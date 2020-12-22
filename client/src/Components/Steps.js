@@ -64,7 +64,13 @@ const Step = (props) => {
     try {
       Axios.post(`http://localhost:5000/users/completeInsert`, { ...infoStep, token })
         .then((result) => {
-          if (result.data[0].Count === 0) history.push(`/`);
+          ctx.ChangeErrorMessages({
+            error: '',
+            warning: '',
+            success: 'successful complete sign up',
+          });
+          props.dataHome.ChangeIsLogin(2);
+          history.push(`/`);
         })
         .catch((error) => {});
     } catch (error) {
@@ -181,13 +187,7 @@ const Step = (props) => {
                     };
                     if (infoStep.step5.length >= 1 && findImageDefault(infoStep.step5)) {
                       completeInsertUsers();
-                      ctx.ChangeErrorMessages({
-                        error: '',
-                        warning: '',
-                        success: 'successful complete sign up',
-                      });
-                      history.push(`/`);
-                      props.dataHome.ChangeIsLogin(2);
+   
                     } else
                       ctx.ChangeErrorMessages({
                         error: 'please choose Image',
