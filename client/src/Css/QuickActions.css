@@ -1,0 +1,66 @@
+.QuickActions {
+  width: 95%;
+  max-width: 390px;
+  min-width: 285px;
+  height: 100%;
+  background-color: #e6e8f4;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  overflow: hidden;
+  transition: 0.5s linear;
+  background-color: var(--background-QuickActions);
+}
+.QuickActionsHide {
+  width: 0;
+  min-width: 0;
+}
+.QuickActionsHide * {
+  opacity: 0;
+}
+.QuickActionsMenu {
+  height: 37px;
+  min-height: 37px;
+  position: relative;
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+  width: 87%;
+  border-radius: 15px;
+  margin: 12px;
+  padding: 5px 10px;
+  overflow: hidden;
+  transition: 0.5s linear;
+  background-color: var(--background-QuickActionsMenu);
+  color: var(--color-QuickActionsMenu);
+}
+.MiniMenuBoxItem {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  margin: 10px 20px;
+}
+.CloseChat {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  width: 90%;
+  height: 45px;
+  min-height: 35px;
+  margin: 20px 0;
+  padding: 0 5px;
+  background-color: var(--background-QuickActionsMenu);
+  border-radius: 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.CloseChat > div {
+  color: #6e97ee;
+  margin-left: 10px;
+  font-weight: bold;
+}
+.CloseChat svg {
+  margin-left: 12px;
+}

@@ -1,0 +1,36 @@
+export const ModeStyle = {
+  Dark: {
+    Dashboard: {
+      "--background-Nav": "#0b4258",
+      "--background-NavLink-Hover": "#ffffff80",
+      "--color-NavLink-Hover": "#0b4258",
+      "--background-NavLink-Active": "white",
+      "--color-FriendInfo-lastChild": "#a5a5a5",
+      "--color-FriendInfo-firstChild": "white",
+      "--background-Friend": "#232323",
+      "--background-Friend-Hover": "#464646",
+      "--Icon-Fill": "white",
+      "--background-QuickActionsMenu": "#232323",
+      "--color-QuickActionsMenu": "white",
+      "--background-QuickActions": "#2f2f2f",
+      "--background-DashboardBody": "#232323",
+    },
+  },
+  Light: {
+    Dashboard: {
+      "--background-Nav": "#318fb5",
+      "--background-NavLink-Hover": "#ffffff80",
+      "--color-NavLink-Hover": "#318fb5",
+      "--background-NavLink-Active": "white",
+      "--color-FriendInfo-lastChild": "#555555",
+      "--color-FriendInfo-firstChild": "#000000",
+      "--background-Friend": "white",
+      "--background-Friend-Hover": "#f3f3f3",
+      "--Icon-Fill": "black",
+      "--background-QuickActionsMenu": "white",
+      "--color-QuickActionsMenu": "#4c4b4b",
+      "--background-QuickActions": "#e6e8f4",
+      "--background-DashboardBody": "white",
+    },
+  },
+};

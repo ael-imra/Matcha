@@ -1,0 +1,23 @@
+{
+	"name": "server",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"server": "nodemon server.js"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"body-parser": "^1.19.0",
+		"cors": "^2.8.5",
+		"express": "^4.17.1",
+		"jsonwebtoken": "^8.5.1",
+		"md5": "^2.3.0",
+		"mysql": "^2.18.1",
+		"nodemailer": "^6.4.16",
+		"nodemon": "^2.0.6",
+		"raw-body": "^2.4.0"
+	}
+}

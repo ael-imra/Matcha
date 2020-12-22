@@ -1,0 +1,50 @@
+export const language = [
+  {
+    lang: 'EN',
+    setting: 'Setting',
+    mode: 'Mode',
+    language: 'Language',
+    singin: 'sing in',
+    singup: 'Join now',
+    singup2: 'sing up',
+    titre_home: 'You just found a better way to connect with your friends',
+    singUpINfb: 'sing up with facebook',
+    LoginINfb: 'sing in with facebook',
+    FirstName: 'First Name',
+    LastName: 'Last Name',
+    password: 'Password',
+    UseName: 'Use Name',
+    CreateAccount: 'Create Account',
+    login: 'login',
+    SignuptoMatcha: 'Sign up to Matcha',
+    AlreadyAMember: 'Already a member',
+    forgotPassword: 'forgot password',
+    AccountDeactivated: 'This account is deactivated please visit your email',
+    FailLogin:
+      'We couldn’t find an account matching the Email and password you entered.Please check your Email and password and try again.'
+  },
+  {
+    lang: 'FR',
+    setting: 'Réglage',
+    mode: 'Mode',
+    language: 'language',
+    singin: 'Se connecter',
+    singup: 'joindre maintenant',
+    singup2: `s'inscrire`,
+    titre_home: 'Vous venez de trouver un meilleur moyen de communiquer avec vos amis',
+    singUpINfb: 'inscrivez-vous avec facebook',
+    LoginINfb: 'Se connecter avec facebook',
+    FirstName: 'Prénom',
+    LastName: 'Nom',
+    password: 'mot de passe',
+    UseName: 'Nom d`utilisation',
+    CreateAccount: 'Créer un compte',
+    login: 'connexion',
+    SignuptoMatcha: 'inscrivez-vous à Matcha',
+    AlreadyAMember: 'Déjà membre',
+    forgotPassword: 'mot de passe oublié',
+    AccountDeactivated: `ace compte est désactivé s'il vous plaît visitez votre email`,
+    FailLogin: `Nous n'avons pas trouvé de compte correspondant à l'adresse e-mail et 
+    au mot de passe que vous avez saisis. Veuillez vérifier votre adresse e-mail et votre mot de passe, puis réessayer.`
+  }
+];
