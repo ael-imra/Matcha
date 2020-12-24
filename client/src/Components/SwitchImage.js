@@ -11,17 +11,20 @@ import step5Dark from '../Images/Step5Dark.gif'
 import finch from '../Images/finish.svg'
 
 const SwitchImage = (props) => {
-	const ctx = useContext(DataContext)
-	let GetImage = () => {
-		if (props.NrStep === 1) return ctx.Mode !== 'Dark' ? step1Light : step1Dark
-		else if (props.NrStep === 2) return ctx.Mode !== 'Dark' ? step5Light : step5Dark
-		else if (props.NrStep === 3) return ctx.Mode !== 'Dark' ? step3Light : step3Dark
-		else if (props.NrStep === 4) return ctx.Mode !== 'Dark' ? step6Light : step6Dark
-		else if (props.NrStep === 5) return finch
-	}
-	console.log()
+  const ctx = useContext(DataContext)
+  let GetImage = () => {
+    if (props.NrStep === 1) return ctx.Mode !== 'Dark' ? step1Light : step1Dark
+    else if (props.NrStep === 2)
+      return ctx.Mode !== 'Dark' ? step5Light : step5Dark
+    else if (props.NrStep === 3)
+      return ctx.Mode !== 'Dark' ? step3Light : step3Dark
+    else if (props.NrStep === 4)
+      return ctx.Mode !== 'Dark' ? step6Light : step6Dark
+    else if (props.NrStep === 5) return finch
+  }
+  console.log()
 
-	return <img src={GetImage()} alt='...' />
+  return <img src={GetImage()} alt="..." />
 }
 
 export default SwitchImage

@@ -37,7 +37,7 @@
 }
 .ChatImage::after {
   position: absolute;
-  content: "";
+  content: '';
   width: 8px;
   height: 8px;
   background-color: #3ed644;

@@ -7,51 +7,51 @@
   margin-right: 50px;
 }
 .logo {
-    display: flex;
-    /* align-items: center; */
+  display: flex;
+  /* align-items: center; */
 }
 .logo img {
-    width: 60px;
-    height: 55px;
+  width: 60px;
+  height: 55px;
 }
 .logo p {
-    font-family: "Roboto", sans-serif;
-    font-size: 25px;
-    font-weight: 600;
-    margin-top: 0;
-    transform: translateY(15px);
+  font-family: 'Roboto', sans-serif;
+  font-size: 25px;
+  font-weight: 600;
+  margin-top: 0;
+  transform: translateY(15px);
 }
 .box-menu-appear {
-    transform: rotateX(-100deg);
-    transform-origin: top;
-    opacity: 1;
+  transform: rotateX(-100deg);
+  transform-origin: top;
+  opacity: 1;
 }
 .box-menu-appear-active {
-    transform: rotateX(0deg);
-    transform-origin: top;
-    opacity: 1;
-    transition: opacity 1000ms, transform 1000ms;
+  transform: rotateX(0deg);
+  transform-origin: top;
+  opacity: 1;
+  transition: opacity 1000ms, transform 1000ms;
 }
 .box-menu-exit {
-    opacity: 1;
+  opacity: 1;
 }
 .box-menu-exit-active {
-    opacity: 0;
-    transform: translateY(-1500px);
-    transition: opacity 500ms, transform 500ms;
+  opacity: 0;
+  transform: translateY(-1500px);
+  transition: opacity 500ms, transform 500ms;
 }
 .box-menu-enter {
-    opacity: 0;
-    transform: translateY(-1500px);
+  opacity: 0;
+  transform: translateY(-1500px);
 }
 .box-menu-enter-active {
-    opacity: 1;
-    transform: translateY(0px);
-    transition: opacity 500ms, transform 500ms;
+  opacity: 1;
+  transform: translateY(0px);
+  transition: opacity 500ms, transform 500ms;
 }
 .menu {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 @media only screen and (max-width: 885px) {
