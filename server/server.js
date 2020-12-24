@@ -4,8 +4,8 @@ const port = 5000;
 const cors = require('cors');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
-const users = require('./users.js');
-const user = require('./user.js');
+const users = require('./Router/Users');
+const user = require('./Router/User');
 
 const con = mysql.createPool({
   host: 'localhost',

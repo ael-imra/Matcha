@@ -3,12 +3,12 @@ const mysql = require('mysql');
 const router = express.Router();
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
-const { isEmailOrUserNameNotReadyTake, fetchDataJSON, fetchCity } = require('./tools/tools');
+const { isEmailOrUserNameNotReadyTake, fetchDataJSON, fetchCity } = require('../tools/tools');
 
 const md5 = require('md5');
 const jwt = require('jsonwebtoken');
-const Validate = require('./tools/validate');
-const isValidDate = require('./tools/Validatedate');
+const Validate = require('../tools/validate');
+const isValidDate = require('../tools/Validatedate');
 let con = mysql.createConnection({
   host: 'localhost',
   port: 3306,
