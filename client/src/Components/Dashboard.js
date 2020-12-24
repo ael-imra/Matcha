@@ -1,59 +1,60 @@
-import React, { useState, useEffect, useContext } from "react"; // eslint-disable-next-line
-import { Nav } from "./Nav";
-import { QuickActions } from "./QuickActions";
-import "../Css/Dashboard.css";
-import { DashboardBody, useWindowSize } from "./DashboardBody"; // eslint-disable-next-line
-import { DataContext } from "../Context/AppContext";
-import { ModeStyle } from "../Data/ModeStyle";
+import React, { useState, useEffect, useContext } from 'react' // eslint-disable-next-line
+import { Nav } from './Nav'
+import { QuickActions } from './QuickActions'
+import '../Css/Dashboard.css'
+import { DashboardBody } from './DashboardBody' // eslint-disable-next-line
+import { useWindowSize } from './UseWindowSize'
+import { DataContext } from '../Context/AppContext'
+import { ModeStyle } from '../Data/ModeStyle'
 
 function Layout(props) {
-  const ctx = useContext(DataContext);
-  const [active, changeActive] = useState("Menu");
+  const ctx = useContext(DataContext)
+  const [active, changeActive] = useState('Menu')
   function switchActive(value) {
     changeActive((oldValue) =>
       oldValue === value
         ? oldValue
-        : oldValue === "Menu"
-        ? "QuickActions"
-        : "Menu"
-    );
+        : oldValue === 'Menu'
+        ? 'QuickActions'
+        : 'Menu'
+    )
   }
   return (
     <div
       className="Layout"
       style={{
         ...props.style,
-        transform: active === "Menu" ? "translateX(0px)" : "translateX(-285px)",
+        transform: active === 'Menu' ? 'translateX(0px)' : 'translateX(-285px)',
       }}
     >
       <div
         className="LayoutSwitch"
         style={{
           transform:
-            active === "Menu" ? "translateX(0px)" : "translateX(295px)",
+            active === 'Menu' ? 'translateX(0px)' : 'translateX(295px)',
         }}
       >
         <div
           className="LayoutSwitchActive"
-          style={active === "Menu" ? { left: "6px" } : { left: "134px" }}
+          style={active === 'Menu' ? { left: '6px' } : { left: '134px' }}
         ></div>
         <div
           className={
-            active === "Menu"
-              ? "LayoutSwitchItem LayoutSwitchItemActive"
-              : "LayoutSwitchItem"
+            active === 'Menu'
+              ? 'LayoutSwitchItem LayoutSwitchItemActive'
+              : 'LayoutSwitchItem'
           }
-          onClick={() => switchActive("Menu")}
+          onClick={() => switchActive('Menu')}
         >
           Menu
         </div>
         <div
           className={
-            active === "QuickActions"
-              ? "LayoutSwitchItem LayoutSwitchItemActive"
-              : "LayoutSwitchItem"
+            active === 'QuickActions'
+              ? 'LayoutSwitchItem LayoutSwitchItemActive'
+              : 'LayoutSwitchItem'
           }
-          onClick={() => switchActive("QuickActions")}
+          onClick={() => switchActive('QuickActions')}
         >
           QuickActions
         </div>
@@ -63,23 +64,23 @@ function Layout(props) {
         <QuickActions />
       </div>
     </div>
-  );
+  )
 }
 function Dashboard() {
-  const ctx = useContext(DataContext);
-  const width = useWindowSize();
-  const [LayoutHide, changeLayoutHide] = useState(true);
+  const ctx = useContext(DataContext)
+  const width = useWindowSize()
+  const [LayoutHide, changeLayoutHide] = useState(true)
   useEffect(() => {
-    if (width > 1250) changeLayoutHide(false);
-    else if (width <= 1250) changeLayoutHide(true);
-  }, [width]);
+    if (width > 1260) changeLayoutHide(false)
+    else if (width <= 1260) changeLayoutHide(true)
+  }, [width])
   return (
     <div className="Dashboard" style={ModeStyle[ctx.Mode].Dashboard}>
       {width < 1540 ? (
         <Layout
           style={{
-            width: !LayoutHide ? "285px" : "0px",
-            minWidth: !LayoutHide ? "285px" : "0px",
+            width: !LayoutHide ? '285px' : '0px',
+            minWidth: !LayoutHide ? '285px' : '0px',
           }}
         />
       ) : null}
@@ -91,6 +92,6 @@ function Dashboard() {
       />
       {width >= 1540 ? <QuickActions /> : null}
     </div>
-  );
+  )
 }
-export { Dashboard };
+export { Dashboard }

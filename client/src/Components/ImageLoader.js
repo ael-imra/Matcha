@@ -1,27 +1,27 @@
-import React, { useState, useEffect, useRef } from "react";
-import "../Css/ImageLoader.css";
+import React, { useState, useEffect, useRef } from 'react'
+import '../Css/ImageLoader.css'
 function ImageLoader(props) {
-  const [imageLoaded, changeImageLoaded] = useState(false);
-  const imageRef = useRef(null);
+  const [imageLoaded, changeImageLoaded] = useState(false)
+  const imageRef = useRef(null)
   useEffect(() => {
-    let unmount = false;
+    let unmount = false
     fetch(props.src)
       .then((res) => res.blob())
       .then((data) => {
         if (!unmount) {
-          const reader = new FileReader();
+          const reader = new FileReader()
           reader.onload = () => {
-            changeImageLoaded(true);
-            if (imageRef.current) imageRef.current.src = reader.result;
-          };
-          reader.readAsDataURL(data);
+            changeImageLoaded(true)
+            if (imageRef.current) imageRef.current.src = reader.result
+          }
+          reader.readAsDataURL(data)
         }
-        return () => (unmount = true);
-      }); // eslint-disable-next-line
-  }, []);
+      })
+    return () => (unmount = true) // eslint-disable-next-line
+  }, [])
   return (
     <div
-      className={`${props.className ? props.className : ""} ImageLoader`}
+      className={`${props.className ? props.className : ''} ImageLoader`}
       style={props.style ? props.style : {}}
     >
       {imageLoaded ? (
@@ -30,6 +30,6 @@ function ImageLoader(props) {
         <div className="ImageLoading"></div>
       )}
     </div>
-  );
+  )
 }
-export { ImageLoader };
+export { ImageLoader }
