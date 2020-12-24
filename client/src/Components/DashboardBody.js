@@ -117,7 +117,7 @@ function Filter(props) {
 }
 function User(props) {
   const [imageIndex, changeImageIndex] = useState(0)
-  const [ratingValue, changeRatingValue] = useState(0)
+  const [ratingValue, changeRatingValue] = useState({ avg: 0, userValue: 0 })
   function UserImageSlideButtonClick(event) {
     const index = [...event.target.parentNode.children].indexOf(event.target)
     changeImageIndex(index)
@@ -127,15 +127,21 @@ function User(props) {
       method: 'GET',
     })
       .then((res) => res.text())
-      .then((data) => changeRatingValue(parseFloat(data)))
+      .then((data) =>
+        parseFloat(data) >= 0 && parseFloat(data) <= 5
+          ? changeRatingValue((oldValue) => ({
+              ...oldValue,
+              avg: parseFloat(parseFloat(data).toFixed(1)),
+            }))
+          : 0
+      )
   }
   function clickRating(value, usernameReceiver) {
     fetch('http://localhost:5000/rating', {
       method: 'POST',
       body: JSON.stringify({
-        usernameOwner: 'jyousefhassan',
         usernameReceiver,
-        RatingValue: parseFloat(value),
+        RatingValue: parseFloat(parseFloat(value).toFixed(1)),
       }),
       headers: {
         Accept: 'text/plain',
@@ -143,10 +149,16 @@ function User(props) {
       },
     })
       .then((res) => res.text())
-      .then((data) => changeRatingValue(parseFloat(data)))
+      .then((data) =>
+        parseFloat(data) >= 0 && parseFloat(data) <= 5
+          ? changeRatingValue(() => ({
+              userValue: value,
+              avg: parseFloat(parseFloat(data).toFixed(1)),
+            }))
+          : 0
+      )
   }
   useEffect(() => {
-    console.log('OK')
     getRating() // eslint-disable-next-line
   }, [])
   return (
@@ -178,7 +190,7 @@ function User(props) {
       </div>
       <div className="UserRating">
         <StarSVG width={42} height={42} fill="#EFD077" />
-        <div>{ratingValue}</div>
+        <div>{ratingValue.avg}</div>
       </div>
       <div className="UserName">{props.userName}</div>
       <div className="UserAgeGenre">
@@ -211,11 +223,10 @@ function User(props) {
         </div>
       </div>
       <div className="UserActionsRating">
-        {console.log(ratingValue)}
         <Rating
           name={props.name}
           defaultValue={0}
-          value={ratingValue}
+          value={ratingValue.userValue}
           max={5}
           precision={0.5}
           onChange={(event, value) => clickRating(value, props.userName)}

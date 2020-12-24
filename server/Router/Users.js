@@ -76,17 +76,16 @@ router.post('/', function (req, res) {
     sendQuery(
       connection,
       'SELECT `Latitude`,`Longitude` FROM `Users` WHERE `Email`=?',
-      ['jyousefhassan@notvn.com']
+      ['eebuxwribz.tvpdjkgihu@gmail.com']
     )
       .then(([{ Latitude, Longitude }]) => {
-        const name = req.body.name
-          ? `\`UserName\` LIKE '%${req.body.name}%' AND`
-          : ''
+        let listInterest = '`ListInterest` LIKE ?'
+        req.body.list.map((value) => {
+          listInterest + ' AND `ListInterest` LIKE ?'
+          return '%' + value + '%'
+        })
+        req.body.list.length === 0 ? req.body.list.push('%%') : req.body.list
         const avg = 0.0075 * req.body.location[1]
-        const distanse =
-          req.body.location[1] < 1000
-            ? `\`Latitude\`>= ${Latitude} - ${avg} AND \`Latitude\`<= ${Latitude} + ${avg} AND \`Longitude\` >= ${Longitude} - ${avg} AND \`Longitude\` <= ${Longitude} + ${avg}`
-            : ''
         const startDate = new Date(
           Date.now() - 31536 * 10 ** 6 * req.body.age[0]
         )
@@ -95,25 +94,31 @@ router.post('/', function (req, res) {
         const endDate = new Date(Date.now() - 31536 * 10 ** 6 * req.body.age[1])
           .toJSON()
           .replace(/[T][ -~]+/, '')
-        const age = `\`DataBirthday\` <= '${startDate}' AND \`DataBirthday\` >= '${endDate}'`
-        const listInterest =
-          req.body.list.length > 0
-            ? "`ListInterest` LIKE '%" +
-              req.body.list
-                .toString()
-                .replaceAll(',', "%' AND `ListInterest` LIKE  '%") +
-              "%'"
-            : ''
-        const query = `SELECT * FROM \`Users\` WHERE ${name} ${
-          name && listInterest ? 'AND' : ''
-        } ${listInterest} ${listInterest && age ? 'AND' : ''} ${age} ${
-          age && distanse ? 'AND ' : ''
-        } ${distanse} LIMIT ${req.body.start},24`
-        connection.query(query, (err, result) => {
-          if (err) res.send(err)
-          else res.send(result)
-          connection.release()
-        })
+        const query =
+          'SELECT * FROM `Users` WHERE Username != ? AND `UserName` LIKE ? AND ' +
+          listInterest +
+          ' AND `DataBirthday` <= ? AND `DataBirthday` >= ? AND `Latitude`>= ? AND `Latitude`<= ? AND `Longitude` >= ? AND `Longitude` <= ? LIMIT ?,24'
+        connection.query(
+          query,
+          [
+            'jnbsiqyefq.uhjwpmqnim',
+            '%' + req.body.name + '%',
+            ...req.body.list,
+            startDate,
+            endDate,
+            req.body.location[1] === 1000 ? -85 : parseFloat(Latitude - avg),
+            req.body.location[1] === 1000 ? 85 : parseFloat(Latitude + avg),
+            req.body.location[1] === 1000 ? -180 : parseFloat(Longitude - avg),
+            req.body.location[1] === 1000 ? 180 : parseFloat(Longitude + avg),
+            req.body.start,
+          ],
+          (err, result) => {
+            if (err) res.send(err)
+            else res.send(result)
+            connection.release()
+            res.end()
+          }
+        )
       })
       .catch((err) => console.log(err))
   })
@@ -163,7 +168,6 @@ router.post('/user', auth, function (req, res) {
       sqlSelect,
       [req.user.data.Email, req.user.data.Password],
       (err, result) => {
-        let data = result
         if (err) res.send(err)
         else {
           res.send(result)
@@ -327,7 +331,7 @@ router.post('/completeInsert', function (req, res) {
             listInterest,
             token,
           ],
-          (err, result) => {
+          (err) => {
             if (err) res.send('Error')
             else {
               res.send('successful')

@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS Rating (
     `IdRating` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `IdUserOwner` INT NOT NULL,
     `IdUserReceiver` INT NOT NULL,
-    `RatingValue` FLOAT(2,2) NOT NULL,
+    `RatingValue` DECIMAL (10,2) NOT NULL,
     FOREIGN KEY (IdUserOwner) REFERENCES `Users`(IdUserOwner),
     FOREIGN KEY (IdUserReceiver) REFERENCES `Users`(IdUserOwner)
 );

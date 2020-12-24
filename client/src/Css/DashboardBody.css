@@ -214,6 +214,7 @@
   margin: auto;
   padding: 5px 15px;
   transition: 0.5s linear;
+  box-sizing: border-box;
 }
 .FilterSearch {
   width: 100%;
@@ -261,7 +262,7 @@
 .FilterAdvanceFirst,
 .FilterAdvanceSecond {
   flex-grow: 1;
-  min-width: 300px;
+  min-width: 270px;
   display: flex;
   flex-flow: column;
   align-items: center;

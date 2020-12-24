@@ -7,7 +7,7 @@ function sendQuery(connection, query, params, needed) {
     else
       connection.query(query, params, (err, result) => {
         resolve(
-          result.length!==0
+          result && result.length !== 0 && !err
             ? needed === '*' || !(result[0] && result[0].hasOwnProperty(needed))
               ? result
               : result[0][needed]
@@ -37,69 +37,70 @@ router.get('/:usernameOwner', (req, res) => {
       )
       const ratingValue = await sendQuery(
         connection,
-        'SELECT RatingValue FROM `Rating` WHERE `IdUserReceiver`=?',
+        'SELECT SUM(RatingValue)/Count(*) AS "AVG" From Rating WHERE `IdUserReceiver`=?',
         [idUserOwner],
-        'RatingValue'
+        'AVG'
       )
-      res.send(ratingValue ? ratingValue : '0')
+      res.send(ratingValue ? ratingValue.toString() : '0')
+      connection.release()
       res.end()
     }
   })
 })
 router.post('/', (req, res) => {
   if (
-    req.body.usernameOwner &&
     req.body.usernameReceiver &&
-    req.body.RatingValue
+    req.body.RatingValue &&
+    req.body.RatingValue >= 0 &&
+    req.body.RatingValue <= 5
   ) {
-    Pool.getConnection((err, connection) => {
+    Pool.getConnection(async (err, connection) => {
       if (err) res.send('Error on Connection')
-      sendQuery(connection, 'SELECT * FROM `Rating` WHERE `IdUserOwner`=?', [
-        req.body.usernameOwner,
-      ])
-        .then((IdUserOwnerResult) => {
-          connection.query(
-            'UPDATE Rating SET `RatingValue`=? WHERE `IdUserOwner`=?',
-            [req.body.RatingValue, IdUserOwnerResult[0].IdUserOwner],
-            (updateError) => {
-              if (updateError) res.send('Error Update Rating')
-              else res.send('Update Seccuss')
-            }
-          )
-        })
-        .catch(() => {
-          connection.query(
-            'SELECT `IdUserOwner` FROM Users WHERE `UserName`=?',
-            [req.body.usernameOwner],
-            (IdUserOwnerError, IdUserOwnerResult) => {
-              if (IdUserOwnerError) res.send('Error IdUserOwner')
-              else
-                connection.query(
-                  'SELECT `IdUserOwner` FROM Users WHERE `UserName`=?',
-                  [req.body.usernameReceiver],
-                  (IdUserReceiverError, IdUserReceiverResult) => {
-                    if (IdUserReceiverError) res.send('Error IdUserReceiver')
-                    else
-                      connection.query(
-                        'INSERT INTO Rating(`IdUserOwner`,`IdUserReceiver`,`RatingValue`) VALUES (?,?,?)',
-                        [
-                          IdUserOwnerResult[0].IdUserOwner,
-                          IdUserReceiverResult[0].IdUserOwner,
-                          req.body.RatingValue,
-                        ],
-                        (insetError) => {
-                          if (insetError) res.send('Error Insert')
-                          else res.send(req.body.RatingValue.toString())
-                          res.end()
-                        }
-                      )
-                    res.end()
-                  }
-                )
-              res.end()
-            }
-          )
-        })
+      const idUserOwner = await sendQuery(
+        connection,
+        'SELECT IdUserOwner FROM `Rating` WHERE `IdUserOwner`=?',
+        ['jnbsiqyefq.uhjwpmqnim'],
+        'IdUserOwner'
+      )
+      if (idUserOwner) {
+        const result = await sendQuery(
+          connection,
+          'UPDATE Rating SET `RatingValue`=? WHERE `IdUserOwner`=?',
+          [req.body.RatingValue, idUserOwner],
+          '*'
+        )
+        res.send(result ? 'Update Seccuss' : 'Error Update Rating')
+        connection.release()
+        res.end()
+      } else {
+        const owner = await sendQuery(
+          connection,
+          'SELECT `IdUserOwner` FROM Users WHERE `UserName`=?',
+          ['jnbsiqyefq.uhjwpmqnim'],
+          'IdUserOwner'
+        )
+        const receiver = await sendQuery(
+          connection,
+          'SELECT `IdUserOwner` FROM Users WHERE `UserName`=?',
+          req.body.usernameReceiver,
+          'IdUserOwner'
+        )
+        const result = await sendQuery(
+          connection,
+          'INSERT INTO Rating(`IdUserOwner`,`IdUserReceiver`,`RatingValue`) VALUES (?,?,?)',
+          [owner, receiver, req.body.RatingValue],
+          '*'
+        )
+        const avg = await sendQuery(
+          connection,
+          'SELECT SUM(RatingValue)/Count(*) AS "AVG" From Rating WHERE `IdUserReceiver`=?',
+          [receiver],
+          'AVG'
+        )
+        res.send(avg ? avg.toString() : 'Error')
+        connection.release()
+        res.end()
+      }
     })
   } else res.send('error')
 })

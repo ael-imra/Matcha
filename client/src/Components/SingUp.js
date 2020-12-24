@@ -45,6 +45,7 @@ const SingUp = (props) => {
       try {
         Axios.get('http://localhost:5000/users')
           .then((result) => {
+            console.log(result.data)
             ChangeDataUsers(result.data)
           })
           .catch((error) => {
