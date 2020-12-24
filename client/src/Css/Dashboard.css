@@ -18,7 +18,7 @@
 }
 .Layout::before {
   position: absolute;
-  content: "";
+  content: '';
   width: 570px;
   height: 66px;
   background: linear-gradient(

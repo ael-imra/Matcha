@@ -1,68 +1,68 @@
-import React, { useState, useEffect } from "react";
-import { data } from "../API/Messages";
-import { IconButtonNext, IconClose } from "./Icons";
-import { ConvertDate } from "./Messages";
-import { ImageLoader } from "./ImageLoader";
-import "../Css/Gallery.css";
+import React, { useState, useEffect } from 'react'
+import { data } from '../API/Messages'
+import { IconButtonNext, IconClose } from './Icons'
+import { ConvertDate } from './Messages'
+import { ImageLoader } from './ImageLoader'
+import '../Css/Gallery.css'
 
 function Gallery(props) {
-  const [allImages, addToAllImages] = useState([]);
-  const [lastIndexImage, changelastIndexImage] = useState(20);
+  const [allImages, addToAllImages] = useState([])
+  const [lastIndexImage, changelastIndexImage] = useState(20)
   const [galleryMainImage, changeGalleryMainImage] = useState(
     data[0] ? data[0].image : null
-  );
-  const [hideLoader, changeHideLoader] = useState(true);
-  const [hideImageLoader, changeHideImageLoader] = useState(true);
+  )
+  const [hideLoader, changeHideLoader] = useState(true)
+  const [hideImageLoader, changeHideImageLoader] = useState(true)
   function removeClassNameFromItem() {
-    for (let item of document.querySelectorAll(".GallerySmallSlideItem"))
-      if (item.classList.contains("GallerySmallSlideItemActive"))
-        item.classList.remove("GallerySmallSlideItemActive");
+    for (let item of document.querySelectorAll('.GallerySmallSlideItem'))
+      if (item.classList.contains('GallerySmallSlideItemActive'))
+        item.classList.remove('GallerySmallSlideItemActive')
   }
   function slideImage(next) {
-    let GallerySmallSlideItem = null;
-    for (let item of document.querySelectorAll(".GallerySmallSlideItem"))
-      if (item.classList.contains("GallerySmallSlideItemActive"))
-        GallerySmallSlideItem = item;
+    let GallerySmallSlideItem = null
+    for (let item of document.querySelectorAll('.GallerySmallSlideItem'))
+      if (item.classList.contains('GallerySmallSlideItemActive'))
+        GallerySmallSlideItem = item
     if (
       next &&
       GallerySmallSlideItem.nextElementSibling &&
       GallerySmallSlideItem.nextElementSibling.classList.contains(
-        "GallerySmallSlideItem"
+        'GallerySmallSlideItem'
       )
     ) {
-      removeClassNameFromItem();
+      removeClassNameFromItem()
       GallerySmallSlideItem.nextElementSibling.classList.add(
-        "GallerySmallSlideItemActive"
-      );
+        'GallerySmallSlideItemActive'
+      )
       changeGalleryMainImage(
         GallerySmallSlideItem.nextElementSibling.children[0].src
-      );
+      )
     } else if (
       !next &&
       GallerySmallSlideItem.previousElementSibling &&
       GallerySmallSlideItem.previousElementSibling.classList.contains(
-        "GallerySmallSlideItem"
+        'GallerySmallSlideItem'
       )
     ) {
-      removeClassNameFromItem();
+      removeClassNameFromItem()
       GallerySmallSlideItem.previousElementSibling.classList.add(
-        "GallerySmallSlideItemActive"
-      );
+        'GallerySmallSlideItemActive'
+      )
       changeGalleryMainImage(
         GallerySmallSlideItem.previousElementSibling.children[0].src
-      );
+      )
     }
   }
   function ClickImage(e) {
-    removeClassNameFromItem();
-    e.target.parentNode.classList.add("GallerySmallSlideItemActive");
-    changeGalleryMainImage(e.target.src);
+    removeClassNameFromItem()
+    e.target.parentNode.classList.add('GallerySmallSlideItemActive')
+    changeGalleryMainImage(e.target.src)
   }
   function getImages(id, lastImage) {
     const promise = new Promise((resolve, reject) => {
       setTimeout(() => {
-        const items = [];
-        let size = 10;
+        const items = []
+        let size = 10
         for (let i = lastImage; i >= 0; i--) {
           if (allImages.length === 0 && i === lastImage)
             items.push(
@@ -76,7 +76,7 @@ function Gallery(props) {
                   onClick={ClickImage}
                 />
               </div>
-            );
+            )
           else
             items.push(
               <div className="GallerySmallSlideItem" key={i}>
@@ -86,45 +86,45 @@ function Gallery(props) {
                   onClick={ClickImage}
                 />
               </div>
-            );
-          size--;
+            )
+          size--
           if (size === 0) {
-            i = 0;
+            i = 0
           }
         }
-        if (items.length > 0) resolve([items, lastImage - 10]);
-        else reject("ERROR");
-      }, 5000);
-    });
-    return promise;
+        if (items.length > 0) resolve([items, lastImage - 10])
+        else reject('ERROR')
+      }, 5000)
+    })
+    return promise
   }
   function getMoreImages() {
-    changeHideLoader(false);
+    changeHideLoader(false)
     getImages(0, lastIndexImage)
       .then(([items, lastImage]) => {
-        changeHideImageLoader(false);
-        addToAllImages((oldValue) => [...oldValue, ...items]);
-        changelastIndexImage(lastImage);
-        changeHideLoader(true);
+        changeHideImageLoader(false)
+        addToAllImages((oldValue) => [...oldValue, ...items])
+        changelastIndexImage(lastImage)
+        changeHideLoader(true)
       })
-      .catch(() => changeHideLoader(true));
+      .catch(() => changeHideLoader(true))
   }
   useEffect(() => {
-    let unmount = false;
-    changeHideImageLoader(true);
+    let unmount = false
+    changeHideImageLoader(true)
     getImages(0, lastIndexImage)
       .then(([items, lastImage]) => {
         if (!unmount) {
-          changeHideImageLoader(false);
-          addToAllImages(items);
-          changelastIndexImage(lastImage);
-          changeGalleryMainImage(items[0].children.props.src);
+          changeHideImageLoader(false)
+          addToAllImages(items)
+          changelastIndexImage(lastImage)
+          changeGalleryMainImage(items[0].children.props.src)
         }
       })
-      .catch(() => (!unmount ? changeHideImageLoader(false) : 0));
+      .catch(() => (!unmount ? changeHideImageLoader(false) : 0))
 
-    return () => (unmount = true); // eslint-disable-next-line
-  }, []);
+    return () => (unmount = true) // eslint-disable-next-line
+  }, [])
   return (
     <div className="Gallery" style={props.style ? props.style : {}}>
       <div className="GalleryHeader">
@@ -151,7 +151,7 @@ function Gallery(props) {
       <div className="GalleryBigSlide">
         <div className="GallerySwitchButton">
           <IconButtonNext
-            style={{ transform: "rotate(180deg)" }}
+            style={{ transform: 'rotate(180deg)' }}
             width={35}
             height={35}
             fill="black"
@@ -180,15 +180,15 @@ function Gallery(props) {
             onClick={getMoreImages}
             style={
               hideLoader
-                ? { animation: "none" }
-                : { animation: "itemLoading 1.5s infinite ease-in-out" }
+                ? { animation: 'none' }
+                : { animation: 'itemLoading 1.5s infinite ease-in-out' }
             }
           >
-            <span>{hideLoader ? `+${lastIndexImage + 1}` : ""}</span>
+            <span>{hideLoader ? `+${lastIndexImage + 1}` : ''}</span>
           </div>
         ) : null}
       </div>
     </div>
-  );
+  )
 }
-export { Gallery };
+export { Gallery }

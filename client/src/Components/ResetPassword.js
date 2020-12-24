@@ -1,24 +1,24 @@
-import React, { useContext, useRef, useState, useEffect } from 'react';
-import { useWindowSize } from './UseWindowSize';
-import { DataContext } from '../Context/AppContext';
-import Input from './Input';
-import { useHistory, useParams } from 'react-router-dom';
-import Button from '@material-ui/core/Button';
-import ImageForgetPassword from '../Images/forgot-password-animate.svg';
-import Axios from 'axios';
+import React, { useContext, useRef, useState, useEffect } from 'react'
+import { useWindowSize } from './UseWindowSize'
+import { DataContext } from '../Context/AppContext'
+import Input from './Input'
+import { useHistory, useParams } from 'react-router-dom'
+import Button from '@material-ui/core/Button'
+import ImageForgetPassword from '../Images/forgot-password-animate.svg'
+import Axios from 'axios'
 const ResetPassword = () => {
-  const width = useWindowSize();
-  const ctx = useContext(DataContext);
-  const [findError, ChangeError] = useState(['', '']);
-  const [DataInput, saveDataInput] = useState([]);
-  const inputRef = useRef([]);
-  let history = useHistory();
-  let { token } = useParams();
-  inputRef.current = new Array(2);
+  const width = useWindowSize()
+  const ctx = useContext(DataContext)
+  const [findError, ChangeError] = useState(['', ''])
+  const [DataInput, saveDataInput] = useState([])
+  const inputRef = useRef([])
+  let history = useHistory()
+  let { token } = useParams()
+  inputRef.current = new Array(2)
   useEffect(() => {
-    saveDataInput(inputRef.current);
-    inputRef.current[0].focus();
-  }, []);
+    saveDataInput(inputRef.current)
+    inputRef.current[0].focus()
+  }, [])
   useEffect(() => {
     try {
       Axios.get(`http://localhost:5000/user/verifierToken/${token}`)
@@ -28,30 +28,30 @@ const ResetPassword = () => {
               error: 'Token not found',
               warning: '',
               success: '',
-            });
-            history.push(`/`);
+            })
+            history.push(`/`)
           }
         })
-        .catch((error) => {});
+        .catch((error) => {})
     } catch (error) {
-      console.log('health check error');
+      console.log('health check error')
     }
     // eslint-disable-next-line
-  }, []);
+  }, [])
   let UpdatePassword = () => {
-    let i = -1;
+    let i = -1
     findError.forEach((item, key) => {
       if (item !== true) {
-        i = 1;
-        DataInput[key].value = '';
-        DataInput[key].className = 'Input input-error';
-        DataInput[key].placeholder = findError[key];
+        i = 1
+        DataInput[key].value = ''
+        DataInput[key].className = 'Input input-error'
+        DataInput[key].placeholder = findError[key]
       }
-    });
+    })
     if (DataInput[0].value !== DataInput[1].value) {
-      DataInput[1].value = '';
-      DataInput[1].className = 'Input input-error';
-      DataInput[1].placeholder = 'password not match';
+      DataInput[1].value = ''
+      DataInput[1].className = 'Input input-error'
+      DataInput[1].placeholder = 'password not match'
     } else if (i === -1)
       try {
         Axios.post('http://localhost:5000/user/ResetPassword', {
@@ -64,22 +64,22 @@ const ResetPassword = () => {
               error: '',
               warning: '',
               success: 'Your password has been reset successfully!',
-            });
-            history.push(`/`);
+            })
+            history.push(`/`)
           })
           .catch((error) => {
             ctx.ChangeErrorMessages({
               error: '',
               warning: 'Error: Network Error',
               success: '',
-            });
-          });
+            })
+          })
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
-  };
+  }
   return (
-    <div className='Step'>
+    <div className="Step">
       <div
         style={{
           width: '580px',
@@ -92,7 +92,7 @@ const ResetPassword = () => {
         }}
       >
         <p
-          className='t3'
+          className="t3"
           style={{
             marginBottom: '37px',
             marginTop: '0px',
@@ -102,7 +102,7 @@ const ResetPassword = () => {
         >
           Reset Password
         </p>
-        <div className='form-group' style={{ width: '100%' }}>
+        <div className="form-group" style={{ width: '100%' }}>
           <p
             style={{
               color: ctx.Mode === 'Dark' ? 'white' : 'black',
@@ -110,9 +110,15 @@ const ResetPassword = () => {
           >
             New password
           </p>
-          <Input type='password' name='Password' checkError={{ findError, ChangeError }} index={0} Ref={inputRef} />
+          <Input
+            type="password"
+            name="Password"
+            checkError={{ findError, ChangeError }}
+            index={0}
+            Ref={inputRef}
+          />
         </div>
-        <div className='form-group' style={{ width: '100%' }}>
+        <div className="form-group" style={{ width: '100%' }}>
           <p
             style={{
               color: ctx.Mode === 'Dark' ? 'white' : 'black',
@@ -120,11 +126,17 @@ const ResetPassword = () => {
           >
             New password
           </p>
-          <Input type='password' name='Password' checkError={{ findError, ChangeError }} index={1} Ref={inputRef} />
+          <Input
+            type="password"
+            name="Password"
+            checkError={{ findError, ChangeError }}
+            index={1}
+            Ref={inputRef}
+          />
         </div>
         <Button
-          variant='contained'
-          color='primary'
+          variant="contained"
+          color="primary"
           onClick={UpdatePassword}
           style={{
             fontWeight: '900',
@@ -136,11 +148,11 @@ const ResetPassword = () => {
           Create New Password
         </Button>
       </div>
-      <div className='Image-step'>
-        <img src={ImageForgetPassword} alt='...' />
+      <div className="Image-step">
+        <img src={ImageForgetPassword} alt="..." />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ResetPassword;
+export default ResetPassword

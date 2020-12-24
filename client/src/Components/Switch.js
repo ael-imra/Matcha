@@ -1,13 +1,13 @@
-import React from "react";
-import { IconArrowDown, IconArrowUp } from "./Icons";
-import "../Css/Switch.css";
+import React from 'react'
+import { IconArrowDown, IconArrowUp } from './Icons'
+import '../Css/Switch.css'
 function Toggle(props) {
   const style = {
-    transition: "all 0.5s",
+    transition: 'all 0.5s',
     transform: props.list.indexOf(props.active)
-      ? "translateX(29px)"
-      : "translateX(5px)",
-  };
+      ? 'translateX(29px)'
+      : 'translateX(5px)',
+  }
   return (
     <div
       className="Toggle"
@@ -22,30 +22,30 @@ function Toggle(props) {
         }}
       ></div>
     </div>
-  );
+  )
 }
 function Switch(props) {
   const translate = {
     Friends: 0,
     Messages: -28,
     Notification: -58,
-  };
+  }
   function SwitchDown() {
-    if (props.active === "Friends" || props.active === "Messages") {
+    if (props.active === 'Friends' || props.active === 'Messages') {
       props.switch((oldValue) => {
-        if (oldValue === "Friends") return "Messages";
-        else if (oldValue === "Messages") return "Notification";
-        return oldValue;
-      });
+        if (oldValue === 'Friends') return 'Messages'
+        else if (oldValue === 'Messages') return 'Notification'
+        return oldValue
+      })
     }
   }
   function SwitchUp() {
-    if (props.active === "Notification" || props.active === "Messages") {
+    if (props.active === 'Notification' || props.active === 'Messages') {
       props.switch((oldValue) => {
-        if (oldValue === "Messages") return "Friends";
-        else if (oldValue === "Notification") return "Messages";
-        return oldValue;
-      });
+        if (oldValue === 'Messages') return 'Friends'
+        else if (oldValue === 'Notification') return 'Messages'
+        return oldValue
+      })
     }
   }
   return (
@@ -81,6 +81,6 @@ function Switch(props) {
         />
       </div>
     </div>
-  );
+  )
 }
-export { Switch, Toggle };
+export { Switch, Toggle }

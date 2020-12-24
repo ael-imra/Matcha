@@ -1,8 +1,8 @@
 .titre {
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 .titre p {
   font-family: 'Roboto', sans-serif;
@@ -22,7 +22,7 @@
     align-items: center;
     flex-flow: column;
   }
-  .titre Button{
+  .titre Button {
     width: 100px;
   }
 }

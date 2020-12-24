@@ -1,63 +1,63 @@
-import React, { useState } from "react";
-import { Friends } from "./Friends";
-import "../Css/QuickActions.css";
-import { Search } from "./Search";
-import { Switch } from "./Switch";
-import { Messages } from "./Messages"; // eslint-disable-next-line
-import { Loader } from "./Loader";
-import { Chat } from "./Chat";
-import { data } from "../API/Messages"; // eslint-disable-next-line
-import { IconButtonBack } from "./Icons";
-import { Notification } from "./Notification";
+import React, { useState } from 'react'
+import { Friends } from './Friends'
+import '../Css/QuickActions.css'
+import { Search } from './Search'
+import { Switch } from './Switch'
+import { Messages } from './Messages' // eslint-disable-next-line
+import { Loader } from './Loader'
+import { Chat } from './Chat'
+import { data } from '../API/Messages' // eslint-disable-next-line
+import { IconButtonBack } from './Icons'
+import { Notification } from './Notification'
 // import { DataContext } from "../Context/AppContext";
 function QuickActions(props) {
-  const [CurrentAction, ChangeCurrentAction] = useState("Friends");
-  const [search, changeSearch] = useState("");
-  const [chatBoxHide, changeChatBoxHide] = useState(false);
-  const [chatBoxInfo, changeChatBoxInfo] = useState({});
+  const [CurrentAction, ChangeCurrentAction] = useState('Friends')
+  const [search, changeSearch] = useState('')
+  const [chatBoxHide, changeChatBoxHide] = useState(false)
+  const [chatBoxInfo, changeChatBoxInfo] = useState({})
   const style = {
-    width: "100%",
-    fontWeight: "bold",
-    fontSize: "20px",
-  };
+    width: '100%',
+    fontWeight: 'bold',
+    fontSize: '20px',
+  }
   function OpenChatBox(userID) {
-    let dataSent = "";
-    data.map((obj) => (obj.id === userID ? (dataSent = obj) : null));
-    changeChatBoxHide(true);
-    changeChatBoxInfo(dataSent);
+    let dataSent = ''
+    data.map((obj) => (obj.id === userID ? (dataSent = obj) : null))
+    changeChatBoxHide(true)
+    changeChatBoxInfo(dataSent)
   }
   return (
     <div
       className="QuickActionsChatBox"
       style={{
-        height: "100%",
-        width: "30%",
-        minWidth: "285px",
-        maxWidth: "390px",
-        display: "flex",
-        flexFlow: "column",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        backgroundColor: "var(--background-QuickActions)",
-        transition: "0.5s linear",
+        height: '100%',
+        width: '30%',
+        minWidth: '285px',
+        maxWidth: '390px',
+        display: 'flex',
+        flexFlow: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        backgroundColor: 'var(--background-QuickActions)',
+        transition: '0.5s linear',
       }}
     >
       <div
         className={
-          props.className ? `QuickActions${props.className}` : "QuickActions"
+          props.className ? `QuickActions${props.className}` : 'QuickActions'
         }
         style={
           props.style
             ? {
                 ...props.style,
-                display: chatBoxHide ? "none" : "flex",
+                display: chatBoxHide ? 'none' : 'flex',
               }
-            : { display: chatBoxHide ? "none" : "flex" }
+            : { display: chatBoxHide ? 'none' : 'flex' }
         }
       >
         <div className="QuickActionsMenu">
           <Switch
-            list={["Friends", "Messages", "Notification"]}
+            list={['Friends', 'Messages', 'Notification']}
             active={CurrentAction}
             switch={ChangeCurrentAction}
             style={style}
@@ -65,20 +65,20 @@ function QuickActions(props) {
         </div>
         <Search search={search} changeSearch={changeSearch} />
         <Friends
-          style={CurrentAction !== "Friends" ? { display: "none" } : {}}
+          style={CurrentAction !== 'Friends' ? { display: 'none' } : {}}
           search={search}
           OpenChatBox={OpenChatBox}
         />
         <Messages
-          style={CurrentAction !== "Messages" ? { display: "none" } : {}}
+          style={CurrentAction !== 'Messages' ? { display: 'none' } : {}}
           OpenChatBox={OpenChatBox}
         />
         <Notification
-          style={CurrentAction !== "Notification" ? { display: "none" } : {}}
+          style={CurrentAction !== 'Notification' ? { display: 'none' } : {}}
         />
       </div>
       <div
-        style={!chatBoxHide ? { display: "none" } : {}}
+        style={!chatBoxHide ? { display: 'none' } : {}}
         className="CloseChat"
         onClick={() => changeChatBoxHide(false)}
       >
@@ -86,14 +86,14 @@ function QuickActions(props) {
         <div>Back To Messages</div>
       </div>
       <Chat
-        style={!chatBoxHide ? { display: "none" } : {}}
+        style={!chatBoxHide ? { display: 'none' } : {}}
         id={1}
         img={chatBoxInfo.image}
         name={chatBoxInfo.name}
-        status={"Active Now"}
+        status={'Active Now'}
         chatBoxHide={chatBoxHide}
       />
     </div>
-  );
+  )
 }
-export { QuickActions };
+export { QuickActions }

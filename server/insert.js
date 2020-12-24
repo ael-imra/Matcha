@@ -1,6 +1,6 @@
-const mysql = require("mysql");
-const data = require("./testData.json");
-require("dotenv").config();
+const mysql = require('mysql')
+const data = require('./testData.json')
+require('dotenv').config()
 const connection = mysql.createPool({
   host: process.env.MYSQL_HOST,
   port: process.env.MYSQL_PORT,
@@ -8,12 +8,12 @@ const connection = mysql.createPool({
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DATABASE,
   multipleStatements: true,
-});
+})
 connection.getConnection((error, con) => {
-  if (error) console.log(error);
+  if (error) console.log(error)
   for (let i = 0; i < data.length; i++) {
     con.query(
-      "INSERT INTO Users(`UserName`,`Email`,`FirstName`,`LastName`,`Password`,`DataBirthday`,`Latitude`,`Longitude`,`City`,`Gender`,`Sexual`,`Biography`,`Token`,`ListInterest`,`Images`,`IsActive`) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+      'INSERT INTO Users(`UserName`,`Email`,`FirstName`,`LastName`,`Password`,`DataBirthday`,`Latitude`,`Longitude`,`City`,`Gender`,`Sexual`,`Biography`,`Token`,`ListInterest`,`Images`,`IsActive`) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
       [
         data[i].Username,
         data[i].Email,
@@ -33,10 +33,10 @@ connection.getConnection((error, con) => {
         1,
       ],
       (err) => {
-        if (err) console.log(err);
-        con.release();
+        if (err) console.log(err)
+        con.release()
       }
-    );
-    if (i === data.length - 1) connection.end();
+    )
+    if (i === data.length - 1) connection.end()
   }
-});
+})
