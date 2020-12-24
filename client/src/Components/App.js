@@ -7,7 +7,7 @@ import '../Css/Btn.css';
 import Axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import {Dashboard} from './Dashboard'
+import { Dashboard } from './Dashboard';
 
 function App() {
   let history = useHistory();
@@ -37,11 +37,10 @@ function App() {
           } else ChangeIsLogin(1);
         })
         .catch((error) => {
-          console.log(error);
           ChangeIsLogin(1);
         });
     } catch (error) {}
-     // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [isLogin]);
 
   if (isLogin === 1)
@@ -51,7 +50,7 @@ function App() {
         <Body dataHome={{ StateHome, ChangeHome, ChangeIsLogin }} />
       </div>
     );
-  else if (isLogin === 2) return <Dashboard/>;
+  else if (isLogin === 2) return <Dashboard IsLogin={isLogin} ChangeIsLogin={ChangeIsLogin} />;
   else return '';
 }
 

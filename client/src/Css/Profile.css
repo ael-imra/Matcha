@@ -1,0 +1,167 @@
+.profile {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.profile > div:nth-of-type(1) {
+  width: 560px;
+  height: 1050px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: column;
+  margin-left: 25px;
+  border-radius: 6px;
+}
+
+.profile > div:nth-of-type(1) > div:nth-of-type(1) {
+  width: 90%;
+  height: 500px;
+  background-color: var(--background-QuickActions);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile > div:nth-of-type(1) > div:nth-of-type(2) {
+  width: 90%;
+  height: 480px;
+  background-color: var(--background-QuickActions);
+  border-radius: 8px;
+}
+.profile > div:nth-of-type(1) > div:nth-of-type(2) p {
+  font-size: 23px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  margin-bottom: 13px;
+  margin-top: 15px;
+  margin-left: 25px;
+  color: #050505;
+}
+.Images {
+  width: 100%;
+  height: 85%;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+.Images img {
+  width: 220px;
+  height: 190px;
+  border-radius: 8px;
+}
+.ImageProfile {
+  margin-top: 25px;
+  width: 170px;
+  height: 170px;
+  background-color: yellow;
+  border-radius: 50%;
+}
+.UseName {
+  margin-top: 20px;
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 17px;
+  color: #1d1b1c;
+}
+.Email {
+  margin-top: 0px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #1d1b1c;
+}
+.CountReviewFriend {
+  width: 350px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.CountReviewFriend > div:nth-of-type(1),
+.CountReviewFriend > div:nth-of-type(3) {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.CountReviewFriend > div:nth-of-type(1) > p:nth-of-type(1),
+.CountReviewFriend > div:nth-of-type(3) > p:nth-of-type(1) {
+  font-size: 33px;
+  font-weight: 700;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+.CountReviewFriend > div:nth-of-type(1) > p:nth-of-type(2),
+.CountReviewFriend > div:nth-of-type(3) > p:nth-of-type(2) {
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  color: #283049;
+}
+.CountReviewFriend > div:nth-of-type(2) {
+  width: 4px;
+  height: 80px;
+  background-color: #c4c4c4;
+  border-radius: 5px;
+}
+.profile > div:nth-of-type(2) {
+  width: 710px;
+  height: 1010px;
+  background-color: var(--background-QuickActions);
+  border-radius: 8px;
+}
+.profile > div:nth-of-type(2) > p {
+  font-size: 27px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  margin-bottom: 20px;
+  margin-top: 30px;
+  margin-left: 25px;
+  color: #050505;
+}
+.profile > div:nth-of-type(2) > div:nth-of-type(1) {
+  width: 720px;
+  height: 1px;
+  border-radius: 8px;
+  background-color: #c4c4c4;
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+  justify-content: center;
+}
+.test {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  margin-top: 30px;
+  color: #050505;
+  width: 35%;
+}
+.infoUser {
+  display: flex;
+  align-items: center;
+  width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.MuiOutlinedInput-notchedOutline {
+  border: none !important;
+}
+.MuiSelect-select:focus{
+  border-radius: 8px;
+}
+.MuiInputBase-input {
+  font-family: "Roboto", sans-serif !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #373e4e !important;
+}

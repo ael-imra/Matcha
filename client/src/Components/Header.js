@@ -30,7 +30,6 @@ const Header = (props) => {
           onClick={() => {
             props.dataHome.StateHome === 3 ? props.dataHome.ChangeHome(2) : props.dataHome.ChangeHome(3);
           }}>
-          {console.log(location.pathname)}
           {location.pathname.includes('/step/') ? 'logout' : props.dataHome.StateHome === 3 ? language[ctx.Lang].singup2 : language[ctx.Lang].singin}
         </button>
         <IconMenu dataHome={{ showMenu, ChangeStateMenu }} />

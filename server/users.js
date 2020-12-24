@@ -8,6 +8,7 @@ const { isEmailOrUserNameNotReadyTake, fetchDataJSON, fetchCity } = require('./t
 const md5 = require('md5');
 const jwt = require('jsonwebtoken');
 const Validate = require('./tools/validate');
+const isValidDate = require('./tools/Validatedate');
 let con = mysql.createConnection({
   host: 'localhost',
   port: 3306,
@@ -54,12 +55,12 @@ router.get('/logout', auth, function (req, res) {
   jwt.destroy(user);
 });
 router.post('/', function (req, res) {
-//   const name = req.body.name ? `\`UserName\` LIKE '%${req.body.name}%' AND` : '';
-//   const distanse = `(\`Latitude\`>= ((SELECT \`Latitude\` FROM Users WHERE \`IdUserOwner\`=1) - 0.0075 *${req.body.location[1]}) AND \`Latitude\`<= ((SELECT \`Latitude\` FROM Users WHERE \`IdUserOwner\`=1) + 0.0075 *${req.body.location[1]}) AND \`Longitude\` >= ((SELECT \`Longitude\` FROM Users WHERE \`IdUserOwner\`=1) - 0.0075 *${req.body.location[1]}) AND \`Longitude\` <= ((SELECT \`Longitude\` FROM Users WHERE \`IdUserOwner\`=1) + 0.0075 *${req.body.location[1]}))`;
-//   const startDate = new Date(Date.now() - 31536 * 10 ** 6 * req.body.age[0]).toJSON().replace(/[T][ -~]+/, '');
-//   const endDate = new Date(Date.now() - 31536 * 10 ** 6 * req.body.age[1]).toJSON().replace(/[T][ -~]+/, '');
-//   const age = `(\`DataBirthday\` <= '${startDate}' AND \`DataBirthday\` >= '${endDate}') AND`;
-//   const listInterest = req.body.list.length > 0 ? "(`ListInterest` LIKE '%" + req.body.list.toString().replaceAll(',', "%' AND `ListInterest` LIKE  '%") + "%') AND" : '';
+  //   const name = req.body.name ? `\`UserName\` LIKE '%${req.body.name}%' AND` : '';
+  //   const distanse = `(\`Latitude\`>= ((SELECT \`Latitude\` FROM Users WHERE \`IdUserOwner\`=1) - 0.0075 *${req.body.location[1]}) AND \`Latitude\`<= ((SELECT \`Latitude\` FROM Users WHERE \`IdUserOwner\`=1) + 0.0075 *${req.body.location[1]}) AND \`Longitude\` >= ((SELECT \`Longitude\` FROM Users WHERE \`IdUserOwner\`=1) - 0.0075 *${req.body.location[1]}) AND \`Longitude\` <= ((SELECT \`Longitude\` FROM Users WHERE \`IdUserOwner\`=1) + 0.0075 *${req.body.location[1]}))`;
+  //   const startDate = new Date(Date.now() - 31536 * 10 ** 6 * req.body.age[0]).toJSON().replace(/[T][ -~]+/, '');
+  //   const endDate = new Date(Date.now() - 31536 * 10 ** 6 * req.body.age[1]).toJSON().replace(/[T][ -~]+/, '');
+  //   const age = `(\`DataBirthday\` <= '${startDate}' AND \`DataBirthday\` >= '${endDate}') AND`;
+  //   const listInterest = req.body.list.length > 0 ? "(`ListInterest` LIKE '%" + req.body.list.toString().replaceAll(',', "%' AND `ListInterest` LIKE  '%") + "%') AND" : '';
   const query = `SELECT * FROM \`Users\` `;
   con.query(query, (err, result) => {
     if (err) res.send('Error');
@@ -166,48 +167,66 @@ router.post('/insert', function (req, res) {
 });
 
 router.post('/completeInsert', function (req, res) {
-  let imageList = new Array(['default']);
-  let nameImage = '';
-  let typeImage = '';
-  let base64Data;
-  let imageCheck = true;
-  req.body.step5.forEach((image) => {
-    if (image.src.split('data:image/').length == 2 && image.src.split('data:image/')[1].split(';').length == 2) {
-      typeImage = image.src.split('data:image/')[1].split(';')[0];
-      nameImage = crypto.randomBytes(16).toString('hex');
-      if (image.default == 1) imageList[0] = `http://localhost:5000/images/${nameImage}.${typeImage}`;
-      else imageList.push(`http://localhost:5000/images/${nameImage}.${typeImage}`);
-      base64Data = image.src.replace(`data:image/${typeImage};base64,`, '');
-      require('fs').writeFile(`images/${nameImage}.${typeImage}`, base64Data, 'base64', function (err) {
-        if (err) imageCheck = false;
-      });
-    } else res.send('Image Error');
-  });
-  if (imageCheck) {
-    const dateOfBirth = req.body.step1;
-    const biography = req.body.step4.DescribeYourself;
-    const gender = req.body.step3.youGender;
-    let Sexual = '';
-    req.body.step3.genderYouAreLooking.forEach((element) => {
-      Sexual = Sexual + ' ' + element;
+  if (
+    typeof req.body.step5 !== 'undefined' &&
+    typeof req.body.step1 !== 'undefined' &&
+    typeof req.body.step4.DescribeYourself !== 'undefined' &&
+    typeof req.body.step3.youGender !== 'undefined' &&
+    typeof req.body.step3.genderYouAreLooking !== 'undefined' &&
+    typeof req.body.token !== 'undefined' &&
+    typeof req.body.step4.yourInterest !== 'undefined' &&
+    req.body.step5.length &&
+    req.body.step1 !== '' &&
+    req.body.step4.DescribeYourself !== '' &&
+    req.body.step3.youGender !== '' &&
+    req.body.step3.genderYouAreLooking.length &&
+    req.body.token !== '' &&
+    req.body.step4.yourInterest.length &&
+    isValidDate(req.body.step1)
+  ) {
+    let imageList = new Array(['default']);
+    let nameImage = '';
+    let typeImage = '';
+    let base64Data;
+    let imageCheck = true;
+    req.body.step5.forEach((image) => {
+      if (image.src.split('data:image/').length == 2 && image.src.split('data:image/')[1].split(';').length == 2) {
+        typeImage = image.src.split('data:image/')[1].split(';')[0];
+        nameImage = crypto.randomBytes(16).toString('hex');
+        if (image.default == 1) imageList[0] = `http://localhost:5000/images/${nameImage}.${typeImage}`;
+        else imageList.push(`http://localhost:5000/images/${nameImage}.${typeImage}`);
+        base64Data = image.src.replace(`data:image/${typeImage};base64,`, '');
+        require('fs').writeFile(`images/${nameImage}.${typeImage}`, base64Data, 'base64', function (err) {
+          if (err) imageCheck = false;
+        });
+      } else res.send('Image Error');
     });
-    fetchDataJSON(req.body.step2.country, req.body.step2.latitude, req.body.step2.longitude).then((obj) => {
-      fetchCity(obj.country, `https://api.opencagedata.com/geocode/v1/json?q=${obj.latitude}+${obj.longitude}&key=a9a78ca780d3456a9b8bf2b3e790a4b4`).then((city) => {
-        const latitude = obj.latitude;
-        const longitude = obj.longitude;
-        const images = JSON.stringify(imageList);
-        const token = req.body.token;
-        const listInterest = JSON.stringify(req.body.step4.yourInterest);
-        const completeInsert = 'UPDATE `Users` SET `DataBirthday`=? , `City` = ?,`Gender` = ?,`Sexual`=?,`Biography`=?,`Images`=?,`Latitude`=?,`Longitude`=?,`ListInterest`=? WHERE `Token` = ?';
-        con.query(completeInsert, [dateOfBirth, city, gender, Sexual, biography, images, latitude, longitude, listInterest, token], (err, result) => {
-          if (err) res.send('Error');
-          else {
-            res.send('successful');
-          }
+    if (imageCheck) {
+      const dateOfBirth = req.body.step1;
+      const biography = req.body.step4.DescribeYourself;
+      const gender = req.body.step3.youGender;
+      let Sexual = '';
+      req.body.step3.genderYouAreLooking.forEach((element) => {
+        Sexual = Sexual + ' ' + element;
+      });
+      fetchDataJSON(req.body.step2.country, req.body.step2.latitude, req.body.step2.longitude).then((obj) => {
+        fetchCity(obj.country, `https://api.opencagedata.com/geocode/v1/json?q=${obj.latitude}+${obj.longitude}&key=a9a78ca780d3456a9b8bf2b3e790a4b4`).then((city) => {
+          const latitude = obj.latitude;
+          const longitude = obj.longitude;
+          const images = JSON.stringify(imageList);
+          const token = req.body.token;
+          const listInterest = JSON.stringify(req.body.step4.yourInterest);
+          const completeInsert = 'UPDATE `Users` SET `DataBirthday`=? , `City` = ?,`Gender` = ?,`Sexual`=?,`Biography`=?,`Images`=?,`Latitude`=?,`Longitude`=?,`ListInterest`=? WHERE `Token` = ?';
+          con.query(completeInsert, [dateOfBirth, city, gender, Sexual, biography, images, latitude, longitude, listInterest, token], (err, result) => {
+            if (err) res.send('Error');
+            else {
+              res.send('successful');
+            }
+          });
         });
       });
-    });
-  } else res.send('Error');
+    } else res.send('Error');
+  } else res.send('Oop ...');
 });
 
 module.exports = router;

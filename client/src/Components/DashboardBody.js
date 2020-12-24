@@ -18,6 +18,7 @@ import Button from '@material-ui/core/Button';
 import { Select } from './Select';
 import { ImageLoader } from './ImageLoader';
 import { Route, Switch, useHistory } from 'react-router-dom';
+import Profile from './Profile';
 function useWindowSize() {
   const [size, setSize] = useState(window.innerWidth);
   useLayoutEffect(() => {
@@ -257,6 +258,9 @@ function DashboardBody(props) {
                 onClick={UserClick}
               />
             ))}
+          </Route>
+          <Route path='/profile'>
+           <Profile />
           </Route>
           <Route path='*'>
             <Error404 />

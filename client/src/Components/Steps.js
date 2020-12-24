@@ -44,6 +44,7 @@ let Steps = (props) => {
 
 const Step = (props) => {
   const ctx = useContext(DataContext);
+
   let delativeCircle = (steps) => {
     steps.forEach((step) => {
       step.classList.value = 'Circle';
@@ -95,24 +96,30 @@ const Step = (props) => {
     array_ul[NbrStep - 1].classList.add('Circle-active');
   }, [NbrStep]);
   React.useEffect(() => {
-    try {
-      Axios.get(`http://localhost:5000/user/verifierToken/${token}`)
-        .then((result) => {
-          if (result.data[0].Count === 0) {
-            ctx.ChangeErrorMessages({
-              error: 'Token not found',
-              warning: '',
-              success: '',
-            });
-            history.push(`/`);
-          }
-        })
-        .catch((error) => {});
-    } catch (error) {
-      console.log('health check error');
-    }
+    let didMount = false;
+    if (!didMount)
+      try {
+        Axios.get(`http://localhost:5000/user/verifierToken/${token}`)
+          .then((result) => {
+            if (result.data[0].Count === 0) {
+              ctx.ChangeErrorMessages({
+                error: 'Token not found',
+                warning: '',
+                success: '',
+              });
+              history.push(`/`);
+            }
+          })
+          .catch((error) => {});
+      } catch (error) {
+        console.log('health check error');
+      }
+    return () => (didMount = true);
     //eslint-disable-next-line
   }, []);
+  // if (!didMount) {
+  //   return null;
+  // }
 
   return (
     <div className='Step'>
@@ -187,7 +194,6 @@ const Step = (props) => {
                     };
                     if (infoStep.step5.length >= 1 && findImageDefault(infoStep.step5)) {
                       completeInsertUsers();
-   
                     } else
                       ctx.ChangeErrorMessages({
                         error: 'please choose Image',
