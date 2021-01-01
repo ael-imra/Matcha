@@ -1,6 +1,7 @@
 const express = require('express')
 const mysql = require('mysql')
 const router = express.Router()
+require('dotenv').config()
 function sendQuery(connection, query, params, needed) {
   return new Promise((resolve) => {
     if (needed !== '*' && !params[0]) resolve(null)
@@ -16,15 +17,15 @@ function sendQuery(connection, query, params, needed) {
       })
   })
 }
-const Pool = mysql.createPool({
-  host: 'localhost',
-  port: 3306,
-  user: 'root',
-  password: 'Test12345@',
-  database: 'Matcha',
+const pool = mysql.createPool({
+  host: process.env.MYSQL_HOST,
+  port: process.env.MYSQL_PORT,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DATABASE,
 })
 router.get('/:usernameOwner', (req, res) => {
-  Pool.getConnection(async (ConnectionError, connection) => {
+  pool.getConnection(async (ConnectionError, connection) => {
     if (ConnectionError) {
       res.send('connection Error')
       res.end()
@@ -54,7 +55,7 @@ router.post('/', (req, res) => {
     req.body.RatingValue >= 0 &&
     req.body.RatingValue <= 5
   ) {
-    Pool.getConnection(async (err, connection) => {
+    pool.getConnection(async (err, connection) => {
       if (err) res.send('Error on Connection')
       const idUserOwner = await sendQuery(
         connection,

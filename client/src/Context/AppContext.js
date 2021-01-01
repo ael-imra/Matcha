@@ -9,6 +9,8 @@ export default function AppContext(props) {
     warning: '',
     success: '',
   })
+  const cacheMessages = {};
+  let usersData = [];
 
   return (
     <DataContext.Provider
@@ -18,7 +20,7 @@ export default function AppContext(props) {
         Lang,
         changeLang,
         ErrorMessages,
-        ChangeErrorMessages,
+        ChangeErrorMessages,cacheMessages,usersData
       }}
     >
       {props.children}

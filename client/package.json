@@ -15,7 +15,8 @@
     "react-icons": "^3.11.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.4",
-    "react-transition-group": "^4.4.1"
+    "react-transition-group": "^4.4.1",
+    "socket.io-client": "^3.0.4"
   },
   "scripts": {
     "start": "react-scripts start",

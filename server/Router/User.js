@@ -7,7 +7,6 @@ const md5 = require('md5')
 const jwt = require('jsonwebtoken')
 const Validate = require('../tools/validate')
 const { fetch } = require('../tools/tools')
-const { rejects } = require('assert')
 
 let con = mysql.createConnection({
   host: 'localhost',

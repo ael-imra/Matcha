@@ -1,21 +1,16 @@
 const express = require('express')
 const app = express()
-const port = 5000
 const cors = require('cors')
-const mysql = require('mysql')
 const bodyParser = require('body-parser')
 const users = require('./Router/Users')
 const user = require('./Router/User')
 const rating = require('./Router/Rating')
-const { use } = require('./Router/Users')
+const {init,checkUserInfo,sendResponse,fetchDataJSON,checkImage} = require('./tools/tools')
+const {query,pool} = require('./tools/mysql')
+const {sendActivation} = require('./tools/mail')
+const crypto = require('crypto')
 
-const con = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: 'Test12345@',
-  database: 'Matcha',
-})
-
+init(app,{query,pool,sendActivation,checkUserInfo,sendResponse,fetchDataJSON,crypto,checkImage})
 app.use(cors())
 app.use(express.json())
 app.use(bodyParser.json({ limit: '50mb' }))
@@ -29,6 +24,6 @@ app.get('/image/:image', (req, res) => {
 app.get('/images/:image', (req, res) => {
   res.sendFile(`${__dirname}/images/${req.params.image}`)
 })
-app.listen(port, () => {
+app.listen(process.env.PORT, () => {
   console.log(`Matcha server app listening at http://localhost:${port}`)
 })

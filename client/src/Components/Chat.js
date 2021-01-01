@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef,useContext } from 'react'
 import { Loader, Countdown } from './Loader'
 import { data } from '../API/Messages'
 import { ConvertDate } from './Messages'
 import { Gallery } from './Gallery'
+import { DataContext } from '../Context/AppContext'
 import {
   IconSettings,
   IconUploadImage,
@@ -15,7 +16,6 @@ import {
   IconArrowDownChat,
 } from './Icons'
 import '../Css/Chat.css'
-const cache = []
 function ChatSettings(props) {
   const [counterInfo, changeCounterInfo] = useState({
     counter: 0,
@@ -124,6 +124,7 @@ function Chat(props) {
   const lastMessageIndex = React.useRef(
     data[props.id] ? data[props.id - 1].messages.length - 1 : 0
   )
+  const ctx = useContext(DataContext)
   const ChatContent = useRef()
   function getMessages(id, lastMessge) {
     let promise = new Promise((resolve, reject) => {
@@ -148,20 +149,13 @@ function Chat(props) {
   useEffect(() => {
     let unmounted = false
     if (
-      cache[props.id - 1] &&
-      cache[props.id - 1].allMessages &&
-      cache[props.id - 1].lastMessageIndex
+      ctx.cacheMessages[props.id - 1] &&
+      ctx.cacheMessages[props.id - 1].allMessages &&
+      ctx.cacheMessages[props.id - 1].lastMessageIndex
     ) {
-      addToAllMessages(() => {
-        return cache[props.id - 1].allMessages
-      })
-      lastMessageIndex.current = cache[props.id - 1].lastMessageIndex.current
-      console.log(
-        'ChatContent.current.scrollTop',
-        ChatContent.current.scrollTop
-      )
+      addToAllMessages(() => ctx.cacheMessages[props.id - 1].allMessages)
+      lastMessageIndex.current = ctx.cacheMessages[props.id - 1].lastMessageIndex.current
       setTimeout(() => {
-        console.log('Ok3')
         ChatContent.current.scrollTop = ChatContent.current.scrollHeight
       }, 0)
     } else {
@@ -169,24 +163,21 @@ function Chat(props) {
       getMessages(props.id - 1, lastMessageIndex.current)
         .then(([arrayOfMessages, lastPos]) => {
           const obj = {
-            allMessages: null,
-            lastMessageIndex: 0,
+            allMessages: arrayOfMessages,
+            lastMessageIndex: lastPos,
           }
-          obj.allMessages = arrayOfMessages
-          obj.lastMessageIndex = lastPos
-          cache[props.id - 1] = obj
-          if (!unmounted) {
-            addToAllMessages([...arrayOfMessages])
-            changeHideLoader(true)
-            lastMessageIndex.current = lastPos
-            setTimeout(() => {
-              ChatContent.current.scrollTop = ChatContent.current.scrollHeight
-            }, 0)
-          }
+          ctx.cacheMessages[props.id - 1] = obj
+          console.log(obj)
+          addToAllMessages([...arrayOfMessages])
+          changeHideLoader(true)
+          lastMessageIndex.current = lastPos
+          setTimeout(() => {
+            ChatContent.current.scrollTop = ChatContent.current.scrollHeight
+          }, 0)
         })
         .catch(() => (!unmounted ? changeHideLoader(true) : 0))
     }
-    return () => (unmounted = true)
+    return () => (unmounted = true)// eslint-disable-next-line
   }, [props.id])
   function ShowScrollDown() {
     const { offsetHeight, scrollHeight, scrollTop } = ChatContent.current
@@ -206,11 +197,10 @@ function Chat(props) {
               }
               obj.allMessages = [...arrayOfMessages, ...oldValue]
               obj.lastMessageIndex = lastMessageIndex
-              cache[props.id - 1] = obj
+              ctx.cacheMessages[props.id - 1] = obj
               return [...arrayOfMessages, ...oldValue]
             })
             setTimeout(() => {
-              console.log('Ok1')
               ChatContent.current.scrollTop =
                 ChatContent.current.scrollHeight - oldHeight
             }, 0)
