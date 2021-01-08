@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef,useContext } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import { Loader, Countdown } from './Loader'
 import { data } from '../API/Messages'
 import { ConvertDate } from './Messages'
@@ -154,7 +154,8 @@ function Chat(props) {
       ctx.cacheMessages[props.id - 1].lastMessageIndex
     ) {
       addToAllMessages(() => ctx.cacheMessages[props.id - 1].allMessages)
-      lastMessageIndex.current = ctx.cacheMessages[props.id - 1].lastMessageIndex.current
+      lastMessageIndex.current =
+        ctx.cacheMessages[props.id - 1].lastMessageIndex.current
       setTimeout(() => {
         ChatContent.current.scrollTop = ChatContent.current.scrollHeight
       }, 0)
@@ -177,7 +178,7 @@ function Chat(props) {
         })
         .catch(() => (!unmounted ? changeHideLoader(true) : 0))
     }
-    return () => (unmounted = true)// eslint-disable-next-line
+    return () => (unmounted = true) // eslint-disable-next-line
   }, [props.id])
   function ShowScrollDown() {
     const { offsetHeight, scrollHeight, scrollTop } = ChatContent.current

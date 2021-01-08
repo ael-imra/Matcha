@@ -85,13 +85,15 @@ function QuickActions(props) {
         <IconButtonBack width={20} height={20} fill="#6e97ee" />
         <div>Back To Messages</div>
       </div>
-      {chatBoxHide ?<Chat
-        id={1}
-        img={chatBoxInfo.image}
-        name={chatBoxInfo.name}
-        status={'Active Now'}
-        chatBoxHide={chatBoxHide}
-      />:null}
+      {chatBoxHide ? (
+        <Chat
+          id={1}
+          img={chatBoxInfo.image}
+          name={chatBoxInfo.name}
+          status={'Active Now'}
+          chatBoxHide={chatBoxHide}
+        />
+      ) : null}
     </div>
   )
 }

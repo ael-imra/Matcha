@@ -1,10 +1,10 @@
 .Users {
   width: 100%;
-  height: 100%;
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
   align-items: center;
+  overflow: auto;
 }
 .User {
   position: relative;
@@ -154,4 +154,32 @@
   transform: translate(-50%, 0px);
   filter: none !important;
   z-index: 4;
+}
+
+.UsersLoader {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  overflow: hidden;
+}
+.UsersLoader::before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  content: '';
+  width: 25%;
+  height: 3px;
+  background-color: #03a9f1;
+  animation: loaderAnimate 1s infinite;
+}
+
+@keyframes loaderAnimate {
+  0% {
+    left: 0;
+  }
+  100% {
+    left: 100%;
+  }
 }

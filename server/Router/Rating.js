@@ -1,108 +1,41 @@
 const express = require('express')
-const mysql = require('mysql')
 const router = express.Router()
-require('dotenv').config()
-function sendQuery(connection, query, params, needed) {
-  return new Promise((resolve) => {
-    if (needed !== '*' && !params[0]) resolve(null)
-    else
-      connection.query(query, params, (err, result) => {
-        resolve(
-          result && result.length !== 0 && !err
-            ? needed === '*' || !(result[0] && result[0].hasOwnProperty(needed))
-              ? result
-              : result[0][needed]
-            : null
-        )
-      })
-  })
-}
-const pool = mysql.createPool({
-  host: process.env.MYSQL_HOST,
-  port: process.env.MYSQL_PORT,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
+
+router.get('/:usernameOwner', async (req, res) => {
+  const locals = req.app.locals
+  if (req.params && req.params.usernameOwner)
+  {
+    const IdUserReceiver = await locals.getIdUserOwner(req.params.usernameOwner)
+    const avgRatingValue = await locals.select('Rating','SUM(RatingValue)/Count(*) AS "AVG"',{IdUserReceiver})
+    locals.sendResponse(res,200,avgRatingValue && avgRatingValue.length > 0 && avgRatingValue[0].AVG ? avgRatingValue[0].AVG.toString() : '0')
+  }
+  else locals.sendResponse(res,400,'bad request')
 })
-router.get('/:usernameOwner', (req, res) => {
-  pool.getConnection(async (ConnectionError, connection) => {
-    if (ConnectionError) {
-      res.send('connection Error')
-      res.end()
-    } else {
-      const idUserOwner = await sendQuery(
-        connection,
-        'SELECT IdUserOwner FROM Users WHERE `UserName`=?',
-        [req.params.usernameOwner],
-        'IdUserOwner'
-      )
-      const ratingValue = await sendQuery(
-        connection,
-        'SELECT SUM(RatingValue)/Count(*) AS "AVG" From Rating WHERE `IdUserReceiver`=?',
-        [idUserOwner],
-        'AVG'
-      )
-      res.send(ratingValue ? ratingValue.toString() : '0')
-      connection.release()
-      res.end()
-    }
-  })
-})
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
+  const {usernameReceiver,RatingValue} = req.body
   if (
-    req.body.usernameReceiver &&
-    req.body.RatingValue &&
-    req.body.RatingValue >= 0 &&
-    req.body.RatingValue <= 5
+    usernameReceiver &&
+    RatingValue &&
+    RatingValue >= 0 &&
+    RatingValue <= 5
   ) {
-    pool.getConnection(async (err, connection) => {
-      if (err) res.send('Error on Connection')
-      const idUserOwner = await sendQuery(
-        connection,
-        'SELECT IdUserOwner FROM `Rating` WHERE `IdUserOwner`=?',
-        ['jnbsiqyefq.uhjwpmqnim'],
-        'IdUserOwner'
-      )
-      if (idUserOwner) {
-        const result = await sendQuery(
-          connection,
-          'UPDATE Rating SET `RatingValue`=? WHERE `IdUserOwner`=?',
-          [req.body.RatingValue, idUserOwner],
-          '*'
-        )
-        res.send(result ? 'Update Seccuss' : 'Error Update Rating')
-        connection.release()
-        res.end()
-      } else {
-        const owner = await sendQuery(
-          connection,
-          'SELECT `IdUserOwner` FROM Users WHERE `UserName`=?',
-          ['jnbsiqyefq.uhjwpmqnim'],
-          'IdUserOwner'
-        )
-        const receiver = await sendQuery(
-          connection,
-          'SELECT `IdUserOwner` FROM Users WHERE `UserName`=?',
-          req.body.usernameReceiver,
-          'IdUserOwner'
-        )
-        const result = await sendQuery(
-          connection,
-          'INSERT INTO Rating(`IdUserOwner`,`IdUserReceiver`,`RatingValue`) VALUES (?,?,?)',
-          [owner, receiver, req.body.RatingValue],
-          '*'
-        )
-        const avg = await sendQuery(
-          connection,
-          'SELECT SUM(RatingValue)/Count(*) AS "AVG" From Rating WHERE `IdUserReceiver`=?',
-          [receiver],
-          'AVG'
-        )
-        res.send(avg ? avg.toString() : 'Error')
-        connection.release()
-        res.end()
-      }
-    })
-  } else res.send('error')
+    const locals = req.app.locals
+    const IdUserReceiver = await locals.getIdUserOwner(usernameReceiver)
+    const resultCheckRating = await locals.select('Rating','*',{IdUserOwner:req.userInfo.IdUserOwner,IdUserReceiver})
+    console.log(resultCheckRating)
+    if (resultCheckRating.length > 0) {
+      const resultUpdateRating = await locals.update('Rating',{RatingValue},{IdUserOwner:req.userInfo.IdUserOwner,IdUserReceiver})
+      if (resultUpdateRating) locals.sendResponse(res,200,RatingValue.toString())
+      else locals.sendResponse(res,403,'Error Update Rating')
+    } else {
+      const resultInsertRating = await locals.insert('Rating',{IdUserOwner:req.userInfo.IdUserOwner,IdUserReceiver,RatingValue})
+      if (resultInsertRating)
+      {
+        const avgRatingValue = await locals.select('Rating','SUM(RatingValue)/Count(*) AS "AVG"',{IdUserReceiver})
+        locals.sendResponse(res,200,avgRatingValue && avgRatingValue.length > 0 && avgRatingValue[0].AVG ? avgRatingValue[0].AVG.toString() : '0')
+      }else locals.sendResponse(res,400,'Error On Insert Rating Value')
+    }
+  }
+  else locals.sendResponse(res,400,'Bad Request')
 })
 module.exports = router

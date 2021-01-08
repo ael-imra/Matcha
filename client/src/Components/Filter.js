@@ -1,16 +1,18 @@
-import React,{useState} from 'react'
+import React, { useState,useContext } from 'react'
 import Slider from '@material-ui/core/Slider'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import { Select } from './Select'
+import { DataContext } from '../Context/AppContext'
 import '../Css/Filter.css'
 
-function Filter(props) {
-  const [listActive, changeListActive] = useState(props.filterData.list)
-  const [name, changeName] = useState(props.filterData.name)
-  const [age, changeAge] = useState(props.filterData.age)
-  const [rating, changeRating] = useState(props.filterData.rating)
-  const [location, changeLocation] = useState(props.filterData.location)
+function Filter() {
+  const ctx = useContext(DataContext)
+  const [listActive, changeListActive] = useState(ctx.filterData.list)
+  const [name, changeName] = useState(ctx.filterData.name)
+  const [age, changeAge] = useState(ctx.filterData.age)
+  const [rating, changeRating] = useState(ctx.filterData.rating)
+  const [location, changeLocation] = useState(ctx.filterData.location)
   const list = [
     'Youtube',
     'Facebook',
@@ -84,7 +86,8 @@ function Filter(props) {
             variant="contained"
             color="primary"
             onClick={() => {
-              props.changeFilterData(() => ({
+              ctx.Cache.users = []
+              ctx.changeFilterData(() => ({
                 list: listActive,
                 name,
                 age,
@@ -101,4 +104,4 @@ function Filter(props) {
     </div>
   )
 }
-export {Filter}
+export { Filter }

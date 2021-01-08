@@ -1,32 +1,34 @@
 const nodemailer = require('nodemailer')
+require('dotenv').config({
+  path: __dirname + '/../.env',
+})
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'camagru1337aelimra@gmail.com',
-    pass: 'ael-imra@1337',
+    user: process.env.NODEMAILER_EMAIL,
+    pass: process.env.NODEMAILER_PASS,
   },
 })
-function sendActivation(email,username,token){
-  const mailResult ={
-    error:null,
-    result:null
+function sendMail(subject,message,email, username, url) {
+  const mailResult = {
+    error: null,
+    result: null,
   }
   const mailOptions = {
-    from: 'camagru1337aelimra@gmail.com',
+    from: process.env.NODEMAILER_EMAIL,
     to: email,
-    subject: 'Activate your email address',
+    subject: subject,
     html: `<div><p>Hey ${username} </p>
-            <p>thanks for signing up for Matcha</p>
-            <p>please <a href="http://localhost:5000/user/active?token=${token}"> Click here</a> to Activate your email address</p>
+            <p>please <a href="${url}"> Click here</a>${message}</p>
             </div>`,
   }
   transporter.sendMail(mailOptions, function (error, info) {
-    mailResult.error = error;
+    mailResult.error = error
     mailResult.result = info
   })
-  return (mailResult)
+  return mailResult
 }
 module.exports = {
-  sendActivation
+  sendMail,
 }

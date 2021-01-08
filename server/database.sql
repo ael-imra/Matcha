@@ -17,13 +17,14 @@ CREATE TABLE IF NOT EXISTS `Users` (
     `Token` VARCHAR(255) NOT NULL,
     `ListInterest` VARCHAR(255) DEFAULT 'x',
     `Images` VARCHAR(1255),
-    `IsActive` INT
+    `IsActive` INT,
+    `JWT` VARCHAR(1024)
 );
 CREATE TABLE IF NOT EXISTS `Friends` (
     `IdFriends` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `IdUserOwner` INT NOT NULL,
     `IdUserReceiver` INT NOT NULL,
-    `Match` INT NOT NULL,
+    `Active` INT DEFAULT 1,
     FOREIGN KEY (`IdUserOwner`) REFERENCES `Users`(`IdUserOwner`),
     FOREIGN KEY (`IdUserReceiver`) REFERENCES `Users`(`IdUserOwner`)
 );

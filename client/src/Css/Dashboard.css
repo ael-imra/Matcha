@@ -15,7 +15,6 @@
   flex-flow: column;
   align-items: flex-start;
   transition: 1s;
-  overflow: hidden;
 }
 .Layout::before {
   position: absolute;

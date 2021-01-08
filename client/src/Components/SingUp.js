@@ -18,12 +18,12 @@ const SingUp = (props) => {
 
   let insertUser = () => {
     try {
-      Axios.post('http://localhost:5000/users/insert', {
-        useName: inputRef.current[2].value,
-        lastName: inputRef.current[1].value,
-        firstName: inputRef.current[0].value,
-        password: inputRef.current[3].value,
-        email: inputRef.current[4].value,
+      Axios.post('http://localhost:5000/Authentication/insert', {
+        UserName: inputRef.current[2].value,
+        LastName: inputRef.current[1].value,
+        FirstName: inputRef.current[0].value,
+        Password: inputRef.current[3].value,
+        Email: inputRef.current[4].value,
       })
         .then((result) => {
           if (result.data === 'successful') props.dataHome.ChangeHome(5)
@@ -43,7 +43,7 @@ const SingUp = (props) => {
   useEffect(() => {
     let getUsers = () => {
       try {
-        Axios.get('http://localhost:5000/users')
+        Axios.get('http://localhost:5000/Users')
           .then((result) => {
             console.log(result.data)
             ChangeDataUsers(result.data)

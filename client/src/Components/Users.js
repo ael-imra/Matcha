@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react'
+import React, { useState, useEffect,useRef,useContext } from 'react'
 import { ReactComponent as UserSVG } from '../Images/user.svg'
 import { ReactComponent as BanSVG } from '../Images/ban.svg'
 import { ReactComponent as CheckSVG } from '../Images/check.svg'
@@ -7,9 +7,12 @@ import { ReactComponent as StarSVG } from '../Images/star.svg'
 import { IconClose } from './Icons'
 import Rating from '@material-ui/lab/Rating'
 import { ImageLoader } from './ImageLoader'
+import { DataContext } from '../Context/AppContext'
 import '../Css/Users.css'
+import axios from 'axios'
 
 function User(props) {
+  const ctx = useContext(DataContext)
   const [imageIndex, changeImageIndex] = useState(0)
   const [ratingValue, changeRatingValue] = useState({ avg: 0, userValue: 0 })
   function UserImageSlideButtonClick(event) {
@@ -17,40 +20,37 @@ function User(props) {
     changeImageIndex(index)
   }
   function getRating() {
-    fetch(`http://localhost:5000/rating/${props.userName}`, {
-      method: 'GET',
-    })
-      .then((res) => res.text())
-      .then((data) =>
-        parseFloat(data) >= 0 && parseFloat(data) <= 5
+    axios.get(`Rating/${props.userName}`).then((data) =>
+        parseFloat(data.data) >= 0 && parseFloat(data.data) <= 5
           ? changeRatingValue((oldValue) => ({
               ...oldValue,
-              avg: parseFloat(parseFloat(data).toFixed(1)),
+              avg: parseFloat(parseFloat(data.data).toFixed(1)),
             }))
           : 0
       )
   }
   function clickRating(value, usernameReceiver) {
-    fetch('http://localhost:5000/rating', {
-      method: 'POST',
-      body: JSON.stringify({
+    axios.post('Rating', {
         usernameReceiver,
         RatingValue: parseFloat(parseFloat(value).toFixed(1)),
-      }),
-      headers: {
-        Accept: 'text/plain',
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => res.text())
-      .then((data) =>
-        parseFloat(data) >= 0 && parseFloat(data) <= 5
+      }).then((data) =>
+        parseFloat(data.data) >= 0 && parseFloat(data.data) <= 5
           ? changeRatingValue(() => ({
               userValue: value,
-              avg: parseFloat(parseFloat(data).toFixed(1)),
+              avg: parseFloat(parseFloat(data.data).toFixed(1)),
             }))
           : 0
       )
+  }
+  function addFriend(Username,IdUserOwner){
+    console.log(Username)
+    axios.post('/Friends/Invite',{Username}).then(()=>{
+      ctx.changeUsersData(oldValue=>oldValue.filter(item=>item.UserName!==Username && item.IdUserOwner !== IdUserOwner))
+      ctx.getUsersData(1).then((data)=>{
+        console.log(data.data)
+        ctx.changeUsersData(oldValue=>[...oldValue,...data.data])
+      })
+    }).catch(err=>0)
   }
   useEffect(() => {
     getRating() // eslint-disable-next-line
@@ -104,7 +104,7 @@ function User(props) {
       </div>
       <div className="UserActions">
         <div className="UserActionsAccept">
-          <CheckSVG width={20} height={20} fill="#44db44" />
+          <CheckSVG width={20} height={20} fill="#44db44" onClick={()=>addFriend(props.userName,props.IdUserOwner)}/>
         </div>
         <div className="UserActionsReject">
           <IconClose width={20} height={20} fill="#ff9a2f" />
@@ -129,7 +129,33 @@ function User(props) {
     </div>
   )
 }
-function Users(props){
+function Users() {
+  const ctx = useContext(DataContext)
+  const [usersLoader, changeUsersLoader] = useState(false)
+  const usersRef = useRef()
+  useEffect(() => {
+    usersRef.current.style = `height:${document.querySelector('.DashboardBody').offsetHeight}px`
+    if (ctx.usersData.length === 0)
+    {
+      changeUsersLoader(true)
+      ctx.getUsersData(24).then((data)=>{
+        changeUsersLoader(false)
+        ctx.changeUsersData(oldValue=>[...oldValue,...data.data])
+      })
+    }
+        // eslint-disable-next-line
+  }, [ctx.filterData])
+  function UsersScroll() {
+    const { scrollHeight, scrollTop, offsetHeight } = usersRef.current
+    if (offsetHeight + scrollTop + 300 > scrollHeight && !usersLoader)
+    {
+      changeUsersLoader(true)
+      ctx.getUsersData(24).then((data)=>{
+        changeUsersLoader(false)
+        ctx.changeUsersData(oldValue=>[...oldValue,...data.data])
+      })
+    }
+  }
   function UserClick(event) {
     if (
       !event.target.closest('.UserActionsRating') &&
@@ -148,22 +174,25 @@ function Users(props){
     }
   }
   return (
-    <div className="Users">
-      {props.users.map((obj) => (
-              <User
-                key={obj.IdUserOwner}
-                images={JSON.parse(obj.Images)}
-                city={obj.City}
-                gender={obj.Gender}
-                dataBirthday={obj.DataBirthday}
-                name={obj.FirstName + ' ' + obj.LastName}
-                userName={obj.UserName}
-                distance="40Km"
-                listInterest={JSON.parse(obj.ListInterest)}
-                onClick={UserClick}
-              />
-            ))}
-    </div>
+    <>
+      <div className="Users" onScroll={UsersScroll} ref={usersRef}>
+        {ctx.usersData.map((obj) => (
+          <User
+            key={obj.IdUserOwner}
+            images={JSON.parse(obj.Images)}
+            city={obj.City}
+            gender={obj.Gender}
+            dataBirthday={obj.DataBirthday}
+            name={obj.FirstName + ' ' + obj.LastName}
+            userName={obj.UserName}
+            distance="40Km"
+            listInterest={JSON.parse(obj.ListInterest)}
+            onClick={UserClick}
+          />
+        ))}
+      </div>
+      {usersLoader ? <div className="UsersLoader"></div> : null}
+    </>
   )
 }
-export { Users}
+export { Users }

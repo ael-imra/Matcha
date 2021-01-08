@@ -1,16 +1,17 @@
 const mysql = require('mysql')
 const fs = require('fs')
-let connection = mysql.createConnection({
-  host: 'localhost',
-  port: '3306',
-  user: 'root',
-  password: 'Test12345@',
+require('dotenv').config()
+const pool = mysql.createPool({
+  host: process.env.MYSQL_HOST,
+  port: process.env.MYSQL_PORT,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
   multipleStatements: true,
 })
 fs.readFile('./database.sql', (err, data) => {
-  connection.query(data.toString(), (err) => {
+  pool.query(data.toString(), (err) => {
     if (err) throw err
     console.log('Database Created')
-    connection.destroy()
+    pool.end()
   })
 })

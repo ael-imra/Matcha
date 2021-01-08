@@ -86,9 +86,9 @@ const SingIn = (props) => {
         <button
           onClick={() => {
             try {
-              Axios.post('http://localhost:5000/users/login', {
-                password: DataInput[1].value,
-                email: DataInput[0].value,
+              Axios.post('Authentication/Login', {
+                Password: DataInput[1].value,
+                Email: DataInput[0].value,
               })
                 .then((result) => {
                   findError.forEach((item, key) => {
@@ -103,6 +103,7 @@ const SingIn = (props) => {
                     '[object Object]'
                   ) {
                     localStorage.setItem('token', result.data.accessToken)
+                    localStorage.setItem('data', JSON.stringify(result.data.data))
                     if (result.data.data.IsActive) {
                       props.dataHome.ChangeIsLogin(0)
                     }
