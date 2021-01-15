@@ -18,13 +18,15 @@ CREATE TABLE IF NOT EXISTS `Users` (
     `ListInterest` VARCHAR(255) DEFAULT 'x',
     `Images` VARCHAR(1255),
     `IsActive` INT,
-    `JWT` VARCHAR(1024)
+    `JWT` VARCHAR(1024),
+    `LastLogin` DateTime DEFAULT NOW(),
+    `Active` INT DEFAULT 0
 );
 CREATE TABLE IF NOT EXISTS `Friends` (
     `IdFriends` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `IdUserOwner` INT NOT NULL,
     `IdUserReceiver` INT NOT NULL,
-    `Active` INT DEFAULT 1,
+    `Match` INT DEFAULT 0,
     FOREIGN KEY (`IdUserOwner`) REFERENCES `Users`(`IdUserOwner`),
     FOREIGN KEY (`IdUserReceiver`) REFERENCES `Users`(`IdUserOwner`)
 );
@@ -42,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `Messages` (
     `IdUserOwner` INT NOT NULL,
     `IdUserReceiver` INT NOT NULL,
     `Content` VARCHAR(255) NOT NULL,
-    `DateCreation` VARCHAR(255) NOT NULL,
+    `DateCreation` DateTime DEFAULT NOW(),
     FOREIGN KEY (IdUserOwner) REFERENCES `Users`(IdUserOwner),
     FOREIGN KEY (IdUserReceiver) REFERENCES `Users`(IdUserOwner)
 );

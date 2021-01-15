@@ -14,20 +14,10 @@ import axios from 'axios'
 function User(props) {
   const ctx = useContext(DataContext)
   const [imageIndex, changeImageIndex] = useState(0)
-  const [ratingValue, changeRatingValue] = useState({ avg: 0, userValue: 0 })
+  const [ratingValue, changeRatingValue] = useState({ avg: props.rating===null ?0:props.rating, userValue: 0 })
   function UserImageSlideButtonClick(event) {
     const index = [...event.target.parentNode.children].indexOf(event.target)
     changeImageIndex(index)
-  }
-  function getRating() {
-    axios.get(`Rating/${props.userName}`).then((data) =>
-        parseFloat(data.data) >= 0 && parseFloat(data.data) <= 5
-          ? changeRatingValue((oldValue) => ({
-              ...oldValue,
-              avg: parseFloat(parseFloat(data.data).toFixed(1)),
-            }))
-          : 0
-      )
   }
   function clickRating(value, usernameReceiver) {
     axios.post('Rating', {
@@ -43,18 +33,15 @@ function User(props) {
       )
   }
   function addFriend(Username,IdUserOwner){
-    console.log(Username)
     axios.post('/Friends/Invite',{Username}).then(()=>{
-      ctx.changeUsersData(oldValue=>oldValue.filter(item=>item.UserName!==Username && item.IdUserOwner !== IdUserOwner))
-      ctx.getUsersData(1).then((data)=>{
-        console.log(data.data)
-        ctx.changeUsersData(oldValue=>[...oldValue,...data.data])
+      props.changeUsersData(oldValue=>{
+        const newArray = [...oldValue.filter(item=>item.UserName!==Username && item.IdUserOwner !== IdUserOwner)]
+        ctx.getUsersData(oldValue.length-1,1).then(data=>newArray.push(...data.data))
+        ctx.usersData.push(...newArray)
+        return (newArray)
       })
     }).catch(err=>0)
   }
-  useEffect(() => {
-    getRating() // eslint-disable-next-line
-  }, [])
   return (
     <div className="User" onClick={props.onClick}>
       <div className="UserImageSlideButtons">
@@ -131,6 +118,7 @@ function User(props) {
 }
 function Users() {
   const ctx = useContext(DataContext)
+  const [usersData,changeUsersData] = useState([...ctx.usersData])
   const [usersLoader, changeUsersLoader] = useState(false)
   const usersRef = useRef()
   useEffect(() => {
@@ -138,9 +126,13 @@ function Users() {
     if (ctx.usersData.length === 0)
     {
       changeUsersLoader(true)
-      ctx.getUsersData(24).then((data)=>{
+      ctx.getUsersData(usersData.length,24).then((data)=>{
         changeUsersLoader(false)
-        ctx.changeUsersData(oldValue=>[...oldValue,...data.data])
+        changeUsersData(oldValue=>{
+          const newArray = [...oldValue,...data.data]
+          ctx.usersData.push(...newArray)
+          return (newArray)
+        })
       })
     }
         // eslint-disable-next-line
@@ -150,9 +142,13 @@ function Users() {
     if (offsetHeight + scrollTop + 300 > scrollHeight && !usersLoader)
     {
       changeUsersLoader(true)
-      ctx.getUsersData(24).then((data)=>{
+      ctx.getUsersData(usersData.length,24).then((data)=>{
         changeUsersLoader(false)
-        ctx.changeUsersData(oldValue=>[...oldValue,...data.data])
+        changeUsersData(oldValue=>{
+          const newArray = [...oldValue,...data.data]
+          ctx.usersData.push(...newArray)
+          return (newArray)
+        })
       })
     }
   }
@@ -173,20 +169,23 @@ function Users() {
       event.target.closest('.User').classList.add('UserAfterClick')
     }
   }
+  console.log("inside Users",usersData)
   return (
     <>
       <div className="Users" onScroll={UsersScroll} ref={usersRef}>
-        {ctx.usersData.map((obj) => (
+        {usersData.map((obj) => (
           <User
             key={obj.IdUserOwner}
             images={JSON.parse(obj.Images)}
             city={obj.City}
+            rating={obj.rating}
             gender={obj.Gender}
             dataBirthday={obj.DataBirthday}
             name={obj.FirstName + ' ' + obj.LastName}
             userName={obj.UserName}
             distance="40Km"
             listInterest={JSON.parse(obj.ListInterest)}
+            changeUsersData={changeUsersData}
             onClick={UserClick}
           />
         ))}

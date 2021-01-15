@@ -3,7 +3,7 @@ const mysql = require('./tools/mysql')
 require('dotenv').config()
 async function insert(){
   for (let i = 0; i < data.length; i++) {
-  const result = await mysql.insert('Users',[{
+  await mysql.insert('Users',[{
       UserName:data[i].Username,
       Email:data[i].Email,
       FirstName:data[i].FirstName,
@@ -21,7 +21,6 @@ async function insert(){
       Images:JSON.stringify(data[i].Images),
       IsActive:1,
     }])
-  mysql.insert('Rating',{IdUserOwner:1,IdUserReceiver:result.insertId,RatingValue:0})
 }
 }
 insert()

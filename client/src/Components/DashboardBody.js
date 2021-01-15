@@ -22,6 +22,7 @@ function DashboardBody(props) {
     }, [])
     return <div></div>
   }
+  console.log("inside DashboardBody")
   return (
     <div className="DashboardBody" style={props.style ? props.style : {}}>
       <div className="DashboardBodyHeader">

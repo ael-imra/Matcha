@@ -86,15 +86,14 @@ function Filter() {
             variant="contained"
             color="primary"
             onClick={() => {
-              ctx.Cache.users = []
-              ctx.changeFilterData(() => ({
+              ctx.filterData = {
                 list: listActive,
                 name,
                 age,
                 rating,
                 location,
                 updated: true,
-              }))
+              }
             }}
           >
             Search

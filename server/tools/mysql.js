@@ -1,4 +1,4 @@
-const mysql_object = require('mysql')
+const mysql_object = require('mysql');
 require('dotenv').config({
   path: __dirname + '/../.env',
 })
@@ -29,15 +29,20 @@ function parseValue(values)
 }
 mysql.query = function (query, params) {
   return new Promise((resolve, reject) => {
-    const sql = mysql.pool.query(query, params, (err, result) => {
-      console.log(sql.sql)
-      if (err) reject(err)
-      else resolve(result)
+    mysql.pool.getConnection((error,connection)=>{
+      if (error) console.log(error)
+      const sql = connection.query(query, params, (err, result) => {
+        result.sql = sql
+        if (err) reject(err)
+        else resolve(result)
+        connection.release(0)
+      })
     })
   })
 }
 mysql.insert = async function (table, values) {
   const result = await mysql.query(`INSERT INTO ${table} SET ?`, values)
+  console.log(result.sql.sql)
   return result
 }
 mysql.select = async function (table, rows, values) {
@@ -71,9 +76,6 @@ mysql.filter = async function (values) {
     values.start > -1 &&
     values.length > -1
   ) {
-    //  AND r.AVG >= ? AND r.AVG <= ? GROUP BY u.IdUserOwner 
-    // u.IdUserOwner != f.IdUserOwner AND r.IdUserReceiver = u.IdUserOwner AND
-    //  INNER JOIN Friends f INNER JOIN (SELECT IdUserReceiver,SUM(RatingValue)/COUNT(*) AS AVG FROM Rating GROUP BY IdUserReceiver) r
     values.name = (values.name?'%%':('%' + values.name + '%'));
     const listInterest =
       '`ListInterest` LIKE ?' +
@@ -82,16 +84,21 @@ mysql.filter = async function (values) {
       ? values.list.push('%%')
       : values.list.map((value) => '%' + value + '%')
     const query =
-      'SELECT u.* FROM Users u WHERE u.IdUserOwner != ? AND u.UserName LIKE ? AND ' +
+      'SELECT u.*,(SELECT AVG(RatingValue) FROM Rating WHERE IdUserReceiver = u.IdUserOwner group by IdUserReceiver) AS rating,(SELECT IdUserReceiver FROM Friends WHERE u.IdUserOwner = IdUserReceiver AND IdUserOwner=?) AS friendreceiver,(SELECT IdUserOwner FROM Friends WHERE u.IdUserOwner = IdUserOwner AND `Match`=1 AND IdUserReceiver=?) AS friendowner FROM Users u WHERE u.IdUserOwner != ? AND u.UserName LIKE ? AND' +
       listInterest +
-      ' AND Year(CURDATE())-Year(u.DataBirthday) >= ? AND Year(CURDATE())-Year(u.DataBirthday) <= ? AND u.Latitude>= ? AND u.Latitude<= ? AND u.Longitude >= ? AND u.Longitude <= ? LIMIT ?,?'
+      ' AND Year(CURDATE())-Year(u.DataBirthday) >= ? AND Year(CURDATE())-Year(u.DataBirthday) <= ? AND u.Latitude>= ? AND u.Latitude<= ? AND u.Longitude >= ? AND u.Longitude <= ?  HAVING ((rating IS NULL AND ? = 0) OR (rating >= ? AND rating <= ?)) AND friendowner IS NULL AND friendreceiver IS NULL LIMIT ?,?'
     const result = await mysql.query(query, [
+      values.IdUserOwner,
+      values.IdUserOwner,
       values.IdUserOwner,
       values.name,
       values.list,
       values.age[0],
       values.age[1],
       ...values.location,
+      values.rating[0],
+      values.rating[0],
+      values.rating[1],
       values.start,
       values.length
     ])
@@ -109,13 +116,4 @@ mysql.checkUserExist = async function (values) {
   const result = await mysql.select('Users', "COUNT(*) AS 'Count'", values)
   return result && result.length > 0 && !result[0].Count
 }
-// mysql.getFriends = async function(IdUserOwner)
-// {
-//   const result = await mysql.query('SELECT f.IdUserOwner,f.IdUserReceiver FROM Users u, Friends f WHERE ((u.IdUserOwner = f.IdUserReceiver AND f.IdUserOwner=?) OR (u.IdUserOwner = f.IdUserOwner AND f.IdUserReceiver=?))',[IdUserOwner,IdUserOwner])
-//   if (result.length > 0)
-//   {
-//     for (const value of result)
-//       value.
-//   }
-// }
 module.exports = mysql

@@ -1,5 +1,6 @@
-import React, { useState, createContext } from 'react';
+import React, { useState, createContext,useEffect,useRef } from 'react';
 import axios from 'axios'
+import io from 'socket.io-client'
 
 export const DataContext = createContext();
 export default function AppContext(props) {
@@ -11,22 +12,32 @@ export default function AppContext(props) {
     warning: '',
     success: '',
   })
-  const [filterData, changeFilterData] = useState({
+  let filterData = {
     list: [],
     name: '',
     age: [18, 88],
     rating: [0, 5],
     location: [0, 1000],
     updated: false,
-  })
-  const [usersData,changeUsersData] = useState([])
-  const Cache = {
-    messages:[],
   }
-
-  function getUsersData(length) {
-    return axios.post(`Users`, { ...filterData, start:usersData.length,length })
+  const friendsList = []
+  const usersData = []
+  const messagesData = {}
+  const chatUserInfo = [null]
+  const socket= useRef(null)
+  function getUsersData(start,length) {
+    return axios.post(`Users`, { ...filterData, start,length })
   }
+  console.log("inside Context")
+  useEffect(()=>{
+    const token = localStorage.getItem('token')
+    if (token)
+    {
+      socket.current = io('http://localhost:5000')
+      // socket.current.on('message',(obj)=>console.log("message 111"))
+      socket.current.on('connect',()=>socket.current.emit('token',token))
+    }
+  },[])
 
   return (
     <DataContext.Provider
@@ -40,10 +51,12 @@ export default function AppContext(props) {
         userInfo,
         changeUserInfo,
         filterData,
-        changeFilterData,
         usersData,
-        changeUsersData,
-        getUsersData
+        getUsersData,
+        messagesData,
+        friendsList,
+        chatUserInfo,
+        socket
       }}>
       {props.children}
     </DataContext.Provider>

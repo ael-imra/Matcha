@@ -62,6 +62,7 @@ function checkImage(src) {
   })
 }
 function handleError(err,req,res,next){
+  console.log("ERR")
   if (err)
     req.app.locals.sendResponse(res,400,"Bad Request")
   else

@@ -34,32 +34,37 @@ function Layout(props) {
       </div>
       <div className='LayoutSelected'>
         <Nav />
-        <QuickActions />
+        <QuickActions  friendsList={props.friendsList} messagesData={props.messagesData} chatUserInfo={props.chatUserInfo} />
       </div>
     </div>
   );
 }
 function Dashboard(props) {
-  const ctx = useContext(DataContext);
-  const width = useWindowSize();
+  // const ctx = useContext(DataContext);
+  // const width = useWindowSize();
   const [LayoutHide, changeLayoutHide] = useState(true);
-  useEffect(() => {
-    if (width > 1540) changeLayoutHide(false);
-    else if (width <= 1540) changeLayoutHide(true);
-  }, [width]);
+  const friendsList = []
+  const messagesData = []
+  let chatUserInfo = {}
+  // useEffect(() => {
+  //   if (width > 1540) changeLayoutHide(false);
+  //   else if (width <= 1540) changeLayoutHide(true);
+  // }, [width]);
+  console.log("inside dashboard")
   return (
-    <div className='Dashboard' style={ModeStyle[ctx.Mode].Dashboard}>
-      {width < 1540 ? (
+    <div className='Dashboard' style={ModeStyle['Light'].Dashboard}>
+      {1540 < 1540 ? (
         <Layout
           style={{
             width: !LayoutHide ? '285px' : '0px',
             minWidth: !LayoutHide ? '285px' : '0px',
           }}
+           friendsList={friendsList} messagesData={messagesData} chatUserInfo={chatUserInfo} 
         />
       ) : null}
-      {width >= 1540 ? <Nav /> : null}
-      <DashboardBody style={{ zIndex: 7 }} changeLayoutHide={changeLayoutHide} width={width} />
-      {width >= 1540 ? <QuickActions /> : null}
+      {1540 >= 1540 ? <Nav /> : null}
+      <DashboardBody style={{ zIndex: 7 }} changeLayoutHide={()=>0} width={1540}/>
+      {1540 >= 1540 ? <QuickActions friendsList={friendsList} messagesData={messagesData} chatUserInfo={chatUserInfo} /> : null}
     </div>
   );
 }

@@ -1,84 +1,17 @@
 import React, { useState, useEffect, useRef, useContext } from 'react'
 import { Loader, Countdown } from './Loader'
-import { data } from '../API/Messages'
 import { ConvertDate } from './Messages'
-import { Gallery } from './Gallery'
 import { DataContext } from '../Context/AppContext'
 import {
   IconSettings,
   IconUploadImage,
   IconSendMessage,
-  IconButtonBack,
   IconSearch,
-  IconDelete,
-  IconProfile,
-  IconImages,
   IconArrowDownChat,
 } from './Icons'
 import '../Css/Chat.css'
-function ChatSettings(props) {
-  const [counterInfo, changeCounterInfo] = useState({
-    counter: 0,
-    counterNumber: 10,
-    intervalID: 0,
-    hide: false,
-  })
-  return (
-    <div className="ChatSettings" style={props.style ? props.style : {}}>
-      <div className="ChatSettingsHeader">
-        <img src={props.img} alt={props.name} />
-        <div className="ChatSettingsName">{props.name}</div>
-      </div>
-      <div className="ChatSettingsItems">
-        <div
-          className="ChatSettingsItem"
-          onClick={() =>
-            changeCounterInfo((oldValue) => {
-              if (oldValue.intervalID !== 0) clearInterval(oldValue.intervalID)
-              return {
-                ...oldValue,
-                hide: !oldValue.hide,
-                counter: 0,
-              }
-            })
-          }
-        >
-          {counterInfo.hide ? (
-            <Countdown
-              counterInfo={counterInfo}
-              changeCounterInfo={changeCounterInfo}
-              func={() => console.log('Work!')}
-              style={{ color: 'red', fontWeight: 'bold', width: '20%' }}
-            />
-          ) : (
-            <IconDelete width={18} height={18} fill="#3a3e88" />
-          )}
-          <div className="ChatSettingsItemsName">
-            {counterInfo.hide ? 'Undo Delete' : 'Delete All Messages'}
-          </div>
-        </div>
-        <div className="ChatSettingsItem">
-          <IconProfile width={18} height={18} fill="#3a3e88" />
-          <div className="ChatSettingsItemsName">View Profile</div>
-        </div>
-        <div
-          className="ChatSettingsItem"
-          onClick={() => props.changeHideGallery(false)}
-        >
-          <IconImages width={18} height={18} fill="#3a3e88" />
-          <div className="ChatSettingsItemsName">View Images</div>
-        </div>
-        <div
-          className="ChatSettingsItem"
-          onClick={() => props.changeHideSettings(false)}
-        >
-          <IconButtonBack width={18} height={18} fill="#3a3e88" />
-          <div className="ChatSettingsItemsName">Back To BoxChat</div>
-        </div>
-      </div>
-    </div>
-  )
-} // eslint-disable-next-line
+import Axios from 'axios'
+
 function ChatMessage(props) {
   const [hideDeleteMessage, changeHideDeleteMessage] = useState(false)
   return (
@@ -115,142 +48,76 @@ function ChatMessage(props) {
   )
 }
 function Chat(props) {
-  const [hideSearchBar, changeHideSearchBar] = useState(false)
   const [hideScrollDown, changeHideScrollDown] = useState(false)
-  const [hideSettings, changeHideSettings] = useState(false)
   const [hideLoader, changeHideLoader] = useState(true)
-  const [hideGallery, changeHideGallery] = useState(true)
-  const [allMessages, addToAllMessages] = useState([])
-  const lastMessageIndex = React.useRef(
-    data[props.id] ? data[props.id - 1].messages.length - 1 : 0
-  )
   const ctx = useContext(DataContext)
+  const [messagesData,changeMessagesData] = useState({...ctx.messagesData})
   const ChatContent = useRef()
-  function getMessages(id, lastMessge) {
-    let promise = new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const arrayOfMessages = []
-        let size = 0
-        let lastPos = lastMessge
-        if (lastMessge > 0) {
-          for (let i = lastMessge; i >= 0; i--) {
-            size += data[id].messages[i].messageContent.length
-            if (size < 500) {
-              arrayOfMessages.push(data[id].messages[i])
-              lastPos = i
-            } else i = 0
-          }
-          resolve([arrayOfMessages.reverse(), lastPos])
-        } else reject('ERROR')
-      }, 1000)
+  const [chatTextValue,changeChatTextValue] = useState("")
+  const IdUserOwner = props.chatUserInfo.IdUserOwner
+  function getMessages(IdUserOwner) {
+    const length = (Object.entries(messagesData).length > 0 && messagesData[IdUserOwner])? messagesData[IdUserOwner].length : 0
+    Axios.get(`/Messages/${IdUserOwner}/${length}`).then(data=>
+    {
+      console.log('OK')
+      const oldHeight = ChatContent.current.scrollHeight
+      changeMessagesData(()=>{
+      ctx.messagesData[IdUserOwner] = Object.entries(ctx.messagesData).length > 0 && ctx.messagesData[IdUserOwner] ? [...data.data,...ctx.messagesData[IdUserOwner]]:data.data
+      return ({...ctx.messagesData})
+      })
+      changeHideLoader(true)
+      setTimeout(() => ChatContent.current.scrollTop = ChatContent.current.scrollHeight - oldHeight, 0)
     })
-    return promise
   }
+  useEffect(()=>{
+    let unmount = false
+    if (!unmount)
+      ctx.socket.current.on('message',(obj)=>{
+      const oldHeight = ChatContent.current.scrollHeight
+          const {Content,IdUserOwner,date} = JSON.parse(obj)
+          changeMessagesData(oldValue=>{
+            const msgObj = {Content,date,myMessage:false}
+            if (Object.entries(oldValue).length > 0 && oldValue[IdUserOwner])
+              ctx.messagesData[IdUserOwner].push(msgObj)
+            else
+              ctx.messagesData[IdUserOwner] = [msgObj]
+            return ({...ctx.messagesData})
+          })
+        setTimeout(() => ChatContent.current.scrollTop = oldHeight, 0)
+    })
+    return ()=>unmount = true
+  },[])
   useEffect(() => {
-    let unmounted = false
-    if (
-      ctx.cacheMessages[props.id - 1] &&
-      ctx.cacheMessages[props.id - 1].allMessages &&
-      ctx.cacheMessages[props.id - 1].lastMessageIndex
-    ) {
-      addToAllMessages(() => ctx.cacheMessages[props.id - 1].allMessages)
-      lastMessageIndex.current =
-        ctx.cacheMessages[props.id - 1].lastMessageIndex.current
-      setTimeout(() => {
-        ChatContent.current.scrollTop = ChatContent.current.scrollHeight
-      }, 0)
-    } else {
-      if (!unmounted) changeHideLoader(false)
-      getMessages(props.id - 1, lastMessageIndex.current)
-        .then(([arrayOfMessages, lastPos]) => {
-          const obj = {
-            allMessages: arrayOfMessages,
-            lastMessageIndex: lastPos,
-          }
-          ctx.cacheMessages[props.id - 1] = obj
-          console.log(obj)
-          addToAllMessages([...arrayOfMessages])
-          changeHideLoader(true)
-          lastMessageIndex.current = lastPos
-          setTimeout(() => {
-            ChatContent.current.scrollTop = ChatContent.current.scrollHeight
-          }, 0)
-        })
-        .catch(() => (!unmounted ? changeHideLoader(true) : 0))
-    }
-    return () => (unmounted = true) // eslint-disable-next-line
-  }, [props.id])
+    if (Object.entries(messagesData).length === 0 || !messagesData[IdUserOwner])
+    {
+      changeHideLoader(false)
+      getMessages(IdUserOwner)
+    } // eslint-disable-next-line
+  }, [])
   function ShowScrollDown() {
     const { offsetHeight, scrollHeight, scrollTop } = ChatContent.current
-    const oldHeight = scrollHeight
     if (scrollHeight - (scrollTop + offsetHeight) > 30)
       changeHideScrollDown(true)
     else changeHideScrollDown(false)
-    if (scrollTop === 0 && lastMessageIndex.current > 0) {
+    if (scrollTop === 0 && messagesData[IdUserOwner] && !messagesData[IdUserOwner][0].limit) {
+      console.log("Scroll")
       changeHideLoader(false)
-      getMessages(props.id - 1, lastMessageIndex.current)
-        .then(([arrayOfMessages, lastPos]) => {
-          if (arrayOfMessages) {
-            addToAllMessages((oldValue) => {
-              const obj = {
-                allMessages: null,
-                lastMessageIndex: 0,
-              }
-              obj.allMessages = [...arrayOfMessages, ...oldValue]
-              obj.lastMessageIndex = lastMessageIndex
-              ctx.cacheMessages[props.id - 1] = obj
-              return [...arrayOfMessages, ...oldValue]
-            })
-            setTimeout(() => {
-              ChatContent.current.scrollTop =
-                ChatContent.current.scrollHeight - oldHeight
-            }, 0)
-          }
-          changeHideLoader(true)
-          lastMessageIndex.current = lastPos
-        })
-        .catch(() => changeHideLoader(true))
+      getMessages(IdUserOwner)
     }
   }
   return (
     <div className="Chat" style={props.style ? props.style : {}}>
       <div
         className="ChatHeader"
-        style={{ display: hideSettings ? 'none' : 'flex' }}
-      >
-        <div className="ChatImage">
-          <img src={props.img} alt={props.name} />
+      > 
+        <div className="ChatImage" style={props.chatUserInfo.Active ? {'--color-online':'#44db44'} :{'--color-online':'#a5a5a5'}}>
+          <img src={props.chatUserInfo.Images} alt={props.chatUserInfo.UserName} />
         </div>
         <div className="ChatUserInfo">
-          <div className="ChatUserInfoName">{props.name}</div>
-        </div>
-        <div className="ChatSearchButton">
-          <IconSearch
-            width={16}
-            height={16}
-            fill="#555555"
-            onClick={() => changeHideSearchBar((oldValue) => !oldValue)}
-          />
-        </div>
-        <div className="ChatSettingsButton">
-          <IconSettings
-            width={18}
-            height={18}
-            fill="#555555"
-            onClick={() => {
-              changeHideSettings((oldValue) => !oldValue)
-            }}
-          />
+          <div className="ChatUserInfoName">{props.chatUserInfo.UserName}</div>
         </div>
       </div>
       <div
-        className="ChatSearchBar"
-        style={{ display: hideSearchBar ? 'block' : 'none' }}
-      >
-        <input type="text" placeholder="Search..." />
-      </div>
-      <div
-        style={{ display: hideSettings ? 'none' : 'block' }}
         className="ChatContent"
         ref={ChatContent}
         onScroll={ShowScrollDown}
@@ -263,33 +130,20 @@ function Chat(props) {
             }}
           />
         ) : null}
-        {allMessages
-          ? allMessages.map((msg, index) => {
-              if (msg.myMessage)
+        {IdUserOwner && messagesData[IdUserOwner]?messagesData[IdUserOwner].map((msg, index) => {
+              if (!msg.limit)
                 return (
                   <ChatMessage
                     index={index}
                     key={index}
-                    pos="right"
-                    background="#E6E8F4"
-                    color="black"
-                    message={msg.messageContent}
+                    pos={msg.myMessage?"right":"left"}
+                    background={msg.myMessage?"#E6E8F4":"#3D88B7"}
+                    color={msg.myMessage?"black":"white"}
+                    message={msg.Content}
                     time={ConvertDate(msg.date, 'time')}
                   />
                 )
-              return (
-                <ChatMessage
-                  index={index}
-                  key={index}
-                  pos="left"
-                  background="#3D88B7"
-                  color="white"
-                  message={msg.messageContent}
-                  time={ConvertDate(msg.date, 'time')}
-                />
-              )
-            })
-          : null}
+            }):null}
       </div>
       {hideScrollDown ? (
         <IconArrowDownChat
@@ -303,31 +157,30 @@ function Chat(props) {
       ) : null}
       <div
         className="ChatSendMessage"
-        style={{ display: hideSettings ? 'none' : 'flex' }}
       >
-        <div className="ChatSendImage">
-          <IconUploadImage width={24} height={24} fill="#6e97ee" />
-        </div>
-        <div className="ChatSendMessage">
-          <input type="text" placeholder="Enter Message" />
+        <div className="ChatSendMessageButton">
+          <input type="text" placeholder="Enter Message" value={chatTextValue} onChange={(event)=>changeChatTextValue(event.target.value)} />
         </div>
         <div className="ChatSendButton">
-          <IconSendMessage width={24} height={24} fill="#6e97ee" />
+          <IconSendMessage width={24} height={24} fill="#6e97ee" onClick={()=>{
+            if (chatTextValue.trim()!=="")
+            {
+              ctx.socket.current.emit('message',JSON.stringify({IdUserOwner:props.chatUserInfo.IdUserOwner,message:chatTextValue}))
+              const obj = {myMessage:1,date:new Date().toISOString().slice(0, 19).replace('T', ' '),Content:chatTextValue}
+              // console.log(props.chatUserInfo,"Ok",messagesData[IdUserOwner])
+              changeMessagesData(oldValue=>{
+                  if ((Object.entries(oldValue).length > 0 && IdUserOwner && oldValue[IdUserOwner]))
+                    oldValue[IdUserOwner].push(obj)
+                  else
+                    oldValue = [obj]
+                  return {...oldValue}
+                })
+                changeChatTextValue("")
+                setTimeout(() => ChatContent.current.scrollTop = ChatContent.current.scrollHeight, 0)
+            }
+            }} />
         </div>
       </div>
-      <ChatSettings
-        {...props}
-        style={{ display: hideSettings ? 'flex' : 'none' }}
-        changeHideSettings={changeHideSettings}
-        changeHideGallery={changeHideGallery}
-      />
-      <Gallery
-        {...props}
-        style={{
-          display: !hideGallery && props.chatBoxHide ? 'flex' : 'none',
-        }}
-        changeHideGallery={changeHideGallery}
-      />
     </div>
   )
 }

@@ -3,31 +3,28 @@ import { data } from '../API/Messages'
 import { ImageLoader } from './ImageLoader'
 import '../Css/Messages.css'
 function ConvertDate(date, type) {
-  const dayOfWeek = [
-    'Sunday',
-    'Monday',
-    'Thursday',
-    'Wednesday',
-    'Tuesday',
-    'Friday',
-    'Saturday',
-  ]
-  const splitDate = date.split(/[T]/g)[0]
-  const splitTime = date.split(/[T]/g)[1].split(/[:]/g)
-  const myDate = new Date(date)
-  const dateNow = new Date()
-  const years = dateNow.getFullYear() - myDate.getFullYear()
-  const months = dateNow.getMonth() - myDate.getMonth()
-  const days = dateNow.getDate() - myDate.getDate()
-  if (type && type === 'time') return `${splitTime[0]}:${splitTime[1]}`
-  else if (type && type === 'date') return splitDate.replace(/[-]/g, '/')
-  else if (years === 0 && months === 0 && days === 1) return 'Yesterday'
-  else if (years === 0 && months === 0 && days < 7 && days > 0)
-    return dayOfWeek[myDate.getDay()]
-  else if (years === 0 && months === 0 && days === 0)
-    return `${splitTime[0]}:${splitTime[1]}`
-  else if (type === 'date') return splitDate.replace(/[-]/g, '/')
-  return splitDate.replace(/[-]/g, '/')
+  if (date && type)
+  {
+    const dayOfWeek = [
+      'Sunday',
+      'Monday',
+      'Thursday',
+      'Wednesday',
+      'Tuesday',
+      'Friday',
+      'Saturday',
+    ]
+    const myDate = new Date() - Date.parse(date)
+
+    if (type && type === 'time') return new Date(date).toISOString().slice(10, 16).replace('T', ' ')
+    else if (type && type === 'date') return new Date(date).toISOString().slice(0,10)
+    if (myDate.getFullYear() === 0 && myDate.getMonth() === 0 && myDate.getDate() === 1) return 'Yesterday'
+    else if (myDate.getFullYear() === 0 && myDate.getMonth() === 0 && myDate.getDate() < 7 && myDate.getDate() > 0)
+      return dayOfWeek[myDate.getDay()]
+    else if (myDate.getFullYear() === 0 && myDate.getMonth() === 0 && myDate.getDate() === 0)
+      return new Date(date).toISOString().slice(0, 19).replace('T', ' ')
+    return new Date(date).toISOString().slice(0,10)
+  }
 } // eslint-disable-next-line
 
 function Message(props) {
@@ -37,7 +34,6 @@ function Message(props) {
       <div className="MessageColumn">
         <div className="MessageRow">
           <div className="MessageNameFriend">{props.name}</div>
-
           <div className="MessageDateLastMessage">
             {ConvertDate(props.messages[props.messages.length - 1].date)}
           </div>

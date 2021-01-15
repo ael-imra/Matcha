@@ -11,7 +11,6 @@ require('dotenv').config({
 //   res.app.locals.sendResponse(res,200,res.userInfo,true)
 // })
 router.post('/',auth, async function (req, res) {
-  console.log(req.userInfo)
   const { Latitude, Longitude } = req.userInfo
   const { list, age, name, location,rating, start,length } = req.body
   const avg = 0.0075 * location[1]

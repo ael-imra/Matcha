@@ -1,8 +1,9 @@
-import React from 'react'
+import React,{useState,useContext, useEffect} from 'react'
 import { IconSendMessage, IconCircle } from './Icons'
-import { data } from '../API/data'
 import { ImageLoader } from './ImageLoader'
 import '../Css/Friends.css'
+import Axios from 'axios'
+import { DataContext } from '../Context/AppContext'
 function calculatorLogTime(date) {
   const cmp = Date.now() - Date.parse(date)
   const days = parseInt(cmp / (864 * 100000))
@@ -47,20 +48,32 @@ function Friend(props) {
   )
 }
 function Friends(props) {
-  const dataFilter = data.filter(
-    (obj) => obj.name.toLowerCase().indexOf(props.search.toLowerCase()) > -1
-  )
+  const ctx = useContext(DataContext)
+  const [friendsList,changeFriendsList] = useState([...ctx.friendsList])
+  useEffect(() => {
+      if (ctx.friendsList.length === 0)
+        Axios.get('/Friends').then(data=>
+        {
+          if (data.data !== 'bad request' && ctx.friendsList.length === 0)
+          {
+            ctx.friendsList.push(...data.data)
+            changeFriendsList(oldValue=>[...oldValue,...data.data])
+          }
+        })
+      // eslint-disable-next-line
+  }, [])
+  console.log("friends")
   return (
     <div className="Friends" style={props.style ? props.style : {}}>
-      {dataFilter.map((obj) => (
+      {friendsList.map((obj) => (
         <Friend
-          id={obj.id}
-          key={obj.id}
-          image="http://localhost:5000/image/out.jpeg"
-          name={obj.name}
-          active={obj.active}
-          date={obj.date}
-          OpenChatBox={props.OpenChatBox}
+          id={obj.IdUserOwner}
+          key={'Friends'+obj.IdUserOwner}
+          image={obj.Images}
+          name={obj.UserName}
+          active={obj.Active}
+          date={obj.LastLogin}
+          OpenChatBox={()=>props.changeChatUserInfo({...obj})}
         />
       ))}
     </div>
