@@ -1,6 +1,6 @@
 import React from 'react'
 import { data } from '../API/Notification'
-import { ConvertDate } from './Messages'
+import { ConvertDate } from './Friends'
 import { ImageLoader } from './ImageLoader'
 import '../Css/Notification.css'
 

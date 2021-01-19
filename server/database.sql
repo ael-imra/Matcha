@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS `Messages` (
     `IdUserReceiver` INT NOT NULL,
     `Content` VARCHAR(255) NOT NULL,
     `DateCreation` DateTime DEFAULT NOW(),
+    `IsRead` INT DEFAULT 0,
     FOREIGN KEY (IdUserOwner) REFERENCES `Users`(IdUserOwner),
     FOREIGN KEY (IdUserReceiver) REFERENCES `Users`(IdUserOwner)
 );

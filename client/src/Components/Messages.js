@@ -1,31 +1,9 @@
-import React from 'react'
-import { data } from '../API/Messages'
+import React,{useState,useEffect, useContext} from 'react'
 import { ImageLoader } from './ImageLoader'
+import Axios from 'axios'
 import '../Css/Messages.css'
-function ConvertDate(date, type) {
-  if (date && type)
-  {
-    const dayOfWeek = [
-      'Sunday',
-      'Monday',
-      'Thursday',
-      'Wednesday',
-      'Tuesday',
-      'Friday',
-      'Saturday',
-    ]
-    const myDate = new Date() - Date.parse(date)
-
-    if (type && type === 'time') return new Date(date).toISOString().slice(10, 16).replace('T', ' ')
-    else if (type && type === 'date') return new Date(date).toISOString().slice(0,10)
-    if (myDate.getFullYear() === 0 && myDate.getMonth() === 0 && myDate.getDate() === 1) return 'Yesterday'
-    else if (myDate.getFullYear() === 0 && myDate.getMonth() === 0 && myDate.getDate() < 7 && myDate.getDate() > 0)
-      return dayOfWeek[myDate.getDay()]
-    else if (myDate.getFullYear() === 0 && myDate.getMonth() === 0 && myDate.getDate() === 0)
-      return new Date(date).toISOString().slice(0, 19).replace('T', ' ')
-    return new Date(date).toISOString().slice(0,10)
-  }
-} // eslint-disable-next-line
+import { DataContext } from '../Context/AppContext'
+import {ConvertDate} from './Friends'
 
 function Message(props) {
   return (
@@ -35,31 +13,68 @@ function Message(props) {
         <div className="MessageRow">
           <div className="MessageNameFriend">{props.name}</div>
           <div className="MessageDateLastMessage">
-            {ConvertDate(props.messages[props.messages.length - 1].date)}
+            {ConvertDate(props.message.date)}
           </div>
         </div>
         <div className="MessageRow">
           <div className="MessageLastMessage">
-            {props.messages[props.messages.length - 1].messageContent}
+            {props.message.Content}
           </div>
-          <div className="MessageCountNewMessage">{2}</div>
+          {props.message.IsRead > 0 ?<div className="MessageCountNewMessage">{props.message.IsRead}</div>:null}
         </div>
       </div>
     </div>
   )
 }
 function Messages(props) {
+  const ctx = useContext(DataContext)
+  useEffect(()=>{
+    console.log("MESSG",{...props.messages})
+    ctx.socket.current.on('message',(obj)=>{
+      const {Content,UserName,date} = JSON.parse(obj)
+      props.changeMessages(oldValue=>{
+        oldValue[UserName].messages.push({Content,date,isRead:0,myMessage:0})
+        const newObj = {[UserName]:oldValue[UserName],...oldValue}
+        ctx.messagesData = newObj
+        return (newObj)
+      })
+    })
+    function sortMessages(messages)
+    {
+      const newObj = {}
+      const result = Object.values(messages).sort((a,b)=>{
+        if (a.messages[a.messages.length - 1] === 'limit' && b.messages[b.messages.length - 1] === 'limit')
+          return (0)
+        else if (a.messages[a.messages.length - 1] === 'limit')
+          return (1)
+        else if (b.messages[b.messages.length - 1] === 'limit')
+          return (-1)
+        return ((Date.now()-Date.parse(a.messages[a.messages.length - 1].date))-(Date.now()-Date.parse(b.messages[b.messages.length - 1].date)))
+      })
+      result.map(item=>newObj[item.UserName] = item)
+      return(newObj)
+    }
+    Axios.get('/Messages').then(data=>{
+      if (data.data !== "Messages Not Found")
+      {
+        ctx.messagesData = sortMessages({...data.data,...ctx.messagesData})
+        props.changeMessages({...ctx.messagesData})
+      }
+    })// eslint-disable-next-line
+  },[])
   return (
     <div className="Messages" style={props.style ? props.style : {}}>
-      {data.map((obj, index) => (
-        <Message
-          key={index}
-          messages={obj.messages}
-          name={obj.name}
-          img="http://localhost:5000/image/out.jpeg"
-          onClick={() => props.OpenChatBox(obj.id)}
-        />
-      ))}
+      {Object.values(props.messages) && Object.values(props.messages).length > 0 ? Object.values(props.messages).map((obj,index) => {
+        if (obj.messages[0] !== 'limit' || obj.messages.length > 1)
+          return (<Message
+            key={index}
+            message={obj.messages ? obj.messages[obj.messages.length - 1]:{Content:"",date:'2021-01-18 19:15:37',IsRead:1,myMessage:0}}
+            name={obj.UserName}
+            img={obj.Images}
+            onClick={() => props.changeChatUserInfo({IdUserOwner:obj.IdUserOwner,UserName:obj.UserName,Images:obj.Images})}
+          />)
+        return null
+      }):null}
     </div>
   )
 }

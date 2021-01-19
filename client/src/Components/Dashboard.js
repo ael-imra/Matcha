@@ -1,11 +1,10 @@
-import React, { useState, useContext,useEffect } from 'react'; // eslint-disable-next-line
+import React, { useState,useEffect} from 'react'; // eslint-disable-next-line
 import { Nav } from './Nav';
 import { QuickActions } from './QuickActions';
 import '../Css/Dashboard.css';
 import { DashboardBody } from './DashboardBody'; // eslint-disable-next-line
-import { useWindowSize } from './UseWindowSize';
-import { DataContext } from '../Context/AppContext';
 import { ModeStyle } from '../Data/ModeStyle';
+import {useWindowSize} from './UseWindowSize'
 
 function Layout(props) {
   const [active, changeActive] = useState('Menu');
@@ -41,19 +40,18 @@ function Layout(props) {
 }
 function Dashboard(props) {
   // const ctx = useContext(DataContext);
-  // const width = useWindowSize();
+  const width = useWindowSize();
   const [LayoutHide, changeLayoutHide] = useState(true);
   const friendsList = []
   const messagesData = []
   let chatUserInfo = {}
-  // useEffect(() => {
-  //   if (width > 1540) changeLayoutHide(false);
-  //   else if (width <= 1540) changeLayoutHide(true);
-  // }, [width]);
-  console.log("inside dashboard")
+  useEffect(() => {
+    if (width > 1540) changeLayoutHide(false);
+    else if (width <= 1540) changeLayoutHide(true);// eslint-disable-next-line
+  }, [width]);
   return (
     <div className='Dashboard' style={ModeStyle['Light'].Dashboard}>
-      {1540 < 1540 ? (
+      {width < 1540 ? (
         <Layout
           style={{
             width: !LayoutHide ? '285px' : '0px',
@@ -62,9 +60,9 @@ function Dashboard(props) {
            friendsList={friendsList} messagesData={messagesData} chatUserInfo={chatUserInfo} 
         />
       ) : null}
-      {1540 >= 1540 ? <Nav /> : null}
-      <DashboardBody style={{ zIndex: 7 }} changeLayoutHide={()=>0} width={1540}/>
-      {1540 >= 1540 ? <QuickActions friendsList={friendsList} messagesData={messagesData} chatUserInfo={chatUserInfo} /> : null}
+      {width >= 1540 ? <Nav /> : null}
+      <DashboardBody style={{ zIndex: 7 }} changeLayoutHide={()=>0} width={width}/>
+      {width >= 1540 ? <QuickActions friendsList={friendsList} messagesData={messagesData} chatUserInfo={chatUserInfo} /> : null}
     </div>
   );
 }
