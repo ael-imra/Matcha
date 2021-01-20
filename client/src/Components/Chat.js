@@ -100,7 +100,6 @@ function Chat(props) {
       changeHideScrollDown(true)
     else changeHideScrollDown(false)
     if (scrollTop === 0 && messagesData[IdUserOwner] && !messagesData[IdUserOwner][0].limit) {
-      console.log("Scroll")
       changeHideLoader(false)
       getMessages(IdUserOwner)
     }
