@@ -50,18 +50,41 @@ function Chat(props) {
   const [hideLoader, changeHideLoader] = useState(true)
   const ctx = useContext(DataContext)
   const ChatContent = useRef()
-  const [chatTextValue,changeChatTextValue] = useState("")
+  const chatTextValue=useRef("")
   const UserName = props.chatUserInfo.UserName
+  function sortMessages(messages)
+  {
+    const result = messages.sort((a,b)=>{
+      if (a.messages && b.messages && a.messages[a.messages.length - 1] === 'limit' && b.messages[b.messages.length - 1] === 'limit')
+        return (0)
+      else if (a.messages && a.messages[a.messages.length - 1] === 'limit')
+        return (1)
+      else if (b.messages && b.messages[b.messages.length - 1] === 'limit')
+        return (-1)
+      else if(a.messages&&b.messages)
+        return ((Date.now()-Date.parse(a.messages[a.messages.length - 1].date))-(Date.now()-Date.parse(b.messages[b.messages.length - 1].date)))
+      return (0)
+    })
+    return(result)
+  }
+  function getUserIndex(messages,UserName)
+  {
+    let index = -1
+    messages.map((item,idx) => index = item.UserName === UserName ? idx : index)
+    return (index)
+  }
+  const index = getUserIndex(ctx.messagesData,UserName)
   function getMessages(UserName) {
-    const length = (Object.entries(props.messages).length > 0 && props.messages[UserName])? props.messages[UserName].messages.length : 0
+    const length = (props.messages.length > 0 && ctx.messagesData[index])? ctx.messagesData[index].messages.length : 0
     Axios.get(`/Messages/${UserName}/${length}`).then(data=>
     {
       const oldHeight = ChatContent.current.scrollHeight
-      if (ctx.messagesData[UserName] && ctx.messagesData[UserName].messages)
-        ctx.messagesData = {...ctx.messagesData,[UserName]:{...ctx.messagesData[UserName],messages:[...data.data,...ctx.messagesData[UserName].messages]}}
+      if (ctx.messagesData[index] && ctx.messagesData[index].messages)
+        ctx.messagesData[index] = {...ctx.messagesData[index],messages:[...data.data,...ctx.messagesData[index].messages]}
       else
-        ctx.messagesData = {...ctx.messagesData,[UserName]:{...props.chatUserInfo,messages:[...data.data]}}
-      props.changeMessages({...ctx.messagesData})
+        ctx.messagesData = [...ctx.messagesData,{...props.chatUserInfo,messages:[...data.data]}]
+      ctx.messagesData = sortMessages(ctx.messagesData)
+      props.changeMessages(ctx.messagesData)
       changeHideLoader(true)
       setTimeout(() => ChatContent.current.scrollTop = ChatContent.current.scrollHeight - oldHeight, 0)
     })
@@ -70,17 +93,19 @@ function Chat(props) {
     ctx.socket.current.on('message',(obj)=>{
       const oldHeight = ChatContent.current.scrollHeight
           const {Content,UserName,date} = JSON.parse(obj)
-          props.changeMessages(oldValue=>{
+          props.changeMessages(()=>{
+            const index = getUserIndex(ctx.messagesData,UserName)
             const msgObj = {Content,date,myMessage:false,IsRead:1}
-            if (Object.entries(oldValue).length > 0 && oldValue[UserName])
-              ctx.messagesData[UserName].messages.push(msgObj)
+            if (ctx.messagesData[index])
+              ctx.messagesData[index].messages.push(msgObj)
             else
-              ctx.messagesData[UserName] = {UserName:props.chatUserInfo.UserName,Images:props.chatUserInfo.Images,messages:[msgObj]}
-            return ({...ctx.messagesData})
+              ctx.messagesData = [{...props.chatUserInfo,messages:[msgObj]},...ctx.messagesData]
+            ctx.messagesData = sortMessages(ctx.messagesData)
+            return (ctx.messagesData)
           })
         setTimeout(() => ChatContent.current.scrollTop = oldHeight, 0)
     })
-    if (!ctx.messagesData[UserName] || ctx.messagesData[UserName].messages.length === 0 || (ctx.messagesData[UserName].messages.length === 1 && ctx.messagesData[UserName].messages[0] !== "limit"))
+    if (!ctx.messagesData[index] || (ctx.messagesData[index].messages.length === 1 && ctx.messagesData[index].messages[0] !== "limit"))
     {
       changeHideLoader(false)
       getMessages(UserName)
@@ -89,28 +114,13 @@ function Chat(props) {
   function ShowScrollDown() {
     const { offsetHeight, scrollHeight, scrollTop } = ChatContent.current
     if (scrollHeight - (scrollTop + offsetHeight) > 30)
-      changeHideScrollDown(true)
+      changeHideScrollDown(oldValue => oldValue ? oldValue : true)
     else changeHideScrollDown(false)
-    if (scrollTop === 0 && ctx.messagesData[UserName] && !ctx.messagesData[UserName].messages[0] === "limit") {
+    if (scrollTop === 0 && ctx.messagesData[index] && !ctx.messagesData[index].messages[0] === "limit") {
       changeHideLoader(false)
       getMessages(UserName)
     }
   }
-  function sortMessages(messages)
-    {
-      const newObj = {}
-      const result = Object.values(messages).sort((a,b)=>{
-        if (a.messages[a.messages.length - 1] === 'limit' && b.messages[b.messages.length - 1] === 'limit')
-          return (0)
-        else if (a.messages[a.messages.length - 1] === 'limit')
-          return (1)
-        else if (b.messages[b.messages.length - 1] === 'limit')
-          return (-1)
-        return ((Date.now()-Date.parse(a.messages[a.messages.length - 1].date))-(Date.now()-Date.parse(b.messages[b.messages.length - 1].date)))
-      })
-      result.map(item=>newObj[item.UserName] = item)
-      return(newObj)
-    }
   return (
     <div className="Chat" style={props.style ? props.style : {}}>
       <div
@@ -118,7 +128,6 @@ function Chat(props) {
       > 
         <div className="ChatImage" style={props.chatUserInfo.Active ? {'--color-online':'#44db44'} :{'--color-online':'#a5a5a5'}}>
           <ImageLoader src={props.chatUserInfo.Images} alt={props.chatUserInfo.UserName}/>
-          {/* <img src={props.chatUserInfo.Images} alt={props.chatUserInfo.UserName} /> */}
         </div>
         <div className="ChatUserInfo">
           <div className="ChatUserInfoName">{props.chatUserInfo.UserName}</div>
@@ -137,7 +146,7 @@ function Chat(props) {
             }}
           />
         ) : null}
-        {UserName && ctx.messagesData[UserName]?ctx.messagesData[UserName].messages.map((msg, index) => {
+        {UserName && ctx.messagesData[index] ? ctx.messagesData[index].messages.map((msg, index) => {
               if (msg !== "limit")
                 return (
                   <ChatMessage
@@ -167,26 +176,24 @@ function Chat(props) {
         className="ChatSendMessage"
       >
         <div className="ChatSendMessageButton">
-          <input type="text" placeholder="Enter Message" value={chatTextValue} onChange={(event)=>changeChatTextValue(event.target.value)} />
+          <input type="text" placeholder="Enter Message" ref={chatTextValue}/>
         </div>
         <div className="ChatSendButton">
           <IconSendMessage width={24} height={24} fill="#6e97ee" onClick={()=>{
-            if (chatTextValue.trim() !== "")
+          console.dir({...chatTextValue.current})
+            if (chatTextValue.current.value.trim() !== "")
             {
-              ctx.socket.current.emit('message',JSON.stringify({UserName:props.chatUserInfo.UserName,message:chatTextValue}))
-              const obj = {myMessage:1,date:new Date().toISOString().slice(0, 19).replace('T', ' '),Content:chatTextValue,IsRead:1}
-              props.changeMessages(oldValue=>{
-                  if ((Object.entries(oldValue).length > 0 && UserName && oldValue[UserName]))
-                    oldValue[UserName].messages =['limit',...oldValue[UserName].messages.filter(item=>item!=='limit'),obj]
-                  else
-                    oldValue = {[UserName]:{UserName:props.chatUserInfo.UserName,Images:props.chatUserInfo.Images,messages:['limit',obj]}}
-                  oldValue = sortMessages(oldValue)
-                  console.log("OLD",{...oldValue})
-                  ctx.messagesData = {...oldValue}
-                  return {...oldValue}
-                })
-                changeChatTextValue("")
-                setTimeout(() => ChatContent.current.scrollTop = ChatContent.current.scrollHeight, 0)
+              ctx.socket.current.emit('message',JSON.stringify({UserName:props.chatUserInfo.UserName,message:chatTextValue.current.value}))
+              const obj = {myMessage:1,date:new Date().toISOString(),Content:chatTextValue.current.value,IsRead:1}
+              // console.log("OBJ",{...obj})
+              if (ctx.messagesData[index])
+                ctx.messagesData[index].messages.push(obj)
+              else
+                ctx.messagesData = [...ctx.messagesData,{...props.chatUserInfo,messages:['limit',obj]}]
+              ctx.messagesData = sortMessages(ctx.messagesData)
+              props.changeMessages([...ctx.messagesData])
+              chatTextValue.current.value = ""
+              setTimeout(() => ChatContent.current.scrollTop = ChatContent.current.scrollHeight, 0)
             }
             }} />
         </div>

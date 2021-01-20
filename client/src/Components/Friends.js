@@ -5,21 +5,22 @@ import '../Css/Friends.css'
 import Axios from 'axios'
 import { DataContext } from '../Context/AppContext'
 function ConvertDate(date,type) {
-  const cmp = Date.now() - Date.parse(date)
-  const year = parseInt(cmp / (12 * 30 * 24 * 60 * 60 * 1000))
-  const month = parseInt(cmp / (30 * 24 * 60 * 60 * 1000))
-  const days = parseInt(cmp / (24 * 60 * 60 * 1000))
-  const hours = parseInt(cmp / (60 * 60 * 1000))
-  const minutes = parseInt(cmp / (60 * 1000))
-  const seconds = parseInt(cmp / 1000)
+  const cmp = Math.abs(Date.now() - Date.parse(new Date(date)))
+  const year = Math.floor(cmp / 31104000000)
+  const month = Math.floor(cmp / 2592000000)
+  const days = Math.floor(cmp / 86400000)
+  const hours = Math.floor(cmp / 3600000)
+  const minutes = Math.floor(cmp / 60000)
+  const seconds = Math.floor(cmp / 1000)
+  console.log(cmp,year,month,days,hours,minutes,seconds,"CMP")
   if (type && type === 'time') return new Date(date).toISOString().slice(10, 16).replace('T', ' ')
   if (type && type === 'date') return new Date(date).toISOString().slice(0,10)
   if(year > 0) return `${year} day${year !== 1 ? 's' : ''} ago`
-  if(month > 0) return `${month} day${month !== 1 ? 's' : ''} ago`
-  if (days > 0) return `${days} day${days !== 1 ? 's' : ''} ago`
-  if (hours > 0) return `${hours} hour${hours !== 1 ? 's' : ''} ago`
-  if (minutes > 0) return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`
-  if (seconds > 0) return `${seconds} second${seconds !== 1 ? 's' : ''} ago`
+  else if(month > 0) return `${month} day${month !== 1 ? 's' : ''} ago`
+  else if (days > 0) return `${days} day${days !== 1 ? 's' : ''} ago`
+  else if (hours > 0) return `${hours} hour${hours !== 1 ? 's' : ''} ago`
+  else if (minutes > 0) return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`
+  else if (seconds > 0) return `${seconds} second${seconds !== 1 ? 's' : ''} ago`
 }
 function Friend(props) {
   return (

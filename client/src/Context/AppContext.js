@@ -22,7 +22,7 @@ export default function AppContext(props) {
   }
   const friendsList = []
   const usersData = []
-  const [messagesData,changeMessagesData] = useState({})
+  let messagesData = []
   const chatUserInfo = [null]
   const socket= useRef(null)
   function getUsersData(start,length) {
@@ -53,7 +53,7 @@ export default function AppContext(props) {
         filterData,
         usersData,
         getUsersData,
-        messagesData,changeMessagesData,
+        messagesData,
         friendsList,
         chatUserInfo,
         socket
