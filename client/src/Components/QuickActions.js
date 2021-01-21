@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState,useEffect } from 'react'
 import { Friends } from './Friends'
 import '../Css/QuickActions.css'
 import { Search } from './Search'
@@ -14,11 +14,42 @@ function QuickActions(props) {
   const [search, changeSearch] = useState('')
   const [chatUserInfo,changeChatUserInfo] = useState({})
   const [messages,changeMessages] = useState(ctx.messagesData)
+  const [friendsList,changeFriendsList] = useState([...ctx.friendsList])
   const style = {
     width: '100%',
     fontWeight: 'bold',
     fontSize: '20px',
   }
+  function getUserIndex(messages,UserName)
+  {
+    let index = -1
+    if (messages.length > 0)
+      messages.map((item,idx) => index = item.UserName.toLowerCase() === UserName.toLowerCase() ? idx : index)
+    return (index)
+  }
+  useEffect(() => {
+    let unmount = false
+    function changeStateOfFriend(obj)
+    {
+      if(!unmount)
+      {
+        console.log("INDEX")
+        const index = getUserIndex(ctx.friendsList,JSON.parse(obj).UserName)
+        if (index > -1)
+        {
+          console.log("friendsStatus")
+          console.log("BEFORE UPDATE",{...ctx.friendsList[index]})
+          ctx.friendsList[index].Active = JSON.parse(obj).Active
+          ctx.friendsList[index].LastLogin = new Date().toISOString()
+          console.log("UPDATE",ctx.friendsList[index])
+          changeFriendsList([...ctx.friendsList])
+        }
+      }
+    }
+    if (ctx.socket.current)
+      ctx.socket.current.on('FriendState',changeStateOfFriend)
+    return () => unmount = true
+  }, [])
   return (
     <div
       className="QuickActionsChatBox"
@@ -57,7 +88,7 @@ function QuickActions(props) {
           />
         </div>
         <Search search={search} changeSearch={changeSearch} />
-        {CurrentAction === 'Friends' ? <Friends search={search} changeChatUserInfo={changeChatUserInfo} />:null}
+        {CurrentAction === 'Friends' ? <Friends search={search} changeChatUserInfo={changeChatUserInfo} friendsList={friendsList} changeFriendsList={changeFriendsList} />:null}
         {CurrentAction === 'Messages' ? <Messages changeChatUserInfo={changeChatUserInfo} messages={messages} changeMessages={changeMessages} />:null}
         {CurrentAction === 'Notification' ? <Notification/> : null}
       </div>

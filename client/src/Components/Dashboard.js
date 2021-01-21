@@ -61,7 +61,7 @@ function Dashboard(props) {
         />
       ) : null}
       {width >= 1540 ? <Nav /> : null}
-      <DashboardBody style={{ zIndex: 7 }} changeLayoutHide={()=>0} width={width}/>
+      <DashboardBody style={{ zIndex: 7 }} changeLayoutHide={()=>changeLayoutHide(oldValue=>!oldValue)} width={width}/>
       {width >= 1540 ? <QuickActions friendsList={friendsList} messagesData={messagesData} chatUserInfo={chatUserInfo} /> : null}
     </div>
   );
