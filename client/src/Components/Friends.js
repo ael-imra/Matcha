@@ -16,8 +16,8 @@ function Friend(props) {
       </div>
       <div className="FriendInfo">
         <span>{props.name}</span>
-        <span style={props.active ? { color: '#44db44' } : {}}>
-          {props.active ? (
+        <span style={props.active>0 ? { color: '#44db44' } : {}}>
+          {props.active > 0 ? (
             <>
               <IconCircle width={8} fill="#44db44" /> Active now
             </>
@@ -39,17 +39,23 @@ function Friend(props) {
 function Friends(props) {
   const ctx = useContext(DataContext)
   const [friends,changeFriends] = useState({...ctx.cache.friends})
-  useEffect(() => ctx.ref.changeFriends = changeFriends, [])
+  useEffect(() => {
+    ctx.ref.changeFriends = changeFriends
+    return (()=>ctx.ref.changeFriends = null)// eslint-disable-next-line
+  }, [])
   return (
     <div className="Friends" style={props.style ? props.style : {}}>
-      {friends.map((obj) => (
+      {Object.values(friends).map((obj) => (
         <Friend
           key={'Friends' + obj.IdUserOwner}
           image={obj.Images}
           name={obj.UserName}
           active={obj.Active}
           date={obj.LastLogin}
-          OpenChatBox={()=>ctx.ref.changeChatUserInfo({...obj})}
+          OpenChatBox={()=>{
+            ctx.cache.chatUserInfo = {...obj}
+            ctx.ref.changeChatUserInfo({...obj})
+          }}
         />
       ))}
     </div>

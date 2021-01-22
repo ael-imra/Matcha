@@ -14,8 +14,7 @@ const Friends = require('./Router/Friends')
 const Messages = require('./Router/Messages')
 const io = require('socket.io')(http,{
   cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"]
+    origin: "*",
   }
 })
 
@@ -26,41 +25,43 @@ async function sendFriendMyState(Active,IdUserOwner,UserName,sockets)
   if (friends.length > 0)
     friends.map(friend=>sockets.map(item=>{
       if ((item.IdUserOwner === friend.IdUserOwner || friend.IdUserReceiver === item.IdUserOwner) && item.IdUserOwner !== IdUserOwner)
-        item.emit('FriendState',JSON.stringify({UserName,Active}))
+        item.emit('status',JSON.stringify({UserName,Active,date:new Date(Date.now()).toISOString()}))
     }))
 }
 io.on('connection',(socket)=>{
   console.log("User Connected")
   socket.on('token',async (token)=>{
-    const result = await mysql.select('Users',['UserName','IdUserOwner'],{JWT:token})
+    const result = await mysql.select('Users',['UserName','IdUserOwner','Images'],{JWT:token})
     if (result.length > 0)
     {
       mysql.update('Users',{Active:1},{IdUserOwner:result[0].IdUserOwner,UserName:result[0].UserName})
       socket.IdUserOwner = result[0].IdUserOwner
       socket.UserName = result[0].UserName
+      socket.Images = JSON.parse(result[0].Images)[0]
       app.locals.sockets.push(socket)
       sendFriendMyState(1,result[0].IdUserOwner,result[0].UserName,[...app.locals.sockets])
     }
   })
   socket.on('message',async (obj)=>{
-    const {UserName,message} = JSON.parse(obj)
-    if (UserName && message && message.trim())
+    const {user,message} = JSON.parse(obj)
+    if (user.UserName && message && message.Content.trim())
     {
-      const IdUserOwner = await mysql.getIdUserOwner(UserName)
+      const IdUserOwner = await mysql.getIdUserOwner(user.UserName)
       const result = await mysql.query('SELECT * FROM Friends WHERE `Match`=1 AND ((IdUserOwner=? AND IdUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?))',[socket.IdUserOwner,IdUserOwner,IdUserOwner,socket.IdUserOwner])
       if (result.length > 0)
       {
-        let index = -1
-        app.locals.sockets.map((item,idx)=>index = item.IdUserOwner === result[0].IdUserOwner?idx:index)
-        console.log("INNNDEX",index,JSON.parse(obj))
-        if(index > -1)
+        let sockerOfFriend = null
+        app.locals.sockets.map(item=>{
+          if (item.IdUserOwner === IdUserOwner || item.IdUserOwner === IdUserOwner)
+            sockerOfFriend = item
+        })
+        if(sockerOfFriend)
         {
-          console.log(app.locals.sockets[index].IdUserOwner)
-          app.locals.sockets[index].emit('message',JSON.stringify({UserName:socket.UserName,Content:message,date:new Date(Date.now()).toISOString()}))
-          mysql.insert("Messages",{IdUserOwner:socket.IdUserOwner,IdUserReceiver:IdUserOwner,Content:message})
+          sockerOfFriend.emit('message',JSON.stringify({user:{UserName:socket.UserName,Images:socket.Images,Active:1},message:{id:message.id,IdUserReceiver:IdUserOwner,Content:message.Content,date:new Date(Date.now()).toISOString()}}))
+          mysql.insert("Messages",{IdUserOwner:socket.IdUserOwner,IdUserReceiver:IdUserOwner,Content:message.Content})
         }
         else
-          mysql.insert("Messages",{IdUserOwner:socket.IdUserOwner,IdUserReceiver:IdUserOwner,Content:message})
+          mysql.insert("Messages",{IdUserOwner:socket.IdUserOwner,IdUserReceiver:IdUserOwner,Content:message.Content})
       }
     }
   })

@@ -30,18 +30,22 @@ function Messages(props) {
   const [friends,changeFriends] = useState({...ctx.cache.friends})
   useEffect(()=>{
     ctx.ref.changeFriends = changeFriends
+    return (()=>ctx.ref.changeFriends = null)// eslint-disable-next-line
   },[])
   return (
     <div className="Messages" style={props.style ? props.style : {}}>
       {ctx.ref.sortUsesByDateMessages(friends).map(UserName => {
-        if (friends[UserName].messages && (friends[UserName].messages[0] !== 'limit' || friends[UserName].messages.length > 1))
+        if (friends[UserName] && friends[UserName].messages.length > 0 && (friends[UserName].messages[0] !== 'limit' || friends[UserName].messages.length > 1))
           return (<Message
             key={"MSG"+friends[UserName].IdUserOwner}
             message={friends[UserName].messages[friends[UserName].messages.length - 1]}
             IsRead={friends[UserName].IsRead}
             name={friends[UserName].UserName}
             img={friends[UserName].Images}
-            onClick={() => ctx.ref.changeChatUserInfo({...friends[UserName]})}
+            onClick={() =>{
+              ctx.cache.chatUserInfo = {...friends[UserName]}
+              ctx.ref.changeChatUserInfo({...friends[UserName]})
+            }}
           />)
         return null
       })}

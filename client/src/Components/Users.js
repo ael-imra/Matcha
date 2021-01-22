@@ -12,7 +12,6 @@ import '../Css/Users.css'
 import axios from 'axios'
 
 function User(props) {
-  const ctx = useContext(DataContext)
   const [imageIndex, changeImageIndex] = useState(0)
   const [ratingValue, changeRatingValue] = useState({ avg: props.rating===null ?0:props.rating, userValue: 0 })
   function UserImageSlideButtonClick(event) {
@@ -120,7 +119,8 @@ function Users() {
     ctx.ref.changeUsers = changeUsers
     usersRef.current.style = `height:${document.querySelector('.DashboardBody').offsetHeight}px`
     if (users.length === 0)
-      ctx.getUsers(users.length,24)
+      ctx.ref.getUsers(users.length,24)
+    return (()=>ctx.ref.changeUsers = null)
         // eslint-disable-next-line
   }, [ctx.cache.filterData])
   function UsersScroll() {
@@ -128,7 +128,7 @@ function Users() {
     if (offsetHeight + scrollTop + 300 > scrollHeight && !usersLoader)
     {
       changeUsersLoader(true)
-      ctx.getUsers(users.length,24)
+      ctx.ref.getUsers(users.length,24)
     }
   }
   function UserClick(event) {
@@ -149,11 +149,8 @@ function Users() {
     }
   }
   function removeFriend(UserName){
-    if (ctx.cache.users[UserName])
-    {
-      delete ctx.cache.users[UserName]
-      ctx.ref.getUsers(users.length-1,1)
-    }
+    ctx.cache.users = ctx.cache.users.filter(item=>item.UserName!==UserName)
+    ctx.ref.getUsers(users.length-1,1)
   }
   return (
     <>
@@ -170,7 +167,7 @@ function Users() {
             userName={obj.UserName}
             distance="40Km"
             listInterest={JSON.parse(obj.ListInterest)}
-            remove={removeFriend}
+            removeFriend={removeFriend}
             onClick={UserClick}
           />
         ))}

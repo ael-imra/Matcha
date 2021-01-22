@@ -23,7 +23,7 @@ function Select(props) {
     return newArray
   }
   const [list, changeList] = useState(init(props.list, props.active))
-  const [search, changeSearch] = useState('')
+  const [search, changeSearch] = useState('')// eslint-disable-next-line
   useEffect(()=>changeList(init(props.list,props.active)),[props.active])
   function getListActive(list) {
     const newArray = []
