@@ -1,11 +1,10 @@
-import React, { useState, useContext,useEffect } from 'react'; // eslint-disable-next-line
+import React, { useState,useEffect} from 'react'; // eslint-disable-next-line
 import { Nav } from './Nav';
 import { QuickActions } from './QuickActions';
 import '../Css/Dashboard.css';
 import { DashboardBody } from './DashboardBody'; // eslint-disable-next-line
-import { useWindowSize } from './UseWindowSize';
-import { DataContext } from '../Context/AppContext';
 import { ModeStyle } from '../Data/ModeStyle';
+import {useWindowSize} from './UseWindowSize'
 
 function Layout(props) {
   const [active, changeActive] = useState('Menu');
@@ -40,7 +39,11 @@ function Layout(props) {
   );
 }
 function Dashboard(props) {
+<<<<<<< HEAD
   const ctx = useContext(DataContext);
+=======
+  // const ctx = useContext(DataContext);
+>>>>>>> 373317800fa74e0be0ca0254660386c51e97d4ae
   const width = useWindowSize();
   const [LayoutHide, changeLayoutHide] = useState(true);
   const friendsList = []
@@ -48,9 +51,8 @@ function Dashboard(props) {
   let chatUserInfo = {}
   useEffect(() => {
     if (width > 1540) changeLayoutHide(false);
-    else if (width <= 1540) changeLayoutHide(true);
+    else if (width <= 1540) changeLayoutHide(true);// eslint-disable-next-line
   }, [width]);
-  console.log("inside dashboard")
   return (
     <div className='Dashboard' style={ModeStyle['Light'].Dashboard}>
       {width < 1540 ? (

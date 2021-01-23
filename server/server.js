@@ -21,29 +21,29 @@ const io = require('socket.io')(http,{
 
 tools.init(app, {...mysql,...tools,sendMail,crypto,sockets:[]})
 io.on('connection',(socket)=>{
-  console.log("User Connected",socket.IdUserOwner)
+  console.log("User Connected")
   socket.on('token',async (token)=>{
-    const result = await mysql.select('Users','IdUserOwner',{JWT:token})
+    const result = await mysql.select('Users',['UserName','IdUserOwner'],{JWT:token})
     if (result.length > 0)
     {
-    console.log("enter token",result[0].IdUserOwner)
-      mysql.update('Users',{Active:1},{IdUserOwner:result[0].IdUserOwner})
+      mysql.update('Users',{Active:1},{IdUserOwner:result[0].IdUserOwner,UserName:result[0].UserName})
       socket.IdUserOwner = result[0].IdUserOwner
+      socket.UserName = result[0].UserName
       app.locals.sockets.push(socket)
     }
   })
   socket.on('message',async (obj)=>{
-    const {IdUserOwner,message} = JSON.parse(obj)
-    console.log(obj,socket.IdUserOwner)
-    if (IdUserOwner && message && message.trim())
+    const {UserName,message} = JSON.parse(obj)
+    if (UserName && message && message.trim())
     {
+      const IdUserOwner = await mysql.getIdUserOwner(UserName)
       const result = await mysql.query('SELECT * FROM Friends WHERE `Match`=1 AND ((IdUserOwner=? AND IdUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?))',[socket.IdUserOwner,IdUserOwner,IdUserOwner,socket.IdUserOwner])
       if (result.length > 0)
       {
         const userSocket = app.locals.sockets.filter(item=>item.IdUserOwner === IdUserOwner)
         if(userSocket.length > 0)
         {
-          userSocket[0].emit('message',JSON.stringify({IdUserOwner:socket.IdUserOwner,Content:message,date:new Date(Date.now()).toISOString()}))
+          userSocket[0].emit('message',JSON.stringify({UserName:socket.UserName,Content:message,date:new Date(Date.now()).toISOString()}))
           mysql.insert("Messages",{IdUserOwner:socket.IdUserOwner,IdUserReceiver:IdUserOwner,Content:message})
         }
         else

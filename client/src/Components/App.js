@@ -1,11 +1,9 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import '../Css/App.css';
-import AppContext, { DataContext } from '../Context/AppContext';
+import AppContext from '../Context/AppContext';
 import Header from './Header';
 import Body from './Body';
 import '../Css/Btn.css';
-import Axios from 'axios';
-import { useHistory } from 'react-router-dom';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Dashboard } from './Dashboard';
 
