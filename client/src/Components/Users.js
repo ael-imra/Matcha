@@ -12,7 +12,6 @@ import '../Css/Users.css'
 import axios from 'axios'
 
 function User(props) {
-  const ctx = useContext(DataContext)
   const [imageIndex, changeImageIndex] = useState(0)
   const [ratingValue, changeRatingValue] = useState({ avg: props.rating===null ?0:props.rating, userValue: 0 })
   function UserImageSlideButtonClick(event) {
@@ -32,14 +31,9 @@ function User(props) {
           : 0
       )
   }
-  function addFriend(Username,IdUserOwner){
-    axios.post('/Friends/Invite',{Username}).then(()=>{
-      props.changeUsersData(oldValue=>{
-        const newArray = [...oldValue.filter(item=>item.UserName!==Username && item.IdUserOwner !== IdUserOwner)]
-        ctx.getUsersData(oldValue.length-1,1).then(data=>newArray.push(...data.data))
-        ctx.usersData.push(...newArray)
-        return (newArray)
-      })
+  function addFriend(UserName){
+    axios.post('/Friends/Invite',{UserName}).then(()=>{
+      props.removeFriend(UserName)
     }).catch(err=>0)
   }
   return (
@@ -91,7 +85,7 @@ function User(props) {
       </div>
       <div className="UserActions">
         <div className="UserActionsAccept">
-          <CheckSVG width={20} height={20} fill="#44db44" onClick={()=>addFriend(props.userName,props.IdUserOwner)}/>
+          <CheckSVG width={20} height={20} fill="#44db44" onClick={()=>addFriend(props.userName)}/>
         </div>
         <div className="UserActionsReject">
           <IconClose width={20} height={20} fill="#ff9a2f" />
@@ -118,38 +112,23 @@ function User(props) {
 }
 function Users() {
   const ctx = useContext(DataContext)
-  const [usersData,changeUsersData] = useState([...ctx.usersData])
+  const [users,changeUsers] = useState([...ctx.cache.users])
   const [usersLoader, changeUsersLoader] = useState(false)
   const usersRef = useRef()
   useEffect(() => {
+    ctx.ref.changeUsers = changeUsers
     usersRef.current.style = `height:${document.querySelector('.DashboardBody').offsetHeight}px`
-    if (ctx.usersData.length === 0)
-    {
-      changeUsersLoader(true)
-      ctx.getUsersData(usersData.length,24).then((data)=>{
-        changeUsersLoader(false)
-        changeUsersData(oldValue=>{
-          const newArray = [...oldValue,...data.data]
-          ctx.usersData.push(...newArray)
-          return (newArray)
-        })
-      })
-    }
+    if (users.length === 0)
+      ctx.ref.getUsers(users.length,24)
+    return (()=>ctx.ref.changeUsers = null)
         // eslint-disable-next-line
-  }, [ctx.filterData])
+  }, [ctx.cache.filterData])
   function UsersScroll() {
     const { scrollHeight, scrollTop, offsetHeight } = usersRef.current
     if (offsetHeight + scrollTop + 300 > scrollHeight && !usersLoader)
     {
       changeUsersLoader(true)
-      ctx.getUsersData(usersData.length,24).then((data)=>{
-        changeUsersLoader(false)
-        changeUsersData(oldValue=>{
-          const newArray = [...oldValue,...data.data]
-          ctx.usersData.push(...newArray)
-          return (newArray)
-        })
-      })
+      ctx.ref.getUsers(users.length,24)
     }
   }
   function UserClick(event) {
@@ -169,11 +148,14 @@ function Users() {
       event.target.closest('.User').classList.add('UserAfterClick')
     }
   }
-  console.log("inside Users",usersData)
+  function removeFriend(UserName){
+    ctx.cache.users = ctx.cache.users.filter(item=>item.UserName!==UserName)
+    ctx.ref.getUsers(users.length-1,1)
+  }
   return (
     <>
       <div className="Users" onScroll={UsersScroll} ref={usersRef}>
-        {usersData.map((obj) => (
+        {users.map((obj) => (
           <User
             key={obj.IdUserOwner}
             images={JSON.parse(obj.Images)}
@@ -185,7 +167,7 @@ function Users() {
             userName={obj.UserName}
             distance="40Km"
             listInterest={JSON.parse(obj.ListInterest)}
-            changeUsersData={changeUsersData}
+            removeFriend={removeFriend}
             onClick={UserClick}
           />
         ))}

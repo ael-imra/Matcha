@@ -1,7 +1,7 @@
-import React from 'react'
+import React,{useContext} from 'react'
 import { data } from '../API/Notification'
-import { ConvertDate } from './Friends'
 import { ImageLoader } from './ImageLoader'
+import { DataContext } from '../Context/AppContext'
 import '../Css/Notification.css'
 
 function Notice(props) {
@@ -10,6 +10,7 @@ function Notice(props) {
     Like: '#ff9790',
     User: '#708dfd',
   }
+  const ctx = useContext(DataContext)
   const Component = props.action
   return (
     <div className="Notice" onClick={props.onClick}>
@@ -17,7 +18,7 @@ function Notice(props) {
       <div className="NoticeColumn">
         <div className="NoticeRow">
           <div className="NoticeUserName">{props.name}</div>
-          <div className="NoticeDate">{ConvertDate(props.date)}</div>
+          <div className="NoticeDate">{ctx.ConvertDate(props.date)}</div>
         </div>
         <div className="NoticeRow" style={{ margin: '6px 0' }}>
           <div

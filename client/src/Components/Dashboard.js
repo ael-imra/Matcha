@@ -39,11 +39,6 @@ function Layout(props) {
   );
 }
 function Dashboard(props) {
-<<<<<<< HEAD
-  const ctx = useContext(DataContext);
-=======
-  // const ctx = useContext(DataContext);
->>>>>>> 373317800fa74e0be0ca0254660386c51e97d4ae
   const width = useWindowSize();
   const [LayoutHide, changeLayoutHide] = useState(true);
   const friendsList = []
@@ -65,7 +60,7 @@ function Dashboard(props) {
         />
       ) : null}
       {width >= 1540 ? <Nav /> : null}
-      <DashboardBody style={{ zIndex: 7 }} changeLayoutHide={changeLayoutHide} width={width}/>
+      <DashboardBody style={{ zIndex: 7 }} changeLayoutHide={()=>changeLayoutHide(oldValue=>!oldValue)} width={width}/>
       {width >= 1540 ? <QuickActions friendsList={friendsList} messagesData={messagesData} chatUserInfo={chatUserInfo} /> : null}
     </div>
   );

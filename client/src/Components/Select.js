@@ -1,28 +1,30 @@
-import React from 'react'
+import React,{useState,useEffect} from 'react'
 import '../Css/Select.css'
 import Chip from '@material-ui/core/Chip'
 import TextField from '@material-ui/core/TextField'
 function Select(props) {
   function init(propsList, listActive) {
     const newArray = []
-    propsList.map((item, index) =>
-      newArray.push({
-        id: index,
-        value: item,
-        selected: listActive && listActive.indexOf(item) > -1 ? true : false,
-      })
-    )
-    listActive.map((item) =>
-      propsList.indexOf(item) === -1
-        ? newArray.push({ id: newArray.length, value: item, selected: true })
-        : null
-    )
+    if (propsList && propsList.length > 0 && listActive && listActive.length)
+    {
+      propsList.map((item, index) =>
+        newArray.push({
+          id: index,
+          value: item,
+          selected: listActive && listActive.indexOf(item) > -1 ? true : false,
+        })
+      )
+      listActive.map((item) =>
+        propsList.indexOf(item) === -1
+          ? newArray.push({ id: newArray.length, value: item, selected: true })
+          : null
+      )
+    }
     return newArray
   }
-  const [list, changeList] = React.useState(
-    props.list && props.active ? init(props.list, props.active) : []
-  )
-  const [search, changeSearch] = React.useState('')
+  const [list, changeList] = useState(init(props.list, props.active))
+  const [search, changeSearch] = useState('')// eslint-disable-next-line
+  useEffect(()=>changeList(init(props.list,props.active)),[props.active])
   function getListActive(list) {
     const newArray = []
     list.map((item) => {

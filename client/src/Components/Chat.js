@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useRef, useContext } from 'react'
 import { Loader } from './Loader'
-import { ConvertDate } from './Friends'
 import { DataContext } from '../Context/AppContext'
 import {
   IconSendMessage,
   IconArrowDownChat,
 } from './Icons'
 import '../Css/Chat.css'
-import Axios from 'axios'
 import { ImageLoader } from './ImageLoader'
 
 function ChatMessage(props) {
@@ -49,79 +47,39 @@ function Chat(props) {
   const [hideScrollDown, changeHideScrollDown] = useState(false)
   const [hideLoader, changeHideLoader] = useState(true)
   const ctx = useContext(DataContext)
+  const [friends,changeFriends] = useState({...ctx.cache.friends})
   const ChatContent = useRef()
-  const [chatTextValue,changeChatTextValue] = useState("")
-  const UserName = props.chatUserInfo.UserName
-  function getMessages(UserName) {
-    const length = (Object.entries(props.messages).length > 0 && props.messages[UserName])? props.messages[UserName].messages.length : 0
-    Axios.get(`/Messages/${UserName}/${length}`).then(data=>
-    {
-      const oldHeight = ChatContent.current.scrollHeight
-      if (ctx.messagesData[UserName] && ctx.messagesData[UserName].messages)
-        ctx.messagesData = {...ctx.messagesData,[UserName]:{...ctx.messagesData[UserName],messages:[...data.data,...ctx.messagesData[UserName].messages]}}
-      else
-        ctx.messagesData = {...ctx.messagesData,[UserName]:{...props.chatUserInfo,messages:[...data.data]}}
-      props.changeMessages({...ctx.messagesData})
-      changeHideLoader(true)
-      setTimeout(() => ChatContent.current.scrollTop = ChatContent.current.scrollHeight - oldHeight, 0)
-    })
-  }
+  const chatTextValue=useRef("")
+  const UserName = ctx.cache.chatUserInfo.UserName
   useEffect(() => {
-    ctx.socket.current.on('message',(obj)=>{
-      const oldHeight = ChatContent.current.scrollHeight
-          const {Content,UserName,date} = JSON.parse(obj)
-          props.changeMessages(oldValue=>{
-            const msgObj = {Content,date,myMessage:false,IsRead:1}
-            if (Object.entries(oldValue).length > 0 && oldValue[UserName])
-              ctx.messagesData[UserName].messages.push(msgObj)
-            else
-              ctx.messagesData[UserName] = {UserName:props.chatUserInfo.UserName,Images:props.chatUserInfo.Images,messages:[msgObj]}
-            return ({...ctx.messagesData})
-          })
-        setTimeout(() => ChatContent.current.scrollTop = oldHeight, 0)
+    ctx.ref.changeFriends = changeFriends
+    ctx.ref.ChatContent = ChatContent
+    setTimeout(()=>ctx.ref.scrollDown(),0)
+    return (()=>{
+      ctx.ref.changeFriends = null
+      ctx.ref.ChatContent = null
     })
-    if (!ctx.messagesData[UserName] || ctx.messagesData[UserName].messages.length === 0 || (ctx.messagesData[UserName].messages.length === 1 && ctx.messagesData[UserName].messages[0] !== "limit"))
-    {
-      changeHideLoader(false)
-      getMessages(UserName)
-    } // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [])
   function ShowScrollDown() {
     const { offsetHeight, scrollHeight, scrollTop } = ChatContent.current
     if (scrollHeight - (scrollTop + offsetHeight) > 30)
-      changeHideScrollDown(true)
+      changeHideScrollDown(oldValue => oldValue ? oldValue : true)
     else changeHideScrollDown(false)
-    if (scrollTop === 0 && ctx.messagesData[UserName] && !ctx.messagesData[UserName].messages[0] === "limit") {
+    if (scrollTop === 0 && ctx.cache.friends[UserName] && !ctx.cache.friends[UserName].messages[0] === "limit") {
+      console.log("SSSSS")
       changeHideLoader(false)
-      getMessages(UserName)
+      ctx.ref.getMessages(UserName)
     }
   }
-  function sortMessages(messages)
-    {
-      const newObj = {}
-      const result = Object.values(messages).sort((a,b)=>{
-        if (a.messages[a.messages.length - 1] === 'limit' && b.messages[b.messages.length - 1] === 'limit')
-          return (0)
-        else if (a.messages[a.messages.length - 1] === 'limit')
-          return (1)
-        else if (b.messages[b.messages.length - 1] === 'limit')
-          return (-1)
-        return ((Date.now()-Date.parse(a.messages[a.messages.length - 1].date))-(Date.now()-Date.parse(b.messages[b.messages.length - 1].date)))
-      })
-      result.map(item=>newObj[item.UserName] = item)
-      return(newObj)
-    }
   return (
     <div className="Chat" style={props.style ? props.style : {}}>
-      <div
-        className="ChatHeader"
-      > 
-        <div className="ChatImage" style={props.chatUserInfo.Active ? {'--color-online':'#44db44'} :{'--color-online':'#a5a5a5'}}>
-          <ImageLoader src={props.chatUserInfo.Images} alt={props.chatUserInfo.UserName}/>
-          {/* <img src={props.chatUserInfo.Images} alt={props.chatUserInfo.UserName} /> */}
+      <div className="ChatHeader"> 
+        <div className="ChatImage" style={ctx.cache.chatUserInfo.Active ? {'--color-online':'#44db44'} :{'--color-online':'#a5a5a5'}}>
+          <ImageLoader src={ctx.cache.chatUserInfo.Images} alt={UserName}/>
         </div>
         <div className="ChatUserInfo">
-          <div className="ChatUserInfoName">{props.chatUserInfo.UserName}</div>
+          <div className="ChatUserInfoName">{UserName}</div>
         </div>
       </div>
       <div
@@ -137,19 +95,21 @@ function Chat(props) {
             }}
           />
         ) : null}
-        {UserName && ctx.messagesData[UserName]?ctx.messagesData[UserName].messages.map((msg, index) => {
+        {friends[UserName] ? friends[UserName].messages.map(msg => {
               if (msg !== "limit")
+              {
+                console.log("MSG",friends[UserName].messages)
                 return (
                   <ChatMessage
-                    index={index}
-                    key={index}
-                    pos={msg.myMessage?"right":"left"}
-                    background={msg.myMessage?"#E6E8F4":"#3D88B7"}
-                    color={msg.myMessage?"black":"white"}
+                    key={"Message"+msg.id}
+                    pos={msg.IdUserReceiver === ctx.cache.chatUserInfo.IdUserOwner?"right":"left"}
+                    background={msg.IdUserReceiver === ctx.cache.chatUserInfo.IdUserOwner?"#E6E8F4":"#3D88B7"}
+                    color={msg.IdUserReceiver === ctx.cache.chatUserInfo.IdUserOwner?"black":"white"}
                     message={msg.Content}
-                    time={ConvertDate(msg.date, 'time')}
+                    time={ctx.ref.ConvertDate(msg.date, 'time')}
                   />
                 )
+              }
               return null
             }):null}
       </div>
@@ -158,37 +118,24 @@ function Chat(props) {
           className="ScrollDown"
           width={18}
           height={18}
-          onClick={() =>
-            (ChatContent.current.scrollTop = ChatContent.current.scrollHeight)
-          }
+          onClick={() =>ctx.ref.scrollDown}
         />
       ) : null}
       <div
         className="ChatSendMessage"
       >
         <div className="ChatSendMessageButton">
-          <input type="text" placeholder="Enter Message" value={chatTextValue} onChange={(event)=>changeChatTextValue(event.target.value)} />
+          <input type="text" placeholder="Enter Message" ref={chatTextValue}/>
         </div>
         <div className="ChatSendButton">
           <IconSendMessage width={24} height={24} fill="#6e97ee" onClick={()=>{
-            if (chatTextValue.trim() !== "")
+            if (chatTextValue.current.value.trim() !== "")
             {
-              ctx.socket.current.emit('message',JSON.stringify({UserName:props.chatUserInfo.UserName,message:chatTextValue}))
-              const obj = {myMessage:1,date:new Date().toISOString().slice(0, 19).replace('T', ' '),Content:chatTextValue,IsRead:1}
-              props.changeMessages(oldValue=>{
-                  if ((Object.entries(oldValue).length > 0 && UserName && oldValue[UserName]))
-                    oldValue[UserName].messages =['limit',...oldValue[UserName].messages.filter(item=>item!=='limit'),obj]
-                  else
-                    oldValue = {[UserName]:{UserName:props.chatUserInfo.UserName,Images:props.chatUserInfo.Images,messages:['limit',obj]}}
-                  oldValue = sortMessages(oldValue)
-                  console.log("OLD",{...oldValue})
-                  ctx.messagesData = {...oldValue}
-                  return {...oldValue}
-                })
-                changeChatTextValue("")
-                setTimeout(() => ChatContent.current.scrollTop = ChatContent.current.scrollHeight, 0)
-            }
-            }} />
+              console.log('LOLOLOLO',{...ctx.cache.chatUserInfo})
+              ctx.ref.sendMessage({message:{id:friends[UserName].messages[friends[UserName].messages.length - 1].id + 1,Content:chatTextValue.current.value,date:new Date().toISOString(),IdUserReceiver:ctx.cache.chatUserInfo.IdUserOwner},user:{...ctx.cache.chatUserInfo}})
+              chatTextValue.current.value = ""
+              // setTimeout(() => ctx.ref.scrollDown(), 0)
+            }}} />
         </div>
       </div>
     </div>

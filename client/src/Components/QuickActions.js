@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { Friends } from './Friends'
 import '../Css/QuickActions.css'
 import { Search } from './Search'
@@ -13,12 +13,15 @@ function QuickActions(props) {
   const [CurrentAction, ChangeCurrentAction] = useState('Friends')
   const [search, changeSearch] = useState('')
   const [chatUserInfo,changeChatUserInfo] = useState({})
-  const [messages,changeMessages] = useState(ctx.messagesData)
   const style = {
     width: '100%',
     fontWeight: 'bold',
     fontSize: '20px',
   }
+  useEffect(()=>{
+    ctx.ref.changeChatUserInfo = changeChatUserInfo
+    return (()=>ctx.ref.changeChatUserInfo = null)// eslint-disable-next-line
+  },[])
   return (
     <div
       className="QuickActionsChatBox"
@@ -57,8 +60,8 @@ function QuickActions(props) {
           />
         </div>
         <Search search={search} changeSearch={changeSearch} />
-        {CurrentAction === 'Friends' ? <Friends search={search} changeChatUserInfo={changeChatUserInfo} />:null}
-        {CurrentAction === 'Messages' ? <Messages changeChatUserInfo={changeChatUserInfo} messages={messages} changeMessages={changeMessages} />:null}
+        {CurrentAction === 'Friends' ? <Friends search={search} />:null}
+        {CurrentAction === 'Messages' ? <Messages />:null}
         {CurrentAction === 'Notification' ? <Notification/> : null}
       </div>
       {chatUserInfo.UserName ? <div
@@ -69,7 +72,7 @@ function QuickActions(props) {
           <div>Back To Messages</div>
         </div>:null}
       {chatUserInfo.UserName ? (
-        <Chat chatUserInfo={chatUserInfo} messages={messages} changeMessages={changeMessages}/>
+        <Chat />
       ) : null}
     </div>
   )

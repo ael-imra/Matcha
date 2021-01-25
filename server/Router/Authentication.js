@@ -11,7 +11,7 @@ async function auth(req, res, next) {
   if (authorization) {
     if (authorization.split(' ').length > 1) {
       const result = await locals.select('Users','*',{JWT:authorization.split(' ')[1]})
-      if (result)
+      if (result.length > 0)
         jwt.verify(
           authorization.split(' ')[1],
           process.env.JWT_KEY,

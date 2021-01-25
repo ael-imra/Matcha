@@ -19,9 +19,9 @@ function parseValue(values)
     for (const [key,value] of Object.entries(values))
     {
       if (i < Object.keys(values).length - 1)
-        parse += key+"="+mysql.pool.escape(value) + " AND "
+        parse += mysql.pool.escapeId(key)+"="+mysql.pool.escape(value) + " AND "
       else
-        parse += key+"="+mysql.pool.escape(value)
+        parse += mysql.pool.escapeId(key)+"="+mysql.pool.escape(value)
       i++;
     }
   }
@@ -31,8 +31,7 @@ mysql.query = function (query, params) {
   return new Promise((resolve, reject) => {
     mysql.pool.getConnection((error,connection)=>{
       if (error) console.log(error)
-      const sql = connection.query(query, params, (err, result) => {
-        result.sql = sql
+      connection.query(query, params, (err, result) => {
         if (err) reject(err)
         else resolve(result)
         connection.release(0)
@@ -42,7 +41,6 @@ mysql.query = function (query, params) {
 }
 mysql.insert = async function (table, values) {
   const result = await mysql.query(`INSERT INTO ${table} SET ?`, values)
-  console.log(result.sql.sql)
   return result
 }
 mysql.select = async function (table, rows, values) {
