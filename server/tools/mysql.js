@@ -68,29 +68,30 @@ mysql.filter = async function (values) {
     values.age &&
     values.age.length === 2 &&
     values.location &&
-    values.location.length === 4 &&
+    values.location.length === 2 &&
     values.rating &&
     values.rating.length === 2 &&
     values.start > -1 &&
     values.length > -1
   ) {
     values.name = (values.name?'%%':('%' + values.name + '%'));
-    const listInterest =
-      '`ListInterest` LIKE ?' +
-      ' AND `ListInterest` LIKE ?'.repeat(values.list.length - 1 > -1 ?values.list.length - 1:0)
-    values.list.length === 0
-      ? values.list.push('%%')
-      : values.list.map((value) => '%' + value + '%')
+    let listInterest = '`ListInterest` LIKE \'%%\''
+    if (values.list.length > 0)
+    {
+      listInterest = '`ListInterest` LIKE ' + mysql.pool.escape('%'+values.list[0]+'%')
+      for (let i = 1;i<values.list.length;i++)
+        listInterest += ' AND `ListInterest` LIKE ' + mysql.pool.escape('%'+values.list[i]+'%')
+    }
     const query =
-      'SELECT u.*,(SELECT AVG(RatingValue) FROM Rating WHERE IdUserReceiver = u.IdUserOwner group by IdUserReceiver) AS rating,(SELECT IdUserReceiver FROM Friends WHERE u.IdUserOwner = IdUserReceiver AND IdUserOwner=?) AS friendreceiver,(SELECT IdUserOwner FROM Friends WHERE u.IdUserOwner = IdUserOwner AND `Match`=1 AND IdUserReceiver=?) AS friendowner FROM Users u WHERE u.IdUserOwner != ? AND u.UserName LIKE ? AND' +
+      'SELECT u.IdUserOwner,u.UserName,u.Images,u.Gender,u.ListInterest,u.Latitude,u.Longitude,(SELECT CalcDistance(u.Latitude,u.Longitude,?)) AS distance,Year(CURDATE())-Year(u.DataBirthday) AS Age,(SELECT AVG(RatingValue) FROM Rating WHERE IdUserReceiver = u.IdUserOwner group by IdUserReceiver) AS rating,(SELECT IdUserReceiver FROM Friends WHERE u.IdUserOwner = IdUserReceiver AND IdUserOwner=?) AS friendreceiver,(SELECT IdUserOwner FROM Friends WHERE u.IdUserOwner = IdUserOwner AND `Match`=1 AND IdUserReceiver=?) AS friendowner FROM Users u WHERE u.IdUserOwner != ? AND u.UserName LIKE ? AND ' +
       listInterest +
-      ' AND Year(CURDATE())-Year(u.DataBirthday) >= ? AND Year(CURDATE())-Year(u.DataBirthday) <= ? AND u.Latitude>= ? AND u.Latitude<= ? AND u.Longitude >= ? AND u.Longitude <= ?  HAVING ((rating IS NULL AND ? = 0) OR (rating >= ? AND rating <= ?)) AND friendowner IS NULL AND friendreceiver IS NULL LIMIT ?,?'
+      ' AND Year(CURDATE())-Year(u.DataBirthday) >= ? AND Year(CURDATE())-Year(u.DataBirthday) <= ? HAVING distance >= ? && distance <= ? AND ((rating IS NULL AND ? = 0) OR (rating >= ? AND rating <= ?)) AND friendowner IS NULL AND friendreceiver IS NULL LIMIT ?,?'
     const result = await mysql.query(query, [
       values.IdUserOwner,
       values.IdUserOwner,
       values.IdUserOwner,
+      values.IdUserOwner,
       values.name,
-      values.list,
       values.age[0],
       values.age[1],
       ...values.location,

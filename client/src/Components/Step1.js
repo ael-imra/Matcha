@@ -3,7 +3,7 @@ import '../Css/inputDate.css'
 import { useWindowSize } from './UseWindowSize'
 
 const Step1 = (props) => {
-  const width = useWindowSize()
+  const size = useWindowSize()
   function getAge(dateString) {
     let today = new Date()
     let birthDate = new Date(dateString)
@@ -41,7 +41,7 @@ const Step1 = (props) => {
           marginBottom: '37px',
           marginTop: '0px',
           color: props.Mode === 'Dark' ? 'white' : 'black',
-          fontSize: width <= 885 ? '18px' : '28px',
+          fontSize: size.width <= 885 ? '18px' : '28px',
         }}
       >
         what's your date of birth ?

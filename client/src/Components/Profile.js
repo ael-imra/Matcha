@@ -22,7 +22,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 export default function Profile() {
-  const width = useWindowSize();
+  const size = useWindowSize();
   const ctx = useContext(DataContext);
   const [findError, ChangeError] = React.useState([]);
   const [open, setOpen] = React.useState(false);
@@ -289,7 +289,7 @@ export default function Profile() {
               Update Password
             </button>
           </div>
-          {width <= 630 ? (
+          {size.width <= 630 ? (
             <>
               <hr style={{ border: 'none', height: '0.1px', width: '97%' }} />
               <p>Photos</p>
@@ -300,7 +300,7 @@ export default function Profile() {
         </div>
 
         <div className='slide-in-left'>
-          {width > 630 ? (
+          {size.width > 630 ? (
             <div className='addImage'>
               <p>Add Image</p>
               <input type='file' accept='image/*' onChange={getImage} />
@@ -320,7 +320,7 @@ export default function Profile() {
                       fontSize: '10px',
                       position: 'absolute',
                       transition: 'all 0.5s',
-                      height: width <= 885 ? '30px' : 'auto',
+                      height: size.width <= 885 ? '30px' : 'auto',
                       padding: '8px',
                     }}
                     variant='contained'
@@ -337,7 +337,7 @@ export default function Profile() {
                       fontSize: '10px',
                       position: 'absolute',
                       transition: 'all 0.5s',
-                      height: width <= 885 ? '30px' : 'auto',
+                      height: size.width <= 885 ? '30px' : 'auto',
                       padding: '8px',
                     }}
                     variant='contained'
@@ -352,7 +352,7 @@ export default function Profile() {
                 ''
               )
             )}
-            {width <= 630 ? (
+            {size.width <= 630 ? (
               <div className='addImage Image' style={{ height: '320px', paddingLeft: '0px', marginLeft: '10px' }}>
                 <p>Add Image</p>
                 <input type='file' accept='image/*' onChange={getImage} />
@@ -469,12 +469,12 @@ export default function Profile() {
         </Alert>
       </Snackbar>
       {/* <Dialog open={showUpdatePassword} onClose={formUpdatePasswordClose}>
-        <div style={{ width: '500px', height: '500px', backgroundColor: 'white', display: 'flex', flexDirection: 'column', justifyContent: 'center', borderRadius: '8px' }}>
-          <div className='infoUser' style={{ justifyContent: 'center', width: '440px' }}>
+        <div style={{ size.width: '500px', height: '500px', backgroundColor: 'white', display: 'flex', flexDirection: 'column', justifyContent: 'center', borderRadius: '8px' }}>
+          <div className='infoUser' style={{ justifyContent: 'center', size.width: '440px' }}>
             <p style={{ fontSize: '30px', fontWeight: '900', marginTop: '5px', marginBottom: '14px' }}>Change password </p>
           </div>
           <p style={{ marginLeft: '40px', marginRight: '30px', fontSize: '14px', fontWeight: '600' }}>create a password at least 8 characters with uppercase letters and numbers and numbers</p>
-          <div className='infoUser' style={{ width: '440px' }}>
+          <div className='infoUser' style={{ size.width: '440px' }}>
             <p className='labelInfo'>Current Password:</p>
             <InputTest
               DefaultValue={password.CurrentPassword}
@@ -484,7 +484,7 @@ export default function Profile() {
               Type='password'
             />
           </div>
-          <div className='infoUser' style={{ width: '440px' }}>
+          <div className='infoUser' style={{ size.width: '440px' }}>
             <p className='labelInfo'>New Password:</p>
             <InputTest
               DefaultValue={password.NewPassword}
@@ -494,7 +494,7 @@ export default function Profile() {
               Type='password'
             />
           </div>
-          <div className='infoUser' style={{ width: '440px' }}>
+          <div className='infoUser' style={{ size.width: '440px' }}>
             <p className='labelInfo'>Confirm password:</p>
             <InputTest
               DefaultValue={password.ConfirmPassword}
@@ -504,7 +504,7 @@ export default function Profile() {
               Type='password'
             />
           </div>
-          <div className='infoUser' style={{ justifyContent: 'center', width: '440px' }}>
+          <div className='infoUser' style={{ justifyContent: 'center', size.width: '440px' }}>
             <button className='ft_btn' style={{ marginTop: '20px', backgroundColor: 'rgb(49, 143, 181)' }} onClick={changePasswordProfile}>
               change Password
             </button>

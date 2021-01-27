@@ -9,7 +9,7 @@ import { useWindowSize } from './UseWindowSize'
 import Axios from 'axios'
 
 const SingUp = (props) => {
-  const width = useWindowSize()
+  const size = useWindowSize()
   const ctx = useContext(DataContext)
   const [findError, ChangeError] = useState(['', '', '', '', ''])
   const [dataUsers, ChangeDataUsers] = useState([])
@@ -192,7 +192,7 @@ const SingUp = (props) => {
           style={{
             paddingLeft: '25px',
             paddingRight: '25px',
-            marginTop: width <= 885 ? '35px' : '20px',
+            marginTop: size.width <= 885 ? '35px' : '20px',
             backgroundColor: '#03a9f1',
           }}
         >

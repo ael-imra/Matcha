@@ -42,7 +42,6 @@
   color: var(--color-FriendInfo-firstChild);
 }
 .NoticeDate {
-  width: 65px;
   font-size: 10px;
   text-align: center;
   color: var(--color-FriendInfo-lastChild);

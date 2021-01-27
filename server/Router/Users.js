@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Validate = require('../tools/validate')
 const md5 = require('md5')
+const haversine = require('haversine-distance')
 const {auth} = require('./Authentication')
 require('dotenv').config({
   path: __dirname + '/../.env',
@@ -13,7 +14,6 @@ require('dotenv').config({
 router.post('/',auth, async function (req, res) {
   const { Latitude, Longitude } = req.userInfo
   const { list, age, name, location,rating, start,length } = req.body
-  const avg = 0.0075 * location[1]
   const locals = req.app.locals
   const filterResult = await locals.filter({
     IdUserOwner:req.userInfo.IdUserOwner,
@@ -21,16 +21,38 @@ router.post('/',auth, async function (req, res) {
     list,
     age,
     location:[
-      location[1] === 1000 ? -85 : parseFloat(Latitude - avg),
-      location[1] === 1000 ? 85 : parseFloat(Latitude + avg),
-      location[1] === 1000 ? -180 : parseFloat(Longitude - avg),
-      location[1] === 1000 ? 180 : parseFloat(Longitude + avg),
-    ],
+      location[0]===1000?0:location[0],
+      location[1]===1000?12800:location[1]],
     rating,
     start,
     length
   })
-  if (filterResult) locals.sendResponse(res, 200, filterResult, true)
+  if (filterResult.length > 0){
+    // filterResult.map(item=>item.distance = haversine({ lat: item.Latitude, lng: item.Longitude },{ lat: req.userInfo.Latitude, lng: req.userInfo.Longitude })) 
+    function cmp(a,b){
+      const keysNeedToCompare = ['distance']
+      let count1 = 0,count2 = 0
+      // JSON.parse(req.userInfo.ListInterest).map(item=>{
+      //   if (a.ListInterest.indexOf(item) > -1)
+      //     count1++
+      //   if (b.ListInterest.indexOf(item) > -1)
+      //     count2++
+      // })
+      for (let key of Object.keys(a))
+      {
+        if (keysNeedToCompare.indexOf(key) > -1)
+        {
+          if (a[key] > b[key])
+            count1++
+          else if (a[key] < b[key])
+            count2++
+        }
+      }
+      return (count1 - count2)
+    }
+    filterResult.sort(cmp)
+    locals.sendResponse(res, 200, filterResult, true)
+  } 
   else locals.sendResponse(res, 400, 'someting wrong with your data')
 })
 

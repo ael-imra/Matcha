@@ -2,7 +2,7 @@ import React from 'react'
 import { useWindowSize } from './UseWindowSize'
 
 export default function Step5(props) {
-  const width = useWindowSize()
+  const size = useWindowSize()
   return (
     <div>
       <p
@@ -11,7 +11,7 @@ export default function Step5(props) {
           transform: 'translateY(-180px)',
           marginTop: '0px',
           color: props.Mode === 'Dark' ? 'white' : 'black',
-          fontSize: width <= 885 ? '18px' : '28px',
+          fontSize: size.width <= 885 ? '18px' : '28px',
         }}
       >
         thank your for sing up in Matcha

@@ -8,14 +8,14 @@ function ImageLoader(props) {
     fetch(props.src)
       .then((res) => res.blob())
       .then((data) => {
-        if (!unmount) {
           const reader = new FileReader()
           reader.onload = () => {
-            changeImageLoaded(true)
-            if (imageRef.current) imageRef.current.src = reader.result
+            if (!unmount) {
+              changeImageLoaded(true)
+              if (imageRef.current) imageRef.current.src = reader.result
+            }
           }
           reader.readAsDataURL(data)
-        }
       })
     return () => (unmount = true) // eslint-disable-next-line
   }, [])

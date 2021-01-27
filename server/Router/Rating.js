@@ -22,7 +22,6 @@ router.post('/', async (req, res) => {
     const locals = req.app.locals
     const IdUserReceiver = await locals.getIdUserOwner(usernameReceiver)
     const resultCheckRating = await locals.select('Rating','*',{IdUserOwner:req.userInfo.IdUserOwner,IdUserReceiver})
-    console.log(resultCheckRating)
     if (resultCheckRating.length > 0) {
       const resultUpdateRating = await locals.update('Rating',{RatingValue},{IdUserOwner:req.userInfo.IdUserOwner,IdUserReceiver})
       if (resultUpdateRating) locals.sendResponse(res,200,RatingValue.toString())
@@ -35,6 +34,7 @@ router.post('/', async (req, res) => {
         locals.sendResponse(res,200,avgRatingValue && avgRatingValue.length > 0 && avgRatingValue[0].AVG ? avgRatingValue[0].AVG.toString() : '0')
       }else locals.sendResponse(res,400,'Error On Insert Rating Value')
     }
+    locals.notification(req,'Rate',req.userInfo.UserName,usernameReceiver)
   }
   else locals.sendResponse(res,400,'Bad Request')
 })

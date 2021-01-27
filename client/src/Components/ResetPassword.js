@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button'
 import ImageForgetPassword from '../Images/forgot-password-animate.svg'
 import Axios from 'axios'
 const ResetPassword = () => {
-  const width = useWindowSize()
+  const size = useWindowSize()
   const ctx = useContext(DataContext)
   const [findError, ChangeError] = useState(['', ''])
   const [DataInput, saveDataInput] = useState([])
@@ -97,7 +97,7 @@ const ResetPassword = () => {
             marginBottom: '37px',
             marginTop: '0px',
             color: ctx.Mode === 'Dark' ? 'white' : 'black',
-            fontSize: width <= 885 ? '18px' : '28px',
+            fontSize: size.width <= 885 ? '18px' : '28px',
           }}
         >
           Reset Password

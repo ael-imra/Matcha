@@ -11,7 +11,7 @@ import Alert from '@material-ui/lab/Alert'
 import { BrowserRouter as Switch, Route } from 'react-router-dom'
 import ResetPassword from './ResetPassword'
 const Body = (props) => {
-  const width = useWindowSize()
+  const size = useWindowSize()
   const ctx = useContext(DataContext)
   const [showMessage, changeShowMessage] = React.useState(false)
   const handleClose = (event, reason) => {
@@ -53,7 +53,7 @@ const Body = (props) => {
                     ? '562px'
                     : '487px',
                 marginTop:
-                  width <= 885
+                  size.width <= 885
                     ? props.dataHome.StateHome === 1
                       ? '120px'
                       : '45px'

@@ -1,6 +1,18 @@
 const express = require('express');
+const { route } = require('./Users');
 const router = express.Router()
 
+router.get('/readMessages/:UserName',async (req,res)=>{
+  const locals = req.app.locals
+  if (req.params.UserName)
+  {
+    const IdUserOwner = await locals.getIdUserOwner(req.params.UserName)
+    if (IdUserOwner)
+      locals.update('Messages',{IsRead:1},{IdUserOwner,IdUserReceiver:req.userInfo.IdUserOwner})
+    locals.sendResponse(res,200,"all messages is readed")
+  }else
+    locals.sendResponse(res,200,"UserName not found")
+})
 router.get('/:UserName/:index',async (req,res)=>{
   const locals = req.app.locals
   if (req.params && req.params.UserName)
@@ -39,20 +51,4 @@ router.get('/',async (req,res)=>{
   else
     locals.sendResponse(res,200,'Messages Not Found')
 })
-// router.get('/:UserName',async (req,res)=>{
-//   const locals = req.app.locals
-//   if (req.params && req.params.UserName)
-//   {
-//     const IdUserOwner = await locals.getIdUserOwner(req.params.UserName)
-//     if (IdUserOwner)
-//     {
-//       locals.update('Messages',{IsRead:1},{IdUserOwner,IdUserReceiver:req.userInfo.IdUserOwner})
-//       locals.sendResponse(res,200,`all Messages of ${req.params.UserName} was readed`)
-//     }
-//     else
-//       locals.sendResponse(res,200,"UserName Doesn't exist")
-//   }
-//   else
-//     locals.sendResponse(res,200,"Bad Request")
-// })
 module.exports = router

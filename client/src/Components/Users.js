@@ -69,11 +69,11 @@ function User(props) {
       </div>
       <div className="UserName">{props.userName}</div>
       <div className="UserAgeGenre">
-        {35}, {props.gender}
+        {props.age}, {props.gender}
       </div>
       <div className="UserDistance">
         <PinSVG width={16} height={16} fill="white" />
-        {props.distance}
+        {(props.distance >= 1000 ? Math.floor(props.distance) + "Km" : Math.floor(props.distance) + "m")}
       </div>
       <div className="UserListInterest">
         {props.listInterest.map((item, index) => (
@@ -99,7 +99,7 @@ function User(props) {
       </div>
       <div className="UserActionsRating">
         <Rating
-          name={props.name}
+          name={props.UserName+props.age.toString()}
           defaultValue={0}
           value={ratingValue.userValue}
           max={5}
@@ -112,24 +112,21 @@ function User(props) {
 }
 function Users() {
   const ctx = useContext(DataContext)
-  const [users,changeUsers] = useState([...ctx.cache.users])
+  const [users,changeUsers] = useState(()=>{console.log("ENTER");return [...ctx.cache.users]})
   const [usersLoader, changeUsersLoader] = useState(false)
   const usersRef = useRef()
   useEffect(() => {
     ctx.ref.changeUsers = changeUsers
-    usersRef.current.style = `height:${document.querySelector('.DashboardBody').offsetHeight}px`
+    ctx.ref.changeUsersLoader = changeUsersLoader
     if (users.length === 0)
       ctx.ref.getUsers(users.length,24)
     return (()=>ctx.ref.changeUsers = null)
-        // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [ctx.cache.filterData])
   function UsersScroll() {
     const { scrollHeight, scrollTop, offsetHeight } = usersRef.current
     if (offsetHeight + scrollTop + 300 > scrollHeight && !usersLoader)
-    {
-      changeUsersLoader(true)
       ctx.ref.getUsers(users.length,24)
-    }
   }
   function UserClick(event) {
     if (
@@ -162,10 +159,9 @@ function Users() {
             city={obj.City}
             rating={obj.rating}
             gender={obj.Gender}
-            dataBirthday={obj.DataBirthday}
-            name={obj.FirstName + ' ' + obj.LastName}
+            age={obj.Age}
             userName={obj.UserName}
-            distance="40Km"
+            distance={obj.distance}
             listInterest={JSON.parse(obj.ListInterest)}
             removeFriend={removeFriend}
             onClick={UserClick}

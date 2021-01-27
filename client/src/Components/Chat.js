@@ -32,7 +32,7 @@ function ChatMessage(props) {
         className="ChatMessageDelete"
         title="delete"
         style={{
-          left: props.pos === 'left' ? '85%' : '0',
+          left: props.pos === 'leftt' ? '84%' : '0',
           display: hideDeleteMessage ? 'block' : 'none',
         }}
       >
@@ -67,13 +67,23 @@ function Chat(props) {
       changeHideScrollDown(oldValue => oldValue ? oldValue : true)
     else changeHideScrollDown(false)
     if (scrollTop === 0 && ctx.cache.friends[UserName] && !ctx.cache.friends[UserName].messages[0] === "limit") {
-      console.log("SSSSS")
       changeHideLoader(false)
       ctx.ref.getMessages(UserName)
     }
   }
+  function sendMessage(){
+    if (chatTextValue.current.value.trim() !== "")
+    {
+      ctx.ref.sendMessage({message:{id:friends[UserName].messages[friends[UserName].messages.length - 1].id + 1,Content:chatTextValue.current.value,date:new Date().toISOString(),IdUserReceiver:ctx.cache.chatUserInfo.IdUserOwner},user:{...ctx.cache.chatUserInfo}})
+      chatTextValue.current.value = ""
+      // setTimeout(() => ctx.ref.scrollDown(), 0)
+    }
+  }
   return (
-    <div className="Chat" style={props.style ? props.style : {}}>
+    <div className="Chat" style={props.style ? props.style : {}} onKeyUp={(event)=>{
+      if (event.keyCode === 13)
+      sendMessage()
+    }}>
       <div className="ChatHeader"> 
         <div className="ChatImage" style={ctx.cache.chatUserInfo.Active ? {'--color-online':'#44db44'} :{'--color-online':'#a5a5a5'}}>
           <ImageLoader src={ctx.cache.chatUserInfo.Images} alt={UserName}/>
@@ -97,8 +107,6 @@ function Chat(props) {
         ) : null}
         {friends[UserName] ? friends[UserName].messages.map(msg => {
               if (msg !== "limit")
-              {
-                console.log("MSG",friends[UserName].messages)
                 return (
                   <ChatMessage
                     key={"Message"+msg.id}
@@ -109,7 +117,6 @@ function Chat(props) {
                     time={ctx.ref.ConvertDate(msg.date, 'time')}
                   />
                 )
-              }
               return null
             }):null}
       </div>
@@ -118,7 +125,7 @@ function Chat(props) {
           className="ScrollDown"
           width={18}
           height={18}
-          onClick={() =>ctx.ref.scrollDown}
+          onClick={() =>ctx.ref.scrollDown()}
         />
       ) : null}
       <div
@@ -128,14 +135,7 @@ function Chat(props) {
           <input type="text" placeholder="Enter Message" ref={chatTextValue}/>
         </div>
         <div className="ChatSendButton">
-          <IconSendMessage width={24} height={24} fill="#6e97ee" onClick={()=>{
-            if (chatTextValue.current.value.trim() !== "")
-            {
-              console.log('LOLOLOLO',{...ctx.cache.chatUserInfo})
-              ctx.ref.sendMessage({message:{id:friends[UserName].messages[friends[UserName].messages.length - 1].id + 1,Content:chatTextValue.current.value,date:new Date().toISOString(),IdUserReceiver:ctx.cache.chatUserInfo.IdUserOwner},user:{...ctx.cache.chatUserInfo}})
-              chatTextValue.current.value = ""
-              // setTimeout(() => ctx.ref.scrollDown(), 0)
-            }}} />
+          <IconSendMessage width={24} height={24} fill="#6e97ee" onClick={sendMessage} />
         </div>
       </div>
     </div>

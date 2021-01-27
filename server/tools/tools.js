@@ -68,10 +68,36 @@ function handleError(err,req,res,next){
   else
     next()
 }
+async function notification(req,Type,UserOwner,UserReceiver){
+  const locals = req.app.locals
+  const IdUserOwner = await locals.getIdUserOwner(UserOwner)
+  const IdUserReceiver = await locals.getIdUserOwner(UserReceiver)
+  let socketOfFriend = null
+  if (IdUserOwner && IdUserReceiver)
+  {
+    const checkSameNotification = await locals.select('Notifications','*',{IdUserOwner,IdUserReceiver,Type})
+    if (checkSameNotification.length === 0)
+    {
+      if (locals.sockets && locals.sockets.length > 0)
+        locals.sockets.map(item=>{
+          if (item.IdUserOwner === IdUserReceiver)
+            socketOfFriend = item
+        })
+      if (socketOfFriend)
+      {
+        const result = await locals.insert('Notifications',{IdUserOwner,IdUserReceiver,Type})
+        const user = await locals.select('Users',['IdUserOwner','Images','UserName','LastLogin','Active'],{IdUserOwner})
+        user[0].Images = JSON.parse(user[0].Images)[0]
+        socketOfFriend.emit('notice',JSON.stringify({user:user[0],Type,IdNotification:result.insertId,DateCreation:new Date().toISOString()}))
+      }
+    }
+  }
+}
 module.exports = {
   fetchDataJSON,
   sendResponse,
   init,
   checkImage,
+  notification,
   handleError
 }

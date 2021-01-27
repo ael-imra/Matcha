@@ -16,6 +16,14 @@ export default function AppContext(props) {
   const cache = {
     friends:{},
     users:[],
+    notifications:{
+      data:[],
+      IsRead:0
+    },
+    IsRead:{
+      messages:0,
+      notifications:0
+    },
     chatUserInfo:{},
     filterData:{
       list: [],
@@ -40,7 +48,7 @@ export default function AppContext(props) {
       if(year > 0) return `${year}y`
       else if(month > 0) return `${month}mo`
       else if (days > 0) return `${days}d`
-      else if (hours > 0) return `${hours}ho`
+      else if (hours > 0) return `${hours}h`
       else if (minutes > 0) return `${minutes}m`
       else if (seconds > 0) return `${seconds}s`
       return '1s'
@@ -63,28 +71,100 @@ export default function AppContext(props) {
       }
       return []
     },
+    readMessages:(UserName)=>{
+      if (UserName)
+      {
+        Axios.get(`Messages/readMessages/${UserName}`).then(()=>{
+          if (cache.friends[UserName])
+            cache.friends[UserName].IsRead = 0
+          ref.countIsRead()
+        })
+        console.log("USRRRR",UserName)
+      }
+    },
+    readNotifications:()=>{
+        Axios.get(`Notifications/readNotifications`).then(()=>{
+          cache.notifications.IsRead = 0
+          ref.countIsRead()
+        })
+    },
+    removeDeplicate:(array1,array2)=>{
+      return ([...array1.filter(item1=>{
+        let find = true
+        array2.map(item2=>find = item1.IdUserOwner === item2.IdUserOwner ? false:find)
+        return (find)
+      }),...array2])
+    },
     getUsers: (start,length)=> {
+      if (ref.changeUsersLoader)
+        ref.changeUsersLoader(true)
       axios.post(`Users`, { ...cache.filterData, start,length }).then(data=>{
-        cache.users.push(...data.data)
+        cache.users = ref.removeDeplicate(cache.users,data.data)
         if (ref.changeUsers)
+        {
           ref.changeUsers([...cache.users])
+          ref.changeUsersLoader(false)
+        }
       })
     },
     getMessages: (user) => {
-        axios.get(`/Messages/${user.UserName}/${user.messages.length}`).then(data=>{
+        axios.get(`Messages/${user.UserName}/${user.messages.length}`).then(data=>{
           if (cache.friends[user.UserName])
             cache.friends[user.UserName].messages.push(...data.data)
           else
             cache.friends[user.UserName] = {...user,messages:data.data}
           if (ref.changeFriends)
             ref.changeFriends({...cache.friends})
+          ref.countIsRead()
+        })
+      },
+    getNotifications:()=>{
+        axios.get(`Notifications/${cache.notifications.data.length}`).then(data=>{
+          if (data.data!== "None" && data.data !== 'Bad request')
+          {
+            cache.notifications.data.push(...data.data.data)
+            cache.notifications.IsRead = data.data.IsRead
+            if (ref.changeNotifications)
+              ref.changeNotifications({...cache.notifications})
+            ref.countIsRead()
+          }
+        })
+    },
+    addFriend:(user)=>{
+      cache.friends[user.UserName] = {...user}
+      if (ref.changeFriends)
+        ref.changeFriends({...cache.friends})
+    },
+    countIsRead:()=>{
+      setTimeout(()=>{
+        let countMessages = 0
+        Object.values(cache.friends).map(value=>value.IsRead > 0?countMessages++:0)
+        cache.IsRead.messages = countMessages
+        cache.IsRead.notifications = cache.notifications.IsRead
+        console.log("CHECK ISREAD",ref.changeIsRead)
+        if (ref.changeIsRead)
+          ref.changeIsRead({...cache.IsRead})
+      },500)
+    },
+    search:(search)=>{
+      if (search && ref.changeFriends)
+      {
+        ref.changeFriends((oldValue)=>{
+          const newObject = {}
+          Object.keys(oldValue).map(key=>{
+            if (key.indexOf(props.search) > -1)
+              newObject[key] = oldValue[key]
+          })
+          return (newObject)
         })
       }
+      else if (ref.changeFriends)
+        ref.changeFriends({...cache.friends})
+    }
   }
   const socket = useRef(null)
   useEffect(()=>{
     const token = localStorage.getItem('token')
-    console.log(token)
     if (token)
     {
       socket.current = io(`http://${window.location.hostname}:5000`)
@@ -92,8 +172,8 @@ export default function AppContext(props) {
       ref.getMessage = messageObject=>{
         function makeID(messages)
         {
-          if (message.length > 0 && message[message.length - 1] !== 'limit')
-            return (message[message.length - 1].id + 1)
+          if (messages.length > 0 && messages[messages.length - 1] !== 'limit')
+            return (messages[messages.length - 1].id + 1)
           return (1)
         }
         const {message,user} = JSON.parse(messageObject)
@@ -102,34 +182,47 @@ export default function AppContext(props) {
           friend.messages.push({...message,id:makeID(friend.messages)})
         else
           cache.friends[user.UserName] = {...user,messages:[{...message,id:makeID(friend.messages)}]}
+        cache.friends[user.UserName].IsRead = cache.friends[user.UserName].IdUserOwner === message.IdUserReceiver ? cache.friends[user.UserName].IsRead ? cache.friends[user.UserName].IsRead : 0 : cache.friends[user.UserName].IsRead + 1
+        if (cache.chatUserInfo.UserName)
+          ref.readMessages(cache.chatUserInfo.UserName)
         if(ref.changeFriends)
           ref.changeFriends({...cache.friends})
         setTimeout(()=>ref.scrollDown(),0)
       }
-      socket.current.on('message',(obj)=>{
-        console.log("ON MEssage")
-        ref.getMessage(obj)
+      socket.current.on('message',(obj)=>ref.getMessage(obj))
+      socket.current.on('notice',(noticeObject)=>{
+        const {user,Type,IdNotification,DateCreation} = JSON.parse(noticeObject)
+        if (Type === "LikedBack")
+          ref.addFriend(user)
+        cache.notifications.data = [{IdNotification,Type,DateCreation,UserName:user.UserName,Images:user.Images},...cache.notifications.data]
+        cache.notifications.IsRead = cache.notifications.IsRead + 1
+        if (ref.changeNotifications)
+        {
+          ref.readNotifications()
+          ref.changeNotifications({...cache.notifications})
+        }
+        ref.countIsRead()
       })
       socket.current.on('status',(statusObject)=>{
-        console.log("ENTER STATUS",statusObject)
         const {Active,date,UserName} = JSON.parse(statusObject)
-        cache.friends[UserName].Active = Active
-        cache.friends[UserName].LastLogin = date
-        if (ref.changeFriends)
-          ref.changeFriends({...cache.friends})
+        if (cache.friends[UserName])
+        {
+          cache.friends[UserName].Active = Active
+          cache.friends[UserName].LastLogin = date
+          if (ref.changeFriends)
+            ref.changeFriends({...cache.friends})
+        }
       })
       ref.sendMessage = messageObject=> {
         socket.current.emit('message',JSON.stringify(messageObject))
         ref.getMessage(JSON.stringify(messageObject))
       }
       ref.scrollDown = ()=>{
-        console.log("SCROOLL",ref.ChatContent)
         if (ref.ChatContent && ref.ChatContent.current)
-        {
-          console.dir(ref.ChatContent.current)
           ref.ChatContent.current.scrollTop = ref.ChatContent.current.scrollHeight
-        }
       }
+      ref.getNotifications()
+      ref.countIsRead()
       Axios.get('Friends').then(data=>{
         if (data.data !== "bad request")
         {

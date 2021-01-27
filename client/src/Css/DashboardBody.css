@@ -51,5 +51,6 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  margin-top: 20px;
+  /* margin-top: 20px; */
+  height: 94%;
 }

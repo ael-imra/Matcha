@@ -29,6 +29,9 @@ function Messages(props) {
   const ctx = useContext(DataContext)
   const [friends,changeFriends] = useState({...ctx.cache.friends})
   useEffect(()=>{
+    ctx.ref.search(props.search)
+  },[props.search])
+  useEffect(()=>{
     ctx.ref.changeFriends = changeFriends
     return (()=>ctx.ref.changeFriends = null)// eslint-disable-next-line
   },[])
@@ -45,6 +48,7 @@ function Messages(props) {
             onClick={() =>{
               ctx.cache.chatUserInfo = {...friends[UserName]}
               ctx.ref.changeChatUserInfo({...friends[UserName]})
+              ctx.ref.readMessages(UserName)
             }}
           />)
         return null

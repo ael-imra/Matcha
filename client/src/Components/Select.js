@@ -5,7 +5,7 @@ import TextField from '@material-ui/core/TextField'
 function Select(props) {
   function init(propsList, listActive) {
     const newArray = []
-    if (propsList && propsList.length > 0 && listActive && listActive.length)
+    if (propsList && propsList.length > 0 && listActive && listActive.length >=0)
     {
       propsList.map((item, index) =>
         newArray.push({

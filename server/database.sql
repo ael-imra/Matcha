@@ -30,12 +30,13 @@ CREATE TABLE IF NOT EXISTS `Friends` (
     FOREIGN KEY (`IdUserOwner`) REFERENCES `Users`(`IdUserOwner`),
     FOREIGN KEY (`IdUserReceiver`) REFERENCES `Users`(`IdUserOwner`)
 );
-CREATE TABLE IF NOT EXISTS `Notification` (
+CREATE TABLE IF NOT EXISTS `Notifications` (
     `IdNotification` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `IdUserOwner` INT NOT NULL,
     `IdUserReceiver` INT NOT NULL,
-    `Category` VARCHAR(255) NOT NULL,
-    `DateCreation` VARCHAR(255) NOT NULL,
+    `Type` VARCHAR(255) NOT NULL,
+    `DateCreation` DateTime DEFAULT NOW(),
+    `IsRead` INT DEFAULT 0,
     FOREIGN KEY (`IdUserOwner`) REFERENCES `Users`(`IdUserOwner`),
     FOREIGN KEY (`IdUserReceiver`) REFERENCES `Users`(`IdUserOwner`)
 );
@@ -65,3 +66,17 @@ CREATE TABLE IF NOT EXISTS `Hitory` (
     FOREIGN KEY (IdUserOwner) REFERENCES `Users`(IdUserOwner),
     FOREIGN KEY (IdUserReceiver) REFERENCES `Users`(IdUserOwner)
 );
+DELIMITER $$
+CREATE FUNCTION CalcDistance (lat decimal, lng decimal,Id INT) 
+RETURNS decimal
+DETERMINISTIC
+BEGIN 
+  DECLARE myLat decimal;
+  DECLARE myLng decimal;
+  DECLARE distance decimal;
+  SET myLat = (SELECT Latitude FROM Users WHERE IdUserOwner=Id);
+  SET myLng = (SELECT Longitude FROM Users WHERE IdUserOwner=Id);
+  SET distance = (3959*acos(cos(radians(myLat))*cos(radians(lat))*cos(radians(lng)-radians(myLng))+sin(radians(myLat))*sin(radians(lat))));
+  RETURN distance;
+END$$
+DELIMITER ;

@@ -2,7 +2,7 @@ import React from 'react'
 import { useWindowSize } from './UseWindowSize'
 
 const Step3 = (props) => {
-  const width = useWindowSize()
+  const size = useWindowSize()
   let deActives = () => {
     let arrayBtn = Array.from(document.querySelectorAll('.Switch-btn button'))
     arrayBtn.forEach((btn) => {
@@ -35,7 +35,7 @@ const Step3 = (props) => {
         className="t3"
         style={{
           color: props.Mode === 'Dark' ? 'white' : 'black',
-          fontSize: width <= 885 ? '18px' : '23px',
+          fontSize: size.width <= 885 ? '18px' : '23px',
         }}
       >
         What's you gender ?
@@ -66,7 +66,7 @@ const Step3 = (props) => {
         className="t3"
         style={{
           color: props.Mode === 'Dark' ? 'white' : 'black',
-          fontSize: width <= 885 ? '15px' : '23px',
+          fontSize: size.width <= 885 ? '15px' : '23px',
         }}
       >
         What gender you are looking for ?

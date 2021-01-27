@@ -12,14 +12,23 @@ router.post('/Invite',async (req,res)=>{
       const checkFriends = await locals.query('SELECT * FROM Friends WHERE (IdUserOwner=? AND IdUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?)',[req.userInfo.IdUserOwner,IdUserOwner,IdUserOwner,req.userInfo.IdUserOwner])
       if (checkFriends && checkFriends.length > 0)
       {
+        const UserOwner = checkFriends[0].IdUserOwner === req.userInfo.IdUserOwner ? req.userInfo.UserName : UserName
+        const UserReceiver = UserOwner === UserName ? req.userInfo.UserName : UserName
         if (checkFriends[0].Match)
+        {
+          locals.notification(req,'Unlike',UserOwner,UserReceiver)
           locals.update('Friends',{Match:0},{IdUserOwner:checkFriends[0].IdUserOwner,IdUserReceiver:checkFriends[0].IdUserReceiver})
+        }
         else
+        {
+          locals.notification(req,'LikedBack',UserOwner,UserReceiver)
           locals.update('Friends',{Match:1},{IdUserOwner:checkFriends[0].IdUserOwner,IdUserReceiver:checkFriends[0].IdUserReceiver})
+        }
         locals.sendResponse(res,200,'Friend has been updated')
       }
       else
       {
+        locals.notification(req,'LikedBack',req.userInfo.UserName,UserName)
         locals.insert('Friends',{IdUserOwner:req.userInfo.IdUserOwner,IdUserReceiver:IdUserOwner})
         locals.sendResponse(res,200,'Friend has been created')
       }
@@ -39,8 +48,9 @@ router.get('/',async (req,res)=>{
     let count = 0
     result.map(async(item,index)=>{
       const messages = await locals.query('SELECT IdMessages As "id",IdUserReceiver,Content,DateCreation As "date" FROM Messages WHERE (IdUserOwner=? AND idUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?) ORDER BY DateCreation DESC LIMIT 30',[req.userInfo.IdUserOwner,item.IdUserOwner,item.IdUserOwner,req.userInfo.IdUserOwner])
+      const messagesReversed = messages.reverse()
       const IsRead = await locals.select('Messages','COUNT(*) AS IsRead',{IsRead:0,IdUserOwner:item.IdUserOwner,IdUserReceiver:req.userInfo.IdUserOwner})
-      resultObject[result[index].UserName]={...item,Images:JSON.parse(item.Images)[0],messages:messages.length < 30 ? ["limit",...messages]:messages,IsRead:IsRead.length > 0 ? IsRead[0].IsRead:0}
+      resultObject[result[index].UserName]={...item,Images:JSON.parse(item.Images)[0],messages:messagesReversed.length < 30 ? ["limit",...messagesReversed]:messagesReversed,IsRead:IsRead.length > 0 ? IsRead[0].IsRead:0}
       count++
       if (count === result.length)
         locals.sendResponse(res,200,resultObject,true)

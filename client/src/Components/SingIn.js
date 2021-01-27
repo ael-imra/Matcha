@@ -12,7 +12,7 @@ const SingIn = (props) => {
   const [DataInput, saveDataInput] = useState([])
   const inputRef = useRef([])
   inputRef.current = new Array(2)
-  const width = useWindowSize()
+  const size = useWindowSize()
   useEffect(() => {
     saveDataInput(inputRef.current)
     inputRef.current[0].focus()
@@ -139,7 +139,7 @@ const SingIn = (props) => {
           style={{
             paddingLeft: '25px',
             paddingRight: '25px',
-            marginTop: width <= 885 ? '35px' : '20px',
+            marginTop: size.width <= 885 ? '35px' : '20px',
             backgroundColor: '#03a9f1',
           }}
         >

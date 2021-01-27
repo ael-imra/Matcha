@@ -7,7 +7,7 @@ import Axios from 'axios'
 const ForgotPassword = (props) => {
   const [findError, ChangeError] = useState([''])
   const inputRef = useRef([])
-  const width = useWindowSize()
+  const size = useWindowSize()
   const ctx = useContext(DataContext)
   inputRef.current = new Array(1)
   useEffect(() => {
@@ -86,7 +86,7 @@ const ForgotPassword = (props) => {
         style={{
           paddingLeft: '25px',
           paddingRight: '25px',
-          marginTop: width <= 885 ? '35px' : '20px',
+          marginTop: size.width <= 885 ? '35px' : '20px',
           backgroundColor: '#03a9f1',
         }}
       >

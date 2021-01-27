@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button'
 import { useWindowSize } from './UseWindowSize'
 
 const Step4 = (props) => {
-  const width = useWindowSize()
+  const size = useWindowSize()
   let getImage = (e) => {
     if (e.target.files && e.target.files[0]) {
       let reader = new FileReader()
@@ -63,7 +63,7 @@ const Step4 = (props) => {
                 position: 'absolute',
                 transition: 'all 0.5s',
                 fontWeight: '600',
-                height: width <= 885 ? '30px' : 'auto',
+                height: size.width <= 885 ? '30px' : 'auto',
                 fontSize: '10px',
                 padding: '8px',
               }}
@@ -73,7 +73,7 @@ const Step4 = (props) => {
               onClick={deleteImage}
               startIcon={<DeleteIcon />}
             >
-              {width <= 885 ? '' : 'Delete'}
+              {size.width <= 885 ? '' : 'Delete'}
             </Button>
             {imageSrc.default === 0 ? (
               <Button
@@ -83,7 +83,7 @@ const Step4 = (props) => {
                   fontWeight: '600',
                   backgroundColor: '#03a9f1',
                   fontSize: '10px',
-                  height: width <= 885 ? '30px' : 'auto',
+                  height: size.width <= 885 ? '30px' : 'auto',
                   padding: '8px',
                 }}
                 variant="contained"
@@ -92,7 +92,7 @@ const Step4 = (props) => {
                 onClick={makeImageDefault}
                 startIcon={<CheckIcon />}
               >
-                {width <= 885 ? '' : 'make default'}
+                {size.width <= 885 ? '' : 'make default'}
               </Button>
             ) : (
               ''

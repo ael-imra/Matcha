@@ -33,8 +33,3 @@ body {
     scrollbar-width: thin;
   }
 }
-@media only screen and (max-width: 885px) {
-  #root {
-    overflow: auto;
-  }
-}

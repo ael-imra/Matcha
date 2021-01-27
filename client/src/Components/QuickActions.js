@@ -2,25 +2,26 @@ import React, { useContext, useState, useEffect } from 'react'
 import { Friends } from './Friends'
 import '../Css/QuickActions.css'
 import { Search } from './Search'
-import { Switch } from './Switch'
 import { Messages } from './Messages' // eslint-disable-next-line
 import { Chat } from './Chat' // eslint-disable-next-line
 import { IconButtonBack } from './Icons'
 import { Notification } from './Notification'
 import { DataContext } from '../Context/AppContext'
+import {PeopleAlt as PeopleAltIcon,Mail as MailIcon,Notifications as NotificationsIcon} from '@material-ui/icons';
+import {Tabs,Tab,Paper,Badge} from '@material-ui/core';
 function QuickActions(props) {
   const ctx = useContext(DataContext)
   const [CurrentAction, ChangeCurrentAction] = useState('Friends')
   const [search, changeSearch] = useState('')
   const [chatUserInfo,changeChatUserInfo] = useState({})
-  const style = {
-    width: '100%',
-    fontWeight: 'bold',
-    fontSize: '20px',
-  }
+  const [IsRead,changeIsRead] = useState({...ctx.cache.IsRead})
   useEffect(()=>{
     ctx.ref.changeChatUserInfo = changeChatUserInfo
-    return (()=>ctx.ref.changeChatUserInfo = null)// eslint-disable-next-line
+    ctx.ref.changeIsRead = changeIsRead
+    return (()=>{
+      ctx.ref.changeChatUserInfo = null
+      ctx.ref.changeIsRead = null
+    })// eslint-disable-next-line
   },[])
   return (
     <div
@@ -51,18 +52,28 @@ function QuickActions(props) {
             : { display: chatUserInfo.UserName ? 'none' : 'flex' }
         }
       >
-        <div className="QuickActionsMenu">
-          <Switch
-            list={['Friends', 'Messages', 'Notification']}
-            active={CurrentAction}
-            switch={ChangeCurrentAction}
-            style={style}
-          />
-        </div>
+          <Paper square>
+            <Tabs
+            value={['Friends','Messages','Notification'].indexOf(CurrentAction)}
+            onChange={(event,value)=>{
+              ChangeCurrentAction(['Friends','Messages','Notification'][value])
+              if (value === 2)
+                ctx.ref.readNotifications()
+            }}
+              variant="fullWidth"
+              indicatorColor="secondary"
+              textColor="secondary"
+              aria-label="icon label tabs example"
+            >
+              <Tab icon={<Badge color="secondary"><PeopleAltIcon /></Badge>} label="Friends" />
+              <Tab icon={<Badge color={IsRead.messages === 0 ? "secondary" : "error"} badgeContent={IsRead.messages} showZero><MailIcon /></Badge>} label="Messages" />
+              <Tab icon={<Badge color={IsRead.notifications === 0 ? "secondary" : "error"} badgeContent={IsRead.notifications} showZero><NotificationsIcon /></Badge>} label="Notification" />
+            </Tabs>
+          </Paper>
         <Search search={search} changeSearch={changeSearch} />
         {CurrentAction === 'Friends' ? <Friends search={search} />:null}
-        {CurrentAction === 'Messages' ? <Messages />:null}
-        {CurrentAction === 'Notification' ? <Notification/> : null}
+        {CurrentAction === 'Messages' ? <Messages search={search} />:null}
+        {CurrentAction === 'Notification' ? <Notification search={search}/> : null}
       </div>
       {chatUserInfo.UserName ? <div
           className="CloseChat"

@@ -12,10 +12,13 @@ const { sendMail } = require('./tools/mail')
 const crypto = require('crypto')
 const Friends = require('./Router/Friends')
 const Messages = require('./Router/Messages')
+const Notifications = require('./Router/Notifications')
 const io = require('socket.io')(http,{
   cors: {
     origin: "*",
-  }
+  },
+  transports: ['websocket', 'polling'],
+  pingInterval: 60000
 })
 
 tools.init(app, {...mysql,...tools,sendMail,crypto,sockets:[]})
@@ -39,7 +42,7 @@ io.on('connection',(socket)=>{
       socket.UserName = result[0].UserName
       socket.Images = JSON.parse(result[0].Images)[0]
       app.locals.sockets.push(socket)
-      sendFriendMyState(1,result[0].IdUserOwner,result[0].UserName,[...app.locals.sockets])
+      setTimeout(()=>sendFriendMyState(1,result[0].IdUserOwner,result[0].UserName,app.locals.sockets),500)
     }
   })
   socket.on('message',async (obj)=>{
@@ -52,7 +55,7 @@ io.on('connection',(socket)=>{
       {
         let sockerOfFriend = null
         app.locals.sockets.map(item=>{
-          if (item.IdUserOwner === IdUserOwner || item.IdUserOwner === IdUserOwner)
+          if (item.IdUserOwner === IdUserOwner)
             sockerOfFriend = item
         })
         if(sockerOfFriend)
@@ -67,9 +70,9 @@ io.on('connection',(socket)=>{
   })
   socket.on('disconnect',async ()=>{
     console.log("user Disconnected")
-    sendFriendMyState(0,socket.IdUserOwner,socket.UserName,[...app.locals.sockets])
     mysql.update('Users',{Active:0,LastLogin:new Date(Date.now())},{IdUserOwner:socket.IdUserOwner})
     app.locals.sockets = app.locals.sockets.filter(item=>item.IdUserOwner !== socket.IdUserOwner)
+    setTimeout(()=>sendFriendMyState(0,socket.IdUserOwner,socket.UserName,app.locals.sockets),500)
   })
 })
 app.use(cors())
@@ -81,6 +84,7 @@ app.use('/Users', users)
 app.use('/Rating',auth, rating)
 app.use('/Friends',auth,Friends)
 app.use('/Messages',auth,Messages)
+app.use('/Notifications',auth,Notifications)
 app.get('/image/:image', (req, res) => {
   res.sendFile(`${__dirname}/${req.params.image}`)
 })

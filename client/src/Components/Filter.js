@@ -8,11 +8,11 @@ import '../Css/Filter.css'
 
 function Filter() {
   const ctx = useContext(DataContext)
-  const [listActive, changeListActive] = useState(ctx.filterData.list)
-  const [name, changeName] = useState(ctx.filterData.name)
-  const [age, changeAge] = useState(ctx.filterData.age)
-  const [rating, changeRating] = useState(ctx.filterData.rating)
-  const [location, changeLocation] = useState(ctx.filterData.location)
+  const [listActive, changeListActive] = useState(ctx.cache.filterData.list)
+  const [name, changeName] = useState(ctx.cache.filterData.name)
+  const [age, changeAge] = useState(ctx.cache.filterData.age)
+  const [rating, changeRating] = useState(ctx.cache.filterData.rating)
+  const [location, changeLocation] = useState(ctx.cache.filterData.location)
   const list = [
     'Youtube',
     'Facebook',
@@ -86,7 +86,8 @@ function Filter() {
             variant="contained"
             color="primary"
             onClick={() => {
-              ctx.filterData = {
+              ctx.cache.users = []
+              ctx.cache.filterData = {
                 list: listActive,
                 name,
                 age,
@@ -94,6 +95,8 @@ function Filter() {
                 location,
                 updated: true,
               }
+              if (ctx.ref.changeUsers)
+                ctx.ref.changeUsers([])
             }}
           >
             Search

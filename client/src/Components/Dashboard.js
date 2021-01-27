@@ -39,29 +39,30 @@ function Layout(props) {
   );
 }
 function Dashboard(props) {
-  const width = useWindowSize();
+  const size = useWindowSize();
   const [LayoutHide, changeLayoutHide] = useState(true);
   const friendsList = []
   const messagesData = []
   let chatUserInfo = {}
   useEffect(() => {
-    if (width > 1540) changeLayoutHide(false);
-    else if (width <= 1540) changeLayoutHide(true);// eslint-disable-next-line
-  }, [width]);
+    if (size.width > 1540) changeLayoutHide(false);
+    else if (size.width <= 1540) changeLayoutHide(true);// eslint-disable-next-line
+  }, [size.width]);
   return (
     <div className='Dashboard' style={ModeStyle['Light'].Dashboard}>
-      {width < 1540 ? (
+      {size.width < 1540 ? (
         <Layout
           style={{
             width: !LayoutHide ? '285px' : '0px',
             minWidth: !LayoutHide ? '285px' : '0px',
+            overflow:!LayoutHide?'inherit':'hidden'
           }}
            friendsList={friendsList} messagesData={messagesData} chatUserInfo={chatUserInfo} 
         />
       ) : null}
-      {width >= 1540 ? <Nav /> : null}
-      <DashboardBody style={{ zIndex: 7 }} changeLayoutHide={()=>changeLayoutHide(oldValue=>!oldValue)} width={width}/>
-      {width >= 1540 ? <QuickActions friendsList={friendsList} messagesData={messagesData} chatUserInfo={chatUserInfo} /> : null}
+      {size.width >= 1540 ? <Nav /> : null}
+      <DashboardBody style={{ zIndex: 7 }} changeLayoutHide={changeLayoutHide} width={size.width}/>
+      {size.width >= 1540 ? <QuickActions friendsList={friendsList} messagesData={messagesData} chatUserInfo={chatUserInfo} /> : null}
     </div>
   );
 }
