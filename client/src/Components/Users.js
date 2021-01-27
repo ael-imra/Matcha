@@ -159,7 +159,7 @@ function Users() {
             city={obj.City}
             rating={obj.rating}
             gender={obj.Gender}
-            age={obj.Age}
+            age={25}
             userName={obj.UserName}
             distance={obj.distance}
             listInterest={JSON.parse(obj.ListInterest)}

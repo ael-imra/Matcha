@@ -1,104 +1,101 @@
-import React, { useContext } from 'react'
-import '../Css/body.css'
-import ChatLogo from '../Images/online-world.svg'
-import { CSSTransition, TransitionGroup } from 'react-transition-group'
-import { DataContext } from '../Context/AppContext'
-import Home from './Home'
-import { useWindowSize } from './UseWindowSize'
-import Steps from './Steps'
-import Snackbar from '@material-ui/core/Snackbar'
-import Alert from '@material-ui/lab/Alert'
-import { BrowserRouter as Switch, Route } from 'react-router-dom'
-import ResetPassword from './ResetPassword'
+import React from 'react';
+import '../Css/body.css';
+import ChatLogo from '../Images/online-world.svg';
+import Home from './Home';
+import { useWindowSize } from './UseWindowSize';
+import Steps from './Steps';
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
+import { Route, Switch, useHistory } from 'react-router-dom';
+import ResetPassword from './ResetPassword';
+import SingUp from './SingUp';
+import SingIn from './SingIn';
 const Body = (props) => {
-  const size = useWindowSize()
-  const ctx = useContext(DataContext)
-  const [showMessage, changeShowMessage] = React.useState(false)
+  const history = useHistory();
+  const width = useWindowSize();
+  const [showMessage, changeShowMessage] = React.useState(false);
+  const [ErrorMessages, ChangeErrorMessages] = React.useState({
+    error: '',
+    warning: '',
+    success: '',
+  });
   const handleClose = (event, reason) => {
-    ctx.ChangeErrorMessages({
+    ChangeErrorMessages({
       error: '',
       warning: '',
       success: '',
-    })
-  }
+    });
+  };
   React.useEffect(() => {
-    if (
-      ctx.ErrorMessages.error !== '' ||
-      ctx.ErrorMessages.warning !== '' ||
-      ctx.ErrorMessages.success !== ''
-    )
-      changeShowMessage(true)
-    else changeShowMessage(false)
-  }, [
-    ctx.ErrorMessages.error,
-    ctx.ErrorMessages.warning,
-    ctx.ErrorMessages.success,
-  ])
+    if (ErrorMessages.error !== '' || ErrorMessages.warning !== '' || ErrorMessages.success !== '') changeShowMessage(true);
+    else changeShowMessage(false);
+  }, [ErrorMessages.error, ErrorMessages.warning, ErrorMessages.success]);
+  console.log('Body');
 
+  function Error404() {
+    React.useEffect(() => {
+      history.push('/');
+    }, []);
+    return <div></div>;
+  }
   return (
-    <div className="body">
+    <div className='body'>
       <Switch>
-        <Route exact path="/">
-          <>
-            <TransitionGroup
-              className="body-titre"
-              style={{
-                height:
-                  props.dataHome.StateHome === 1 ||
-                  props.dataHome.StateHome === 4
-                    ? '360px'
-                    : props.dataHome.StateHome === 5
-                    ? '230px'
-                    : props.dataHome.StateHome === 2
-                    ? '562px'
-                    : '487px',
-                marginTop:
-                  size.width <= 885
-                    ? props.dataHome.StateHome === 1
-                      ? '120px'
-                      : '45px'
-                    : '0px',
-              }}
-            >
-              <CSSTransition
-                key={props.dataHome.StateHome}
-                timeout={800}
-                classNames="alert"
-                unmountOnExit
-              >
-                <Home dataHome={props.dataHome} />
-              </CSSTransition>
-            </TransitionGroup>
-            <div className="body-img">
-              <img src={ChatLogo} alt="..." />
-            </div>
-          </>
+        <Route exact path='/'>
+          <div
+            className='body-titre'
+            style={{
+              height: props.dataHome.StateHome === 1 || props.dataHome.StateHome === 4 ? '360px' : props.dataHome.StateHome === 5 ? '230px' : props.dataHome.StateHome === 2 ? '562px' : '487px',
+              marginTop: width <= 885 ? (props.dataHome.StateHome === 1 ? '120px' : '45px') : '0px',
+            }}>
+            <Home dataHome={{ ...props.dataHome, ChangeErrorMessages }} />
+          </div>
+          <div className='body-img'>
+            <img src={ChatLogo} alt='...' />
+          </div>
         </Route>
-        <Route path="/Step/:token">
-          <Steps dataHome={props.dataHome} />
+        <Route exact path='/Step'>
+          <Steps dataHome={{ ...props.dataHome, ChangeErrorMessages }} />
         </Route>
-        <Route path="/ForgatPassword/:token">
+        <Route exact path='/ForgatPassword/:token'>
           <ResetPassword dataHome={props.dataHome} />
+        </Route>
+        <Route exact path='/singUp'>
+          <div
+            className='body-titre'
+            style={{
+              height: '562px',
+              marginTop: width <= 885 ? (props.dataHome.StateHome === 1 ? '120px' : '45px') : '0px',
+            }}>
+            <SingUp dataHome={{ ...props.dataHome, ChangeErrorMessages }} />
+          </div>
+          <div className='body-img'>
+            <img src={ChatLogo} alt='...' />
+          </div>
+        </Route>
+        <Route exact path='/singIn'>
+          <div
+            className='body-titre'
+            style={{
+              height: '562px',
+              marginTop: width <= 885 ? (props.dataHome.StateHome === 1 ? '120px' : '45px') : '0px',
+            }}>
+            <SingIn dataHome={{ ...props.dataHome, ChangeErrorMessages }} />
+          </div>
+          <div className='body-img'>
+            <img src={ChatLogo} alt='...' />
+          </div>
+        </Route>
+        <Route path='*'>
+          <Error404 />
         </Route>
       </Switch>
 
-      <Snackbar
-        open={showMessage}
-        autoHideDuration={6000}
-        onClose={handleClose}
-      >
-        {ctx.ErrorMessages.error !== '' ? (
-          <Alert severity="error">{ctx.ErrorMessages.error}</Alert>
-        ) : ctx.ErrorMessages.warning !== '' ? (
-          <Alert severity="warning">{ctx.ErrorMessages.warning}</Alert>
-        ) : ctx.ErrorMessages.success !== '' ? (
-          <Alert severity="success">{ctx.ErrorMessages.success}</Alert>
-        ) : (
-          <p></p>
-        )}
+      <Snackbar open={showMessage} autoHideDuration={6000} onClose={handleClose}>
+        {ErrorMessages.error !== '' ? <Alert severity='error'>{ErrorMessages.error}</Alert> : ErrorMessages.warning !== '' ? <Alert severity='warning'>{ErrorMessages.warning}</Alert> : ErrorMessages.success !== '' ? <Alert severity='success'>{ErrorMessages.success}</Alert> : <p></p>}
       </Snackbar>
     </div>
-  )
-}
+  );
+};
 
-export default Body
+export default Body;

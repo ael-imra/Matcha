@@ -11,25 +11,19 @@
 .Step > div {
   height: 75%;
 }
-.Step .Info-step {
+.Info-step {
   width: 550px;
   display: flex;
   flex-flow: column;
   justify-content: space-evenly;
 }
-.Step .Step-count {
+.Step-count {
   width: 65px;
   transform: translateY(-30px);
 }
-.Step .Image-step {
+.image-step {
   width: 550px;
   height: 550px;
-  overflow: hidden;
-  transform: translateY(-30px);
-}
-.Step .Image-step img {
-  width: 100%;
-  height: 100%;
 }
 .Step-count {
   display: flex;
@@ -80,28 +74,12 @@
 }
 .Info-step > div:nth-of-type(1) {
   width: 100%;
-  height: 60%;
+  height: 380px;
   margin-left: 55px;
   animation: fade-in-left 0.6s cubic-bezier(0.39, 0.575, 0.565, 1) both;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-.Info-step > div:nth-of-type(1) > div:nth-of-type(1) {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  left: 0px;
-  top: 0px;
+  justify-content: center;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  overflow-y: scroll;
-  padding-left: 12px;
-}
-.Info-step > div:nth-of-type(1) > div:nth-of-type(1)::-webkit-scrollbar {
-  display: none;
 }
 .Info-step > div:nth-of-type(2) {
   width: 100%;
@@ -111,36 +89,16 @@
   justify-content: space-evenly;
   animation: fade-in-bottom 0.6s cubic-bezier(0.39, 0.575, 0.565, 1) both;
 }
-
-.SwitchStep-enter {
-  transform: translateY(-50px);
-  opacity: 0;
-  transition: opacity 800ms, transform 800ms;
-}
-.SwitchStep-enter-active {
-  transform: translateY(0);
-  opacity: 1;
-  transition: opacity 800ms, transform 800ms;
-}
-.SwitchStep-exit {
-  opacity: 0;
-}
-.SwitchStep-exit-active {
-  opacity: 0;
-  transition: opacity 600ms, transform 600ms;
-}
 .abs {
   animation: fade-in-left 0.8s cubic-bezier(0.39, 0.575, 0.565, 1) both;
 }
 @keyframes fade-in-left {
   0% {
     -webkit-transform: translateX(-70px);
-    /* transform: translateX(-70px); */
     opacity: 0;
   }
   100% {
     -webkit-transform: translateX(0);
-    /* transform: translateX(0); */
     opacity: 1;
   }
 }
@@ -160,12 +118,10 @@
 @keyframes fade-in-bottom {
   0% {
     -webkit-transform: translateY(50px);
-    /* transform: translateY(50px); */
     opacity: 0;
   }
   100% {
     -webkit-transform: translateY(0);
-    /*transform: translateY(0); */
     opacity: 1;
   }
 }
@@ -177,34 +133,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-.choose-language {
-  min-width: 70px;
-  background-color: var(--main-color-Light);
-  height: 33px;
-  border-radius: 40px;
-  display: flex;
-  align-items: center;
-  padding-left: 10px;
-  padding-right: 10px;
-  justify-content: space-between;
-  margin-right: 5px;
-  margin-top: 10px;
-}
-.choose-language > p {
-  font-family: 'Roboto', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: white;
-}
-.choose-language img {
-  width: 8px;
-  height: 8px;
-  cursor: pointer;
-}
-.languages-active {
-  height: 40px;
-  display: flex;
 }
 
 .choosePicture {
@@ -279,7 +207,7 @@
   left: 0px;
   content: '';
   width: 0px;
-  height: 120px;
+  height: 100%;
   transition: all 0.5s;
   border-radius: 4px;
 }
@@ -327,11 +255,14 @@
   }
 }
 @media only screen and (max-width: 885px) {
-  .Step .Info-step {
-    width: 70%;
+  .Info-step {
+    width: 80%;
   }
-  .Step .Step-count {
+  .Step-count {
     width: 10%;
+  }
+  .image-step {
+    display: none;
   }
   .Step {
     padding-left: 0px;
@@ -343,7 +274,7 @@
     height: 100%;
   }
   .Step > div {
-    height: 90%;
+    height: 100%;
   }
   .Circle {
     width: 35px;

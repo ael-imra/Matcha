@@ -1,4 +1,5 @@
 const axios = require('axios')
+const Jimp = require('jimp')
 function init(app, obj) {
   for (const [key, value] of Object.entries(obj)) app.locals[key] = value
 }
@@ -39,34 +40,139 @@ function sendResponse(res, code, message, json) {
   else res.send(message)
   res.end()
 }
-function checkImage(src) {
+function checkImage(src, locals) {
   return new Promise((resolve) => {
-    const newImage = new Image()
-    const typeImage =
-      src.search(/data:image\/+/, '') && src.search(/[;][ -~]+/)
-        ? src
-            .replace(/[data:image/]+/, '')
-            .replace(/[;][ -~]+/, '')
-            .toLowerCase()
-        : null
-    const base64Data = src.search(
-      /^[data:image\/]+([jpg]|[png]|[jpeg]|[gif])+[;]/
-    )
-      ? src.replace(/^[data:image\/]+([jpg]|[png]|[jpeg]|[gif])+[;]/, '')
-      : null
-    if (typeImage && base64Data) {
-      newImage.src = src
-      newImage.onload = () => resolve({ typeImage, base64Data })
-      newImage.onerror = () => resolve({ typeImage: null, base64Data: null })
-    } else resolve({ typeImage: null, base64Data: null })
-  })
+    if (src && src !== '') {
+      const base64Data = src.split(',');
+      if (base64Data.length > 1) {
+        const nameImage = locals.crypto.randomBytes(16).toString('hex');
+        const url = `http://localhost:${process.env.PORT}/images/${nameImage}.jpg`;
+        const buffer = Buffer.from(base64Data[1], 'base64');
+        Jimp.read(buffer, (err, res) => {
+          if (err) resolve(null);
+          else {
+            res.quality(40).write(`./images/${nameImage}.jpg`);
+            resolve(url);
+          }
+        });
+      } else resolve(null);
+    } else resolve(null);
+  });
+}
+function checkImages(images) {
+ return new Promise((resolve) => {
+    let arr = [];
+    if (images.length > 0)
+      images.forEach((image) => {
+        let base64Data = image.split(',');
+        if (base64Data.length > 1) {
+          const buffer = Buffer.from(base64Data[1], 'base64');
+          Jimp.read(buffer, (err, res) => {
+            if (err) {
+              resolve(false);
+            } else {
+              arr.push('ok');
+            }
+            if (arr.length === images.length) resolve(true);
+          });
+        } else resolve(false);
+      });
+    else resolve(false);
+  });
 }
 function handleError(err,req,res,next){
-  console.log("ERR")
   if (err)
+  {
+    console.log("ERRR")
     req.app.locals.sendResponse(res,400,"Bad Request")
+  }
   else
     next()
+}
+let checkProfileOfYou = (token, UserName, locals) => {
+  return new Promise(async (resolve) => {
+    if (token && UserName && locals && token !== '' && UserName !== '') {
+      const result = await locals.select('Users', ['UserName'], {
+        Token: token,
+        IsActive: 1,
+      });
+      if (result[0]) {
+        if (result[0].UserName === UserName) resolve(true);
+        else resolve(false);
+      } else resolve(false);
+    } else resolve(false);
+  });
+};
+function handleError(err, req, res, next) {
+  if (err) req.app.locals.sendResponse(res, 400, 'Bad Request');
+  else next();
+}
+let getImage = (token, locals) => {
+  return new Promise(async (resolve) => {
+    if (token && locals && token != '') {
+      const result = await locals.select('Users', ['Images'], {
+        Token: token,
+        IsActive: 1,
+      });
+      if (result[0]) resolve(result);
+      else resolve(false);
+    } else resolve(false);
+  });
+};
+
+let getPassword = (token, locals) => {
+  return new Promise(async (resolve, reject) => {
+    if (token && locals && token != '') {
+      const result = await locals.select('Users', ['Password'], {
+        Token: token,
+        IsActive: 1,
+      });
+      if (result[0]) resolve(result);
+      else resolve(false);
+    } else resolve(false);
+  });
+};
+function getImageProfile(users) {
+  return new Promise((resolve) => {
+    let Array = [];
+    users.forEach((user) => {
+      user.Images = JSON.parse(user.Images)[0];
+      Array.push('ok');
+      if (Array.length === users.length) 
+        resolve('ok');
+    });
+    if (Array.length === users.length) 
+     resolve('ok');
+  });
+}
+function ifNotBlock(IdUserOwner, IdUserReceiver, locals) {
+  return new Promise(async (resolve) => {
+    const result1 = await locals.select('Blacklist', '*', {
+      IdUserOwner: IdUserOwner,
+      IdUserReceiver: IdUserReceiver,
+    });
+    const result2 = await locals.select('Blacklist', '*', {
+      IdUserOwner: IdUserReceiver,
+      IdUserReceiver: IdUserOwner,
+    });
+    if (!result1[0] && !result2[0]) resolve(true);
+    else resolve(false);
+  });
+}
+function verifyIdTokenGoogle(id) {
+  return new Promise(async (resolve) => {
+    try {
+      const ticket = await client.verifyIdToken({
+        idToken: id,
+        audience: '652872186498-sdfbthmnqp8tqnlnpmu3rsiv2v8rb8s5.apps.googleusercontent.com', // Specify the CLIENT_ID
+      });
+      const payload = ticket.getPayload();
+      const userEmail = payload;
+      resolve(userEmail.email);
+    } catch (error) {
+      resolve(false);
+    }
+  });
 }
 async function notification(req,Type,UserOwner,UserReceiver){
   const locals = req.app.locals
@@ -98,6 +204,13 @@ module.exports = {
   sendResponse,
   init,
   checkImage,
+  checkImages,
   notification,
-  handleError
+  handleError,
+  checkProfileOfYou,
+  getImage,
+  getPassword,
+  getImageProfile,
+  ifNotBlock,
+  verifyIdTokenGoogle,
 }

@@ -1,15 +1,11 @@
-import React from 'react'
-import Textarea from './Textarea'
-import data from '../Data/interests.json'
-
-import { Select } from './Select'
+import React from 'react';
+import Textarea from './Textarea';
+import data from '../Data/interests.json';
+import { Select } from './Select';
 const Step2 = (props) => {
   return (
-    <div>
-      <Textarea
-        InfoStep={props.InfoStep}
-        ChangeInfoStep={props.ChangeInfoStep}
-      />
+    <>
+      <Textarea InfoStep={props.InfoStep} ChangeInfoStep={props.ChangeInfoStep} />
       <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
         <Select
           list={data.data}
@@ -22,7 +18,7 @@ const Step2 = (props) => {
           }
         />
       </div>
-    </div>
-  )
-}
-export default Step2
+    </>
+  );
+};
+export default Step2;

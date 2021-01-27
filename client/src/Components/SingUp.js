@@ -1,220 +1,179 @@
-import React, { useContext, useRef, useState, useEffect } from 'react'
-import '../Css/sing_up.css'
-import Input from './Input'
-import { DataContext } from '../Context/AppContext'
-import { language } from '../Data/language/language'
-import SingSocialMedia from './SingSocialMedia'
-import Line from './Line'
-import { useWindowSize } from './UseWindowSize'
-import Axios from 'axios'
+import React, { useContext, useState } from 'react';
+import '../Css/sing_up.css';
+// import Input from './Input';
+import InputTest from './InputTest';
+import { DataContext } from '../Context/AppContext';
+import { language } from '../Data/language/language';
+import SingSocialMedia from './SingSocialMedia';
+import Line from './Line';
+import { useWindowSize } from './UseWindowSize';
+import Axios from 'axios';
+import { Validate } from './Validate';
 
 const SingUp = (props) => {
-  const size = useWindowSize()
-  const ctx = useContext(DataContext)
-  const [findError, ChangeError] = useState(['', '', '', '', ''])
-  const [dataUsers, ChangeDataUsers] = useState([])
-  const inputRef = useRef([])
-  inputRef.current = new Array(5)
+  const width = useWindowSize();
+  const ctx = useContext(DataContext);
+  const [DataInput, saveDataInput] = useState({ Email: '', Password: '', FirstName: '', LastName: '', UserName: '' });
 
   let insertUser = () => {
     try {
-      Axios.post('http://localhost:5000/Authentication/insert', {
-        UserName: inputRef.current[2].value,
-        LastName: inputRef.current[1].value,
-        FirstName: inputRef.current[0].value,
-        Password: inputRef.current[3].value,
-        Email: inputRef.current[4].value,
+      Axios.post('/Authentication/Insert', {
+        UserName: DataInput.UserName,
+        LastName: DataInput.LastName,
+        FirstName: DataInput.FirstName,
+        Password: DataInput.Password,
+        Email: DataInput.Email,
       })
         .then((result) => {
-          if (result.data === 'successful') props.dataHome.ChangeHome(5)
+          if (result.data === 'successful') props.dataHome.ChangeHome(5);
         })
         .catch((error) => {
-          ctx.ChangeErrorMessages({
+          props.dataHome.ChangeErrorMessages({
             error: '',
             warning: 'Error: Network Error',
             success: '',
-          })
-        })
+          });
+        });
     } catch (error) {
-      console.log('health check error')
+      console.log('health check error');
     }
-  }
-
-  useEffect(() => {
-    let getUsers = () => {
-      try {
-        Axios.get('http://localhost:5000/Users')
-          .then((result) => {
-            console.log(result.data)
-            ChangeDataUsers(result.data)
-          })
-          .catch((error) => {
-            ctx.ChangeErrorMessages({
-              error: '',
-              warning: 'Error: Network Error',
-              success: '',
-            })
-          })
-      } catch (error) {
-        console.log('health check error')
-      }
-    }
-    getUsers()
-    // eslint-disable-next-line
-  }, [])
+  };
   return (
-    <div className="sing">
-      <p
-        className="t1"
-        style={{ color: ctx.Mode === 'Dark' ? 'white' : 'black' }}
-      >
-        {language[ctx.Lang].SignuptoMatcha}
+    <div className='sing'>
+      <p className='t1' style={{ color: ctx.Mode === 'Dark' ? 'white' : 'black' }}>
+        Sign up to Matcha
       </p>
-      <SingSocialMedia titre={language[ctx.Lang].singUpINfb} />
-      <Line str="Or" color={ctx.Mode} />
-      <div className="form-sing">
-        <div className="inline-group">
-          <div className="form-group">
-            <p
-              className="t1"
-              style={{ color: ctx.Mode === 'Dark' ? 'white' : 'black' }}
-            >
-              {language[ctx.Lang].FirstName}
+      <SingSocialMedia titre={language[ctx.Lang].singUpINfb} ChangeErrorMessages={props.dataHome.ChangeErrorMessages} type='sing up' />
+      <Line str='Or' color={ctx.Mode} />
+      <div className='form-sing'>
+        <div className='inline-group'>
+          <div className='form-group'>
+            <p className='t1' style={{ color: ctx.Mode === 'Dark' ? 'white' : 'black' }}>
+              First Name
             </p>
-            <Input
-              SizeGrow={1}
-              type="text"
-              name="Name"
-              checkError={{ findError, ChangeError }}
-              Ref={inputRef}
-              index={0}
+            <InputTest
+              DefaultValue={DataInput.FirstName}
+              Onchange={(firstName) => {
+                saveDataInput((oldValue) => ({ ...oldValue, FirstName: firstName }));
+              }}
+              Disabled='false'
+              Type='text'
             />
           </div>
-          <div className="form-group">
+          <div className='form-group'>
             <p
               style={{
                 color: ctx.Mode === 'Dark' ? 'white' : 'black',
-              }}
-            >
-              {language[ctx.Lang].LastName}
+              }}>
+              Last Name
             </p>
-            <Input
-              SizeGrow={1}
-              type="text"
-              name="Name"
-              checkError={{ findError, ChangeError }}
-              Ref={inputRef}
-              index={1}
+            <InputTest
+              DefaultValue={DataInput.LastName}
+              Onchange={(lastName) => {
+                saveDataInput((oldValue) => ({ ...oldValue, LastName: lastName }));
+              }}
+              Disabled='false'
+              Type='text'
             />
           </div>
         </div>
-        <div className="inline-group">
-          <div className="form-group">
+        <div className='inline-group'>
+          <div className='form-group'>
             <p
               style={{
                 color: ctx.Mode === 'Dark' ? 'white' : 'black',
-              }}
-            >
-              {language[ctx.Lang].UseName}
+              }}>
+              Use Name
             </p>
-            <Input
-              SizeGrow={1}
-              type="text"
-              name="Username"
-              checkError={{ findError, ChangeError }}
-              Ref={inputRef}
-              index={2}
+            <InputTest
+              DefaultValue={DataInput.UserName}
+              Onchange={(useName) => {
+                saveDataInput((oldValue) => ({ ...oldValue, UserName: useName }));
+              }}
+              Disabled='false'
+              Type='text'
             />
           </div>
-          <div className="form-group">
+          <div className='form-group'>
             <p
               style={{
                 color: ctx.Mode === 'Dark' ? 'white' : 'black',
-              }}
-            >
-              {language[ctx.Lang].password}
+              }}>
+              Password
             </p>
-            <Input
-              SizeGrow={1}
-              type="password"
-              name="Password"
-              checkError={{ findError, ChangeError }}
-              Ref={inputRef}
-              index={3}
+            <InputTest
+              DefaultValue={DataInput.Password}
+              Onchange={(password) => {
+                saveDataInput((oldValue) => ({ ...oldValue, Password: password }));
+              }}
+              Disabled='false'
+              Type='password'
             />
           </div>
         </div>
-        <div className="form-group" style={{ width: '100%' }}>
+        <div className='form-group' style={{ width: '100%' }}>
           <p
             style={{
               color: ctx.Mode === 'Dark' ? 'white' : 'black',
-            }}
-          >
+            }}>
             Email
           </p>
-          <Input
-            SizeGrow={2}
-            type="email"
-            name="Email"
-            checkError={{ findError, ChangeError }}
-            Ref={inputRef}
-            index={4}
+          <InputTest
+            DefaultValue={DataInput.Email}
+            Onchange={(email) => {
+              saveDataInput((oldValue) => ({ ...oldValue, Email: email }));
+            }}
+            Disabled='false'
+            Type='Email'
           />
         </div>
         <button
-          onClick={() => {
-            let i = 0
-            findError.forEach((item, key) => {
-              if (item !== true) {
-                inputRef.current[key].value = ''
-                inputRef.current[key].className = 'Input input-error'
-                inputRef.current[key].placeholder = findError[key]
-                i = 1
-              }
-            })
-            dataUsers.forEach((user) => {
-              if (user.Email === inputRef.current[4].value) {
-                inputRef.current[4].value = ''
-                inputRef.current[4].className = 'Input input-error'
-                inputRef.current[4].placeholder = 'Email is ready exist'
-                i = 1
-              }
-              if (user.UserName === inputRef.current[2].value) {
-                inputRef.current[2].value = ''
-                inputRef.current[2].className = 'Input input-error'
-                inputRef.current[2].placeholder = 'User Name is ready exist'
-                i = 1
-              }
-            })
-            if (i === 0) insertUser()
+          onClick={async () => {
+            let errorInput = [];
+            if (Validate('Email', DataInput.Email)) {
+              let emailIsReadyTake = await Axios.get(`Users/EmailIsReadyTake/${DataInput.Email}`);
+              if (!emailIsReadyTake.data) errorInput.push('Email is Ready take');
+            } else errorInput.push('Email is not valid or empty');
+            if (Validate('Username', DataInput.UserName)) {
+              let userNameIsReadyTake = await Axios.get(`Users/UserNameIsReadyTake/${DataInput.UserName}`);
+              if (!userNameIsReadyTake.data) errorInput.push('UserName is Ready take');
+            } else errorInput.push('Username is not valid or empty');
+            if (!Validate('Password', DataInput.Password)) errorInput.push('Password is not valid');
+            if (!Validate('Name', DataInput.FirstName)) errorInput.push('FirstName is not valid');
+            if (!Validate('Name', DataInput.LastName)) errorInput.push('LastName is not valid');
+            if (errorInput.length === 0) insertUser();
+            else {
+              props.dataHome.ChangeErrorMessages({
+                warning: '',
+                error: await errorInput.map((element) => `- ${element}\n`),
+                success: '',
+              });
+            }
           }}
-          className="ft_btn"
+          className='ft_btn'
           style={{
             paddingLeft: '25px',
             paddingRight: '25px',
-            marginTop: size.width <= 885 ? '35px' : '20px',
+            marginTop: width <= 885 ? '35px' : '20px',
             backgroundColor: '#03a9f1',
-          }}
-        >
+          }}>
           {language[ctx.Lang].CreateAccount}
         </button>
         <p
           style={{
             color: ctx.Mode === 'Dark' ? 'white' : 'black',
-          }}
-        >
+          }}>
           {language[ctx.Lang].AlreadyAMember}?
           <span
             onClick={() => {
-              props.dataHome.ChangeHome(3)
-            }}
-          >
+              props.dataHome.ChangeHome(3);
+            }}>
             {language[ctx.Lang].singup2}
           </span>
         </p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SingUp
+export default SingUp;

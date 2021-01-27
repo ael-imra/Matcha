@@ -47,10 +47,9 @@
   width: 120px;
   height: 28px;
   position: absolute;
-  background-color: white;
+  background-color: var(--background-Friend);
   border-radius: 7px;
   transition: left 0.7s linear;
-  box-shadow: 0 0 6px #dadada;
 }
 .LayoutSwitchItem {
   width: 120px;
@@ -68,7 +67,7 @@
   z-index: 3;
 }
 .LayoutSwitchItem:hover:not(.LayoutSwitchItemActive) {
-  background-color: rgb(228, 228, 228);
+  background-color: var(--background-Friend-Hover);
 }
 .LayoutSwitchItemActive {
   color: cornflowerblue;

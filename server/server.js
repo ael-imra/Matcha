@@ -13,6 +13,9 @@ const crypto = require('crypto')
 const Friends = require('./Router/Friends')
 const Messages = require('./Router/Messages')
 const Notifications = require('./Router/Notifications')
+const Profile = require("./Router/Profile");
+const BlackList = require("./Router/BlackList");
+const History = require("./Router/History");
 const io = require('socket.io')(http,{
   cors: {
     origin: "*",
@@ -85,6 +88,9 @@ app.use('/Rating',auth, rating)
 app.use('/Friends',auth,Friends)
 app.use('/Messages',auth,Messages)
 app.use('/Notifications',auth,Notifications)
+app.use("/Profile", auth, Profile);
+app.use("/BlackList", auth, BlackList);
+app.use("/History", auth, History);
 app.get('/image/:image', (req, res) => {
   res.sendFile(`${__dirname}/${req.params.image}`)
 })

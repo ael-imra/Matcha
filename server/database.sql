@@ -63,20 +63,23 @@ CREATE TABLE IF NOT EXISTS `Hitory` (
     `IdUserOwner` INT NOT NULL,
     `IdUserReceiver` INT NOT NULL,
     `DateCreation` VARCHAR(255),
+    `Content` varchar(255),
     FOREIGN KEY (IdUserOwner) REFERENCES `Users`(IdUserOwner),
     FOREIGN KEY (IdUserReceiver) REFERENCES `Users`(IdUserOwner)
 );
-DELIMITER $$
-CREATE FUNCTION CalcDistance (lat decimal, lng decimal,Id INT) 
-RETURNS decimal
-DETERMINISTIC
-BEGIN 
-  DECLARE myLat decimal;
-  DECLARE myLng decimal;
-  DECLARE distance decimal;
-  SET myLat = (SELECT Latitude FROM Users WHERE IdUserOwner=Id);
-  SET myLng = (SELECT Longitude FROM Users WHERE IdUserOwner=Id);
-  SET distance = (3959*acos(cos(radians(myLat))*cos(radians(lat))*cos(radians(lng)-radians(myLng))+sin(radians(myLat))*sin(radians(lat))));
-  RETURN distance;
-END$$
-DELIMITER ;
+CREATE TABLE IF NOT EXISTS `Blacklist` (
+    `IdBlacklist` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `IdUserOwner` INT NOT NULL,
+    `IdUserReceiver` INT NOT NULL,
+    `DateBlock` VARCHAR(255),
+    FOREIGN KEY (IdUserOwner) REFERENCES `Users`(IdUserOwner),
+    FOREIGN KEY (IdUserReceiver) REFERENCES `Users`(IdUserOwner)
+);
+CREATE TABLE IF NOT EXISTS `report` (
+    `Idreport` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `IdUserOwner` INT NOT NULL,
+    `IdUserReceiver` INT NOT NULL,
+    `Datereport` VARCHAR(255),
+    FOREIGN KEY (IdUserOwner) REFERENCES `Users`(IdUserOwner),
+    FOREIGN KEY (IdUserReceiver) REFERENCES `Users`(IdUserOwner)
+);

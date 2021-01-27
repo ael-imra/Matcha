@@ -2,17 +2,18 @@
   width: 100%;
   height: 100%;
   display: flex;
-  align-items: center;
   justify-content: space-evenly;
 }
 .profile > div:nth-of-type(1) {
   width: 530px;
-  height: 1050px;
+  height: 993px;
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
   flex-direction: column;
   border-radius: 6px;
+  margin-left: auto;
+  margin-right: 10px;
 }
 
 .profile > div:nth-of-type(1) > div:nth-of-type(1) {
@@ -24,7 +25,7 @@
   flex-direction: column;
   align-items: center;
 }
-.profile > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) {
+.profile > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) {
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -44,7 +45,7 @@
   margin-bottom: 15px;
   margin-top: 18px;
   margin-left: 34px;
-  color: #050505;
+  color: var(--color-QuickActionsMenu);
 }
 .Images {
   width: 100%;
@@ -57,7 +58,19 @@
   margin-top: 18px;
   width: 170px;
   height: 170px;
+  position: relative;
+}
+.deleteProfile {
+  position: absolute;
+  bottom: 7px;
+  right: 7px;
+  background-color: var(--background-Input);
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .UseName {
   margin-top: 20px;
@@ -65,14 +78,14 @@
   font-weight: 600;
   letter-spacing: 1px;
   margin-bottom: 17px;
-  color: #1d1b1c;
+  color: var(--color-QuickActionsMenu);
 }
 .Email {
   margin-top: 0px;
   font-size: 20px;
   font-weight: 600;
   letter-spacing: 1px;
-  color: #1d1b1c;
+  color: var(--color-QuickActionsMenu);
 }
 .CountReviewFriend {
   width: 350px;
@@ -89,6 +102,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
+  color: var(--color-QuickActionsMenu);
 }
 .CountReviewFriend > div:nth-of-type(1) > p:nth-of-type(1),
 .CountReviewFriend > div:nth-of-type(3) > p:nth-of-type(1) {
@@ -103,31 +117,33 @@
   font-weight: 600;
   margin-top: 0px;
   margin-bottom: 0px;
-  color: #283049;
+  color: var(--color-QuickActionsMenu);
 }
 .CountReviewFriend > div:nth-of-type(2) {
   width: 4px;
   height: 80px;
-  background-color: #c4c4c4;
+  background-color: var(--background-QuickActionsMenu);
   border-radius: 5px;
 }
 .profile > div:nth-of-type(2) {
   width: 730px;
-  height: 1020px;
+  height: 993px;
   background-color: var(--background-QuickActions);
   border-radius: 8px;
+  margin-right: auto;
+  margin-left: 10px;
 }
 .profile > div:nth-of-type(2) > p {
   font-size: 20px;
   font-weight: 900;
   letter-spacing: 2px;
   margin-bottom: 20px;
-  margin-top: 34px;
+  margin-top: 20px;
   margin-left: 35px;
-  color: #050505;
+  color: var(--color-QuickActionsMenu);
 }
 .profile > div:nth-of-type(2) > div:nth-of-type(1) {
-  width: 620px;
+  width: 98%;
   height: 1px;
   border-radius: 8px;
   background-color: #c4c4c4;
@@ -143,7 +159,7 @@
   letter-spacing: 1px;
   margin-bottom: 20px;
   margin-top: 23px;
-  color: #050505;
+  color: var(--color-QuickActionsMenu);
   width: 35%;
 }
 .infoUser {
@@ -163,34 +179,24 @@
   font-family: 'Roboto', sans-serif !important;
   font-size: 15px !important;
   font-weight: 600 !important;
-  color: #373e4e !important;
+  color: var(--color-QuickActionsMenu) !important;
 }
 .MuiSelect-select:focus {
   border-radius: 8px !important;
-  background-color: #eef2fe !important;
+  background-color: var(--background-Input) !important;
 }
 
-input[type='date'] {
-  background-color: #eef2fe;
-  border-radius: 8px;
-  border: none;
+.inputDateBirthday {
   width: 100%;
 }
-::-webkit-calendar-picker-indicator {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  left: 82%;
-  opacity: 0;
-  cursor: pointer;
-}
+
 .slide-in-left {
   -webkit-animation: slide-in-left 0.7s ease-out;
   animation: slide-in-left 0.5s ease-out;
 }
 .addImage {
   width: 90%;
-  border: 2px dashed var(--background-Nav);
+  border: 1.5px dashed var(--background-Nav);
   height: 60px;
   display: flex;
   margin-left: auto;
@@ -202,7 +208,7 @@ input[type='date'] {
   justify-content: center;
   position: relative;
   cursor: pointer;
-  background-color: #eef2fe;
+  background-color: var(--background-Input);
 }
 .addImage:hover {
   background-color: var(--background-NavLink-Hover);
@@ -225,7 +231,6 @@ input[type='date'] {
 .Image {
   min-width: 220px;
   width: 220px;
-
   cursor: pointer;
   z-index: 1;
   position: relative;
@@ -241,27 +246,40 @@ input[type='date'] {
   object-fit: cover;
   border-radius: 8px;
 }
-.imageDefault,
+.imageFullScreen .imageDefault,
 .imageRemove {
   width: 121px;
-  transition: all 0.5s;
 }
 .imageRemove {
   top: -80px;
   left: 53px;
 }
+.imageFullScreen {
+  top: 150px;
+  left: -153px;
+}
 .imageDefault {
-  bottom: -80px;
+  top: 380px;
   left: 53px;
 }
 .Image:hover .imageRemove {
-  top: 25%;
+  top: 100px;
 }
 .Image:hover .imageDefault {
-  bottom: 25%;
+  top: 200px;
+}
+.Image:hover .imageFullScreen {
+  left: 53px;
 }
 .MuiPaper-rounded {
   border-radius: 12px !important;
+}
+.fullScreen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 @keyframes slide-in-left {
   0% {
@@ -291,7 +309,7 @@ input[type='date'] {
     opacity: 1;
   }
 }
-@media only screen and (max-width: 1946px) {
+@media only screen and (max-width: 1950px) {
   .infoUser {
     width: 500px;
   }
@@ -317,7 +335,7 @@ input[type='date'] {
     justify-content: flex-start;
   }
 }
-@media only screen and (max-width: 630px) {
+@media only screen and (max-width: 992px) {
   .profile {
     flex-direction: column;
     justify-content: flex-start;
@@ -364,7 +382,6 @@ input[type='date'] {
   .profile > div:nth-of-type(1) {
     height: auto;
     justify-content: flex-start;
-    overflow-x: hidden;
   }
   .profile > div:nth-of-type(1) > div:nth-of-type(1) {
     height: auto;
@@ -387,13 +404,24 @@ input[type='date'] {
     color: var(--main-color-Dark);
   }
   .infoUser {
-    width: 100%;
+    width: 95%;
+    flex-direction: column;
+    align-items: baseline;
   }
   .labelInfo {
-    font-size: 10px;
+    margin-bottom: 5px;
+    width: 100%;
   }
   .profile > div:nth-of-type(2) > p {
     margin-left: 0px;
     margin-top: 20px;
+  }
+  .profile > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) {
+    width: 50%;
+  }
+  .Images {
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
   }
 }

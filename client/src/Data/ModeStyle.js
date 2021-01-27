@@ -14,6 +14,10 @@ export const ModeStyle = {
       '--color-QuickActionsMenu': 'white',
       '--background-QuickActions': '#2f2f2f',
       '--background-DashboardBody': '#232323',
+      '--background-Input': '#373e4e',
+      '--background-Input-color': '#dee5fc',
+      '--background-Input-active': '#292f3f',
+      '--background-home': '#292f3f',
     },
   },
   Light: {
@@ -31,6 +35,10 @@ export const ModeStyle = {
       '--color-QuickActionsMenu': '#4c4b4b',
       '--background-QuickActions': '#e6e8f4',
       '--background-DashboardBody': 'white',
+      '--background-Input': '#eef2fe',
+      '--background-Input-color': '#373e4e',
+      '--background-Input-active': 'white',
+      '--background-home': '#ffffff',
     },
   },
-}
+};

@@ -1,13 +1,12 @@
-import React, { useContext } from 'react'
-import '../Css/textarea.css'
-import { DataContext } from '../Context/AppContext'
+import React, { useContext } from 'react';
+import '../Css/textarea.css';
+import { DataContext } from '../Context/AppContext';
 const Textarea = (props) => {
   const ctx = useContext(DataContext)
   let focus = (e) => {
     ctx.Mode === 'Light'
       ? (e.target.className = 'textarea Input input-active-light')
       : (e.target.className = 'Input input-dark')
-    console.log(props.InfoStep)
   }
   let blue = (e) => {
     ctx.Mode === 'Light'
@@ -36,4 +35,4 @@ const Textarea = (props) => {
   )
 }
 
-export default Textarea
+export default Textarea;

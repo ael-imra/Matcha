@@ -3,7 +3,7 @@ import { useWindowSize } from './UseWindowSize'
 import { DataContext } from '../Context/AppContext'
 
 const FinishSingUp = (props) => {
-  const size = useWindowSize()
+  const width = useWindowSize()
   const ctx = useContext(DataContext)
   return (
     <div>
@@ -27,7 +27,7 @@ const FinishSingUp = (props) => {
         style={{
           paddingLeft: '25px',
           paddingRight: '25px',
-          marginTop: size.width <= 885 ? '35px' : '20px',
+          marginTop: width <= 885 ? '35px' : '20px',
           backgroundColor: '#03a9f1',
         }}
       >

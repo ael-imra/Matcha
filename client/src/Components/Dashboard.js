@@ -1,10 +1,12 @@
-import React, { useState,useEffect} from 'react'; // eslint-disable-next-line
+import React, { useState,useEffect,useContext} from 'react'; // eslint-disable-next-line
 import { Nav } from './Nav';
 import { QuickActions } from './QuickActions';
 import '../Css/Dashboard.css';
 import { DashboardBody } from './DashboardBody'; // eslint-disable-next-line
 import { ModeStyle } from '../Data/ModeStyle';
 import {useWindowSize} from './UseWindowSize'
+import { CheckBoxTwoTone } from '@material-ui/icons';
+import { DataContext } from '../Context/AppContext';
 
 function Layout(props) {
   const [active, changeActive] = useState('Menu');
@@ -32,37 +34,38 @@ function Layout(props) {
         </div>
       </div>
       <div className='LayoutSelected'>
-        <Nav />
+        <Nav user={props.user} />
         <QuickActions  friendsList={props.friendsList} messagesData={props.messagesData} chatUserInfo={props.chatUserInfo} />
       </div>
     </div>
   );
 }
 function Dashboard(props) {
-  const size = useWindowSize();
+  const ctx = useContext(DataContext)
+  const userJSON = JSON.parse(localStorage.getItem('userInfo'))
+  console.log({...userJSON},"USERJON")
+  const [user, changeUser] = useState(userJSON);
+  const width = useWindowSize();
   const [LayoutHide, changeLayoutHide] = useState(true);
-  const friendsList = []
-  const messagesData = []
-  let chatUserInfo = {}
   useEffect(() => {
-    if (size.width > 1540) changeLayoutHide(false);
-    else if (size.width <= 1540) changeLayoutHide(true);// eslint-disable-next-line
-  }, [size.width]);
+    if (width > 1540) changeLayoutHide(false);
+    else if (width <= 1540) changeLayoutHide(true);// eslint-disable-next-line
+  }, [width]);
   return (
-    <div className='Dashboard' style={ModeStyle['Light'].Dashboard}>
-      {size.width < 1540 ? (
+    <div className='Dashboard' style={ModeStyle[ctx.Mode].Dashboard}>
+      {width < 1540 ? (
         <Layout
           style={{
             width: !LayoutHide ? '285px' : '0px',
             minWidth: !LayoutHide ? '285px' : '0px',
             overflow:!LayoutHide?'inherit':'hidden'
           }}
-           friendsList={friendsList} messagesData={messagesData} chatUserInfo={chatUserInfo} 
+          user={user}
         />
       ) : null}
-      {size.width >= 1540 ? <Nav /> : null}
-      <DashboardBody style={{ zIndex: 7 }} changeLayoutHide={changeLayoutHide} width={size.width}/>
-      {size.width >= 1540 ? <QuickActions friendsList={friendsList} messagesData={messagesData} chatUserInfo={chatUserInfo} /> : null}
+      {width >= 1540 ? <Nav user={user} /> : null}
+      <DashboardBody style={{ zIndex: 7 }} changeLayoutHide={changeLayoutHide} width={width} user={user} changeUser={changeUser} ChangeIsLogin={props.ChangeIsLogin}/>
+      {width >= 1540 ? <QuickActions /> : null}
     </div>
   );
 }

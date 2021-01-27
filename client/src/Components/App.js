@@ -1,49 +1,44 @@
-import React, { useState} from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import '../Css/App.css';
-import AppContext from '../Context/AppContext';
+import AppContext, { DataContext } from '../Context/AppContext';
 import Header from './Header';
 import Body from './Body';
 import '../Css/Btn.css';
+import Axios from 'axios';
+import { useHistory } from 'react-router-dom';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Dashboard } from './Dashboard';
+import { ModeStyle } from '../Data/ModeStyle';
+
 
 function App() {
-  // let history = useHistory();
+  let history = useHistory();
   const [StateHome, ChangeHome] = useState(1);
-  // const ctx = useContext(DataContext);
-  // useEffect(() => {
-  //   document.querySelector('body').style.backgroundColor = ctx.Mode === 'Light' ? '#ffffff' : '#292f3f';
-  // }, [ctx.Mode]);
-  // useEffect(() => {
-  //   try {
-  //     Axios.post('Users/user',
-  //       {},
-  //     )
-  //       .then((result) => {
-  //         if (Object.prototype.toString.call(result.data[0]) === '[object Object]') {
-  //           if (result.data[0].City === 'xxx') {
-  //             history.push(`/step/${result.data[0].Token}`);
-  //           } else {
-  //             ctx.changeUserInfo({ ...result.data[0] });
-  //           }
-  //         } else ctx.changeUserInfo({});
-  //       })
-  //       .catch((error) => {
-  //         ctx.changeUserInfo({});
-  //       });
-  //   } catch (error) {}
-  //   // eslint-disable-next-line
-  // }, []);
-  console.log("inside app")
-  if (!localStorage.getItem('token'))
+  const [isLogin, ChangeIsLogin] = useState('');
+  const ctx = useContext(DataContext);
+  Axios.defaults.headers.common['Authorization'] = `token ${localStorage.getItem('token')}`;
+  useEffect(() => {
+    try {
+      Axios.get('/users')
+        .then((result) => {
+          if (result.data.IsActive === 2) history.push('/step');
+          if (result.data.IsActive) ChangeIsLogin(result.data.IsActive === 1 ? 'Login' : result.data.IsActive === 2 ? 'Step' : 'Not login');
+          else ChangeIsLogin('Not login');
+        })
+        .catch((error) => {});
+    } catch (error) {}
+    // eslint-disable-next-line
+  }, []);
+  console.log('App');
+  if (isLogin === 'Step' || isLogin === 'Not login') {
     return (
-      <div className='App'>
+      <div className='App' style={ModeStyle[ctx.Mode].Dashboard}>
         <Header dataHome={{ StateHome, ChangeHome }} />
-        <Body dataHome={{ StateHome, ChangeHome }} />
+        <Body dataHome={{ StateHome, ChangeHome, ChangeIsLogin }} />
       </div>
     );
-  else if (localStorage.getItem('token'))
-    return <Dashboard />;
+  }
+  if (isLogin === 'Login') return <Dashboard ChangeIsLogin={ChangeIsLogin}/>;
   else return '';
 }
 
@@ -60,5 +55,7 @@ function AppContainer() {
     </AppContext>
   );
 }
+//DataBirthday
+//
 
 export default AppContainer;

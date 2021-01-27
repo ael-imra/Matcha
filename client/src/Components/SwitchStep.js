@@ -3,7 +3,6 @@ import Step1 from './Step1'
 import Step2 from './Step2'
 import Step3 from './Step3'
 import Step4 from './Step4'
-import Step5 from './Step5'
 const SwitchStep = (props) => {
   if (props.NrStep === 1)
     return (
@@ -37,7 +36,6 @@ const SwitchStep = (props) => {
         ChangeInfoStep={props.ChangeInfoStep}
       />
     )
-  else if (props.NrStep === 5) return <Step5 Mode={props.Mode} />
 }
 
 export default SwitchStep

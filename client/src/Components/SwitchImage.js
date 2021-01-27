@@ -1,30 +1,17 @@
-import React, { useContext } from 'react'
-import { DataContext } from '../Context/AppContext'
-import step1Light from '../Images/Step1Light.gif'
-import step3Light from '../Images/Step3Light.gif'
-import step5Light from '../Images/Step5Light.gif'
-import step6Light from '../Images/Step6Light.gif'
-import step6Dark from '../Images/Step6Dark.gif'
-import step1Dark from '../Images/Step1Dark.gif'
-import step3Dark from '../Images/Step3Dark.gif'
-import step5Dark from '../Images/Step5Dark.gif'
-import finch from '../Images/finish.svg'
+import React from 'react';
+import Step1 from '../Images/Step1.svg';
+import Step2 from '../Images/Step2.svg';
+import Step3 from '../Images/Step3.svg';
+import Step4 from '../Images/Step4.svg';
 
 const SwitchImage = (props) => {
-  const ctx = useContext(DataContext)
   let GetImage = () => {
-    if (props.NrStep === 1) return ctx.Mode !== 'Dark' ? step1Light : step1Dark
-    else if (props.NrStep === 2)
-      return ctx.Mode !== 'Dark' ? step5Light : step5Dark
-    else if (props.NrStep === 3)
-      return ctx.Mode !== 'Dark' ? step3Light : step3Dark
-    else if (props.NrStep === 4)
-      return ctx.Mode !== 'Dark' ? step6Light : step6Dark
-    else if (props.NrStep === 5) return finch
-  }
-  console.log()
+    if (props.NrStep === 1) return Step1;
+    else if (props.NrStep === 2) return Step2;
+    else if (props.NrStep === 3) return Step3;
+    else if (props.NrStep === 4) return Step4;
+  };
+  return <img src={GetImage()} alt='...' className='image-step' />;
+};
 
-  return <img src={GetImage()} alt="..." />
-}
-
-export default SwitchImage
+export default SwitchImage;
