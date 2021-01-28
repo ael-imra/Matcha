@@ -75,6 +75,13 @@
 .QuickActions .MuiTab-textColorSecondary.Mui-selected {
   color: #328fb4;
 }
+.QuickActions .MuiTabs-fixed {
+  background-color: var(--background-Friend);
+  border-radius: 6px;
+}
+.QuickActions .MuiTab-textColorSecondary {
+  color: var(--color-QuickActionsMenu);
+}
 .QuickActions .PrivateTabIndicator-colorSecondary-3 {
   background-color: #328fb4;
 }

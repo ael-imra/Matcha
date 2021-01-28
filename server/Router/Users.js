@@ -7,33 +7,38 @@ const {auth} = require('./Authentication')
 require('dotenv').config({
   path: __dirname + '/../.env',
 })
+
+router.get('/', auth, async function (req, res) {
+  const locals = req.app.locals;
+  const result = await locals.select('Users', ['IsActive'], {
+    Token: req.userInfo.Token,
+  });
+  if (result.length !== 0) locals.sendResponse(res, 200, result[0], true);
+})
+
 router.post('/',auth, async function (req, res) {
   const { Latitude, Longitude } = req.userInfo
-  const { list, age, name, location,rating, start,length } = req.body
+  const { list, age, name, location,sexual,rating, start,length } = req.body
   const locals = req.app.locals
   const filterResult = await locals.filter({
     IdUserOwner:req.userInfo.IdUserOwner,
     name,
-    list,
     age,
-    location:[
-      location[0]===1000?0:location[0],
-      location[1]===1000?12800:location[1]],
     rating,
-    start,
-    length
+    sexual:req.userInfo.Sexual
   })
   if (filterResult.length > 0){
     filterResult.map(item=>item.distance = haversine({ lat: item.Latitude, lng: item.Longitude },{ lat: Latitude, lng: Longitude })) 
     function cmp(a,b){
-      const keysNeedToCompare = ['distance']
+      const keysNeedToCompare = ['distance','rating','age']
       let count1 = 0,count2 = 0
-      // JSON.parse(req.userInfo.ListInterest).map(item=>{
-      //   if (a.ListInterest.indexOf(item) > -1)
-      //     count1++
-      //   if (b.ListInterest.indexOf(item) > -1)
-      //     count2++
-      // })
+      list.push(...JSON.parse(req.userInfo.ListInterest))
+      list.map(item=>{
+        if (a.ListInterest.indexOf(item) > -1)
+          count1++
+        if (b.ListInterest.indexOf(item) > -1)
+          count2++
+      })
       for (let key of Object.keys(a))
       {
         if (keysNeedToCompare.indexOf(key) > -1)
@@ -47,18 +52,10 @@ router.post('/',auth, async function (req, res) {
       return (count1 - count2)
     }
     filterResult.sort(cmp)
-    locals.sendResponse(res, 200, filterResult, true)
+    locals.sendResponse(res, 200, filterResult.slice(start,length+start), true)
   } 
   else locals.sendResponse(res, 400, 'someting wrong with your data')
 })
-
-router.get('/', auth, async function (req, res) {
-  const locals = req.app.locals;
-  const result = await locals.select('Users', ['IsActive'], {
-    Token: req.userInfo.Token,
-  });
-  if (result.length !== 0) locals.sendResponse(res, 200, result[0], true);
-});
 
 router.post('/CheckActive', async function (req, res) {
   const { Email, Password } = req.body;

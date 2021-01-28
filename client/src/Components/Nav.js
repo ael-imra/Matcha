@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom';
 import { IconHome, IconProfile, IconMessages, IconHistory, IconSettings } from './Icons';
 import '../Css/Nav.css';
 function Nav(props) {
-  console.log(props.user,"OK")
   return (
     <nav style={props.style ? props.style : {}} className={props.className ? `Nav${props.className}` : 'Nav'}>
       <div className='Logo'>
@@ -24,21 +23,13 @@ function Nav(props) {
           <IconHome fill='#318fb5' width={20} height={20} />
           <span>Home</span>
         </NavLink>
-        <NavLink className='NavLink' activeClassName='NavLinkActive' to={`/profile/${props.user.UserName}`} exact>
+        <NavLink className='NavLink' activeClassName='NavLinkActive' to={`/profile/${props.user.UserName}`}>
           <IconProfile fill='#318fb5' width={20} height={20} />
           <span>Profile</span>
-        </NavLink>
-        <NavLink className='NavLink' activeClassName='NavLinkActive' to='/messages' exact>
-          <IconMessages fill='#318fb5' width={20} height={20} />
-          <span>Messages</span>
         </NavLink>
         <NavLink className='NavLink' activeClassName='NavLinkActive' to='/history' exact>
           <IconHistory fill='#318fb5' width={20} height={20} />
           <span>History</span>
-        </NavLink>
-        <NavLink className='NavLink' activeClassName='NavLinkActive' to='/settings' exact>
-          <IconSettings fill='#318fb5' width={20} height={20} />
-          <span>Settings</span>
         </NavLink>
       </div>
       <div className='Logout'>

@@ -77,7 +77,10 @@ function QuickActions(props) {
       </div>
       {chatUserInfo.UserName ? <div
           className="CloseChat"
-          onClick={() => changeChatUserInfo({})}
+          onClick={() => {
+            ctx.cache.chatUserInfo = {}
+            changeChatUserInfo({})
+          }}
         >
           <IconButtonBack width={20} height={20} fill="#6e97ee" />
           <div>Back To Messages</div>

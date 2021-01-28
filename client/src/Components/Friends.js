@@ -6,7 +6,10 @@ import { DataContext } from '../Context/AppContext'
 function Friend(props) {
   const ctx = useContext(DataContext)
   return (
-    <div className="Friend">
+    <div className="Friend" onClick={()=>{
+        if (!ctx.cache.chatUserInfo.UserName)
+          window.location = `http://${window.location.hostname}:3000/profile/${props.name}`
+      }}>
       <div className="FriendImage">
         <ImageLoader
           className="FriendImageImage"

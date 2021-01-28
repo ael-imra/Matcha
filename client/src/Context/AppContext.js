@@ -74,12 +74,11 @@ export default function AppContext(props) {
     readMessages:(UserName)=>{
       if (UserName)
       {
-        Axios.get(`Messages/readMessages/${UserName}`).then(()=>{
-          if (cache.friends[UserName])
-            cache.friends[UserName].IsRead = 0
-          ref.countIsRead()
+        Axios.get(`Messages/readMessages/${UserName}`).then((data)=>{
+            if (cache.friends[UserName])
+              cache.friends[UserName].IsRead = 0
+            ref.countIsRead()
         })
-        console.log("USRRRR",UserName)
       }
     },
     readNotifications:()=>{
@@ -167,52 +166,54 @@ export default function AppContext(props) {
     const token = localStorage.getItem('token')
     if (token)
     {
-      socket.current = io(`http://${window.location.hostname}:5000`)
-      socket.current.on('connect',()=>socket.current.emit('token',token))
-      ref.getMessage = messageObject=>{
-        function makeID(messages)
-        {
-          if (messages.length > 0 && messages[messages.length - 1] !== 'limit')
-            return (messages[messages.length - 1].id + 1)
-          return (1)
-        }
-        const {message,user} = JSON.parse(messageObject)
-        const friend = cache.friends[user.UserName]
-        if (friend)
-          friend.messages.push({...message,id:makeID(friend.messages)})
-        else
-          cache.friends[user.UserName] = {...user,messages:[{...message,id:makeID(friend.messages)}]}
-        cache.friends[user.UserName].IsRead = cache.friends[user.UserName].IdUserOwner === message.IdUserReceiver ? cache.friends[user.UserName].IsRead ? cache.friends[user.UserName].IsRead : 0 : cache.friends[user.UserName].IsRead + 1
-        if (cache.chatUserInfo.UserName)
-          ref.readMessages(cache.chatUserInfo.UserName)
-        if(ref.changeFriends)
-          ref.changeFriends({...cache.friends})
-        setTimeout(()=>ref.scrollDown(),0)
-      }
-      socket.current.on('message',(obj)=>ref.getMessage(obj))
-      socket.current.on('notice',(noticeObject)=>{
-        const {user,Type,IdNotification,DateCreation} = JSON.parse(noticeObject)
-        if (Type === "LikedBack")
-          ref.addFriend(user)
-        cache.notifications.data = [{IdNotification,Type,DateCreation,UserName:user.UserName,Images:user.Images},...cache.notifications.data]
-        cache.notifications.IsRead = cache.notifications.IsRead + 1
-        if (ref.changeNotifications)
-        {
-          ref.readNotifications()
-          ref.changeNotifications({...cache.notifications})
-        }
-        ref.countIsRead()
-      })
-      socket.current.on('status',(statusObject)=>{
-        const {Active,date,UserName} = JSON.parse(statusObject)
-        if (cache.friends[UserName])
-        {
-          cache.friends[UserName].Active = Active
-          cache.friends[UserName].LastLogin = date
-          if (ref.changeFriends)
+      try{
+        socket.current = io(`http://${window.location.hostname}:5000`)
+        socket.current.on('connect',()=>socket.current.emit('token',token))
+        ref.getMessage = messageObject=>{
+          function makeID(messages)
+          {
+            if (messages.length > 0 && messages[messages.length - 1] !== 'limit')
+              return (messages[messages.length - 1].id + 1)
+            return (1)
+          }
+          const {message,user} = JSON.parse(messageObject)
+          const friend = cache.friends[user.UserName]
+          if (friend)
+            friend.messages.push({...message,id:makeID(friend.messages)})
+          else
+            cache.friends[user.UserName] = {...user,messages:[{...message,id:makeID(friend.messages)}]}
+          cache.friends[user.UserName].IsRead = cache.friends[user.UserName].IdUserOwner === message.IdUserReceiver ? cache.friends[user.UserName].IsRead ? cache.friends[user.UserName].IsRead : 0 : cache.friends[user.UserName].IsRead + 1
+          if (cache.chatUserInfo.UserName)
+            ref.readMessages(cache.chatUserInfo.UserName)
+          if(ref.changeFriends)
             ref.changeFriends({...cache.friends})
+          setTimeout(()=>ref.scrollDown(),0)
         }
-      })
+        socket.current.on('message',(obj)=>ref.getMessage(obj))
+        socket.current.on('notice',(noticeObject)=>{
+          const {user,Type,IdNotification,DateCreation} = JSON.parse(noticeObject)
+          if (Type === "LikedBack")
+            ref.addFriend(user)
+          cache.notifications.data = [{IdNotification,Type,DateCreation,UserName:user.UserName,Images:user.Images},...cache.notifications.data]
+          cache.notifications.IsRead = cache.notifications.IsRead + 1
+          if (ref.changeNotifications)
+          {
+            ref.readNotifications()
+            ref.changeNotifications({...cache.notifications})
+          }
+          ref.countIsRead()
+        })
+        socket.current.on('status',(statusObject)=>{
+          const {Active,date,UserName} = JSON.parse(statusObject)
+          if (cache.friends[UserName])
+          {
+            cache.friends[UserName].Active = Active
+            cache.friends[UserName].LastLogin = date
+            if (ref.changeFriends)
+              ref.changeFriends({...cache.friends})
+          }
+        })
+      }catch(err){}
       ref.sendMessage = messageObject=> {
         socket.current.emit('message',JSON.stringify(messageObject))
         ref.getMessage(JSON.stringify(messageObject))
@@ -224,11 +225,13 @@ export default function AppContext(props) {
       ref.getNotifications()
       ref.countIsRead()
       Axios.get('Friends').then(data=>{
-        if (data.data !== "bad request")
+        if (data.data !== "bad request" && data.data !== 'You Need At lest One Image to do This Action')
         {
           cache.friends = data.data
-          if (ref.changeFriends)
+          setTimeout(()=>{
+            if (ref.changeFriends)
             ref.changeFriends({...cache.friends})
+          },0)
         }
       })
     }// eslint-disable-next-line

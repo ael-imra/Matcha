@@ -35,7 +35,6 @@ function DashboardBody(props) {
       });
     } catch (error) {}
   };
-  console.log("inside DashboardBody")
   return (
     <div className='DashboardBody' style={props.style ? props.style : {}}>
       <div className='DashboardBodyHeader'>
@@ -85,7 +84,7 @@ function DashboardBody(props) {
       <div className='DashboardBodyContent'>
         <Switch>
           <Route exact path='/'>
-            {/* <Users/> */}
+            <Users/>
           </Route>
           <Route path='/profile/:userName'>
             <Profile user={props.user} changeUser={props.changeUser} />

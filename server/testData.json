@@ -1,22 +1,5 @@
 [
   {
-    "Username": "admin",
-    "Email": "admin@gmail.com",
-    "FirstName": "admin",
-    "LastName": "admin",
-    "Password": "7a3a078d6b18ee2ab999911824a306bf",
-    "DataBirthday": "1997-02-14",
-    "Images": null,
-    "City": null,
-    "Location": { "lat": null, "lon": null },
-    "ListInterest": [],
-    "Rating": 0,
-    "Token": "\"93/a?HEX;",
-    "Gender": null,
-    "Sexual": null,
-    "Biography": null
-  },
-  {
     "Username": "psdtlonouc.jxsxypjgfy",
     "Email": "psdtlonouc.jxsxypjgfy@gmail.com",
     "FirstName": "jxsxypjgfy",

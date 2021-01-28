@@ -37,7 +37,7 @@ const types = {
 }
 function Notice(props) {
   return (
-    <div className="Notice" onClick={props.onClick}>
+    <div className="Notice" onClick={()=>window.location = `http://${window.location.hostname}:3000/profile/${props.username}`}>
       <ImageLoader className="NoticeImage" src={props.img} alt={props.username} />
       <div className="NoticeColumn">
         <div className="NoticeRow">

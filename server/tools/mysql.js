@@ -30,12 +30,13 @@ function parseValue(values)
 mysql.query = function (query, params) {
   return new Promise((resolve, reject) => {
     mysql.pool.getConnection((error,connection)=>{
-      if (error) console.log(error)
-      connection.query(query, params, (err, result) => {
-        if (err) reject(err)
-        else resolve(result)
-        connection.release(0)
-      })
+      if (error) resolve(error)
+      else
+        connection.query(query, params, (err, result) => {
+          if (err) reject(err)
+          else resolve(result)
+          connection.release(0)
+        })
     })
   })
 }
@@ -63,45 +64,40 @@ mysql.delete = async function (table, values) {
 mysql.filter = async function (values) {
   if (
     values &&
-    values.list &&
     values.IdUserOwner &&
     values.age &&
     values.age.length === 2 &&
-    values.location &&
-    values.location.length === 2 &&
     values.rating &&
     values.rating.length === 2 &&
-    values.start > -1 &&
-    values.length > -1
+    values.sexual
   ) {
     values.name = (values.name?'%%':('%' + values.name + '%'));
-    let listInterest = '`ListInterest` LIKE \'%%\''
-    if (values.list.length > 0)
-    {
-      listInterest = '`ListInterest` LIKE ' + mysql.pool.escape('%'+values.list[0]+'%')
-      for (let i = 1;i<values.list.length;i++)
-        listInterest += ' AND `ListInterest` LIKE ' + mysql.pool.escape('%'+values.list[i]+'%')
-    }
-    // const query =
-    //   'SELECT u.IdUserOwner,u.UserName,u.Images,u.Gender,u.ListInterest,u.Latitude,u.Longitude,Year(CURDATE())-Year(u.DataBirthday) AS Age,(SELECT AVG(RatingValue) FROM Rating WHERE IdUserReceiver = u.IdUserOwner group by IdUserReceiver) AS rating,(SELECT IdUserReceiver FROM Friends WHERE u.IdUserOwner = IdUserReceiver AND IdUserOwner=?) AS friendreceiver,(SELECT IdUserOwner FROM Friends WHERE u.IdUserOwner = IdUserOwner AND `Match`=1 AND IdUserReceiver=?) AS friendowner FROM Users u WHERE u.IdUserOwner != ? AND u.UserName LIKE ? AND ' +
-    //   listInterest +
-    //   ' AND Year(CURDATE())-Year(u.DataBirthday) >= ? AND Year(CURDATE())-Year(u.DataBirthday) <= ? HAVING ((rating IS NULL AND ? = 0) OR (rating >= ? AND rating <= ?)) AND friendowner IS NULL AND friendreceiver IS NULL LIMIT ?,?'
-    // const result = await mysql.query(query, [
-    //   values.IdUserOwner,
-    //   values.IdUserOwner,
-    //   values.IdUserOwner,
-    //   values.IdUserOwner,
-    //   values.name,
-    //   values.age[0],
-    //   values.age[1],
-    //   ...values.location,
-    //   values.rating[0],
-    //   values.rating[0],
-    //   values.rating[1],
-    //   values.start,
-    //   values.length
-    // ])
-    const result = await mysql.select('Users','*')
+    values.sexual = values instanceof Array? JSON.stringify(values.sexual):values.sexual
+    const query =
+    'SELECT \
+      u.IdUserOwner,u.UserName,u.Images,u.Gender,u.ListInterest,u.Latitude,u.Longitude,\
+      Year(CURDATE())-Year(u.DataBirthday) AS Age,\
+      (SELECT AVG(RatingValue) FROM Rating WHERE IdUserReceiver = u.IdUserOwner group by IdUserReceiver) AS rating,\
+      (SELECT IdUserReceiver FROM Friends WHERE u.IdUserOwner = IdUserReceiver AND IdUserOwner=?) AS friendreceiver,\
+      (SELECT IdUserOwner FROM Friends WHERE u.IdUserOwner = IdUserOwner AND `Match`=1 AND IdUserReceiver=?) AS friendowner\
+      FROM Users u \
+      WHERE u.IdUserOwner != ? AND u.UserName LIKE ? AND u.Gender=? AND u.Images != "[]"\
+      HAVING Age >= ? AND Age <= ? AND ((rating IS NULL AND ? = 0) OR (rating >= ? AND rating <= ?)) AND friendowner IS NULL AND friendreceiver IS NULL'
+      // 'SELECT u.IdUserOwner,u.UserName,u.Images,u.Gender,u.ListInterest,u.Latitude,u.Longitude,Year(CURDATE())-Year(u.DataBirthday) AS Age,(SELECT AVG(RatingValue) FROM Rating WHERE IdUserReceiver = u.IdUserOwner group by IdUserReceiver) AS rating,(SELECT IdUserReceiver FROM Friends WHERE u.IdUserOwner = IdUserReceiver AND IdUserOwner=?) AS friendreceiver,(SELECT IdUserOwner FROM Friends WHERE u.IdUserOwner = IdUserOwner AND `Match`=1 AND IdUserReceiver=?) AS friendowner FROM Users u WHERE u.IdUserOwner != ? AND u.UserName LIKE ? AND ' +
+      // listInterest +
+      // ' AND Year(CURDATE())-Year(u.DataBirthday) >= ? AND Year(CURDATE())-Year(u.DataBirthday) <= ? HAVING ((rating IS NULL AND ? = 0) OR (rating >= ? AND rating <= ?)) AND friendowner IS NULL AND friendreceiver IS NULL LIMIT ?,?'
+    const result = await mysql.query(query, [
+      values.IdUserOwner,
+      values.IdUserOwner,
+      values.IdUserOwner,
+      values.name,
+      values.sexual,
+      values.age[0],
+      values.age[1],
+      values.rating[0],
+      values.rating[0],
+      values.rating[1]
+    ])
     return result
   }
   return null

@@ -4,13 +4,11 @@ import { ReactComponent as BanSVG } from '../Images/ban.svg'
 import { ReactComponent as CheckSVG } from '../Images/check.svg'
 import { ReactComponent as PinSVG } from '../Images/pin.svg'
 import { ReactComponent as StarSVG } from '../Images/star.svg'
-import { IconClose } from './Icons'
 import Rating from '@material-ui/lab/Rating'
 import { ImageLoader } from './ImageLoader'
 import { DataContext } from '../Context/AppContext'
 import '../Css/Users.css'
 import axios from 'axios'
-
 function User(props) {
   const [imageIndex, changeImageIndex] = useState(0)
   const [ratingValue, changeRatingValue] = useState({ avg: props.rating===null ?0:props.rating, userValue: 0 })
@@ -32,8 +30,9 @@ function User(props) {
       )
   }
   function addFriend(UserName){
-    axios.post('/Friends/Invite',{UserName}).then(()=>{
-      props.removeFriend(UserName)
+    axios.post('/Friends/Invite',{UserName}).then((data)=>{
+      if (data.data !== 'You Need At lest One Image to do This Action')
+        props.removeFriend(UserName)
     }).catch(err=>0)
   }
   return (
@@ -73,7 +72,7 @@ function User(props) {
       </div>
       <div className="UserDistance">
         <PinSVG width={16} height={16} fill="white" />
-        {(props.distance >= 1000 ? Math.floor(props.distance) + "Km" : Math.floor(props.distance) + "m")}
+        {(props.distance >= 1000 ? Math.floor(props.distance/1000) + "Km" : Math.floor(props.distance) + "m")}
       </div>
       <div className="UserListInterest">
         {props.listInterest.map((item, index) => (
@@ -84,20 +83,17 @@ function User(props) {
         ))}
       </div>
       <div className="UserActions">
-        <div className="UserActionsAccept">
-          <CheckSVG width={20} height={20} fill="#44db44" onClick={()=>addFriend(props.userName)}/>
-        </div>
-        <div className="UserActionsReject">
-          <IconClose width={20} height={20} fill="#ff9a2f" />
-        </div>
-        <div className="UserActionsInfo">
+        {props.userInfo.Image?<div className="UserActionsAccept" onClick={()=>addFriend(props.userName)}>
+          <CheckSVG width={20} height={20} fill="#44DB44"/>
+        </div>:null}
+        <div className="UserActionsInfo" onClick={()=>window.location = `http://${window.location.hostname}:3000/profile/${props.userName}`}>
           <UserSVG width={20} height={20} fill="white" />
         </div>
-        <div className="UserActionsReport">
-          <BanSVG width={20} height={20} fill="#fb5454" />
-        </div>
+        {props.userInfo.Image?<div className="UserActionsReport">
+          <BanSVG width={20} height={20} fill="#FB5454" />
+        </div>:null}
       </div>
-      <div className="UserActionsRating">
+      {props.userInfo.Image?<div className="UserActionsRating">
         <Rating
           name={props.UserName+props.age.toString()}
           defaultValue={0}
@@ -106,14 +102,15 @@ function User(props) {
           precision={0.5}
           onChange={(event, value) => clickRating(value, props.userName)}
         />
-      </div>
+      </div>:null}
     </div>
   )
 }
 function Users() {
   const ctx = useContext(DataContext)
-  const [users,changeUsers] = useState(()=>{console.log("ENTER");return [...ctx.cache.users]})
+  const [users,changeUsers] = useState(()=>[...ctx.cache.users])
   const [usersLoader, changeUsersLoader] = useState(false)
+  const [length,changeLength] = useState(24)
   const usersRef = useRef()
   useEffect(() => {
     ctx.ref.changeUsers = changeUsers
@@ -126,7 +123,11 @@ function Users() {
   function UsersScroll() {
     const { scrollHeight, scrollTop, offsetHeight } = usersRef.current
     if (offsetHeight + scrollTop + 300 > scrollHeight && !usersLoader)
-      ctx.ref.getUsers(users.length,24)
+    {
+      if (length >= users.length)
+        ctx.ref.getUsers(users.length,24)
+      changeLength(oldValue=>oldValue + 24)
+    }
   }
   function UserClick(event) {
     if (
@@ -152,21 +153,24 @@ function Users() {
   return (
     <>
       <div className="Users" onScroll={UsersScroll} ref={usersRef}>
-        {users.map((obj) => (
-          <User
-            key={obj.IdUserOwner}
-            images={JSON.parse(obj.Images)}
-            city={obj.City}
-            rating={obj.rating}
-            gender={obj.Gender}
-            age={25}
-            userName={obj.UserName}
-            distance={obj.distance}
-            listInterest={JSON.parse(obj.ListInterest)}
-            removeFriend={removeFriend}
-            onClick={UserClick}
-          />
-        ))}
+        {users.map((obj,index) => {
+          if (index < length)
+            return (<User
+              key={obj.IdUserOwner}
+              images={JSON.parse(obj.Images)}
+              city={obj.City}
+              rating={obj.rating}
+              gender={obj.Gender}
+              age={obj.Age}
+              userName={obj.UserName}
+              distance={obj.distance}
+              listInterest={JSON.parse(obj.ListInterest)}
+              removeFriend={removeFriend}
+              onClick={UserClick}
+              userInfo={JSON.parse(localStorage.userInfo)}
+            />)
+          return (null)
+        })}
       </div>
       {usersLoader ? <div className="UsersLoader"></div> : null}
     </>

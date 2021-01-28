@@ -49,33 +49,39 @@ io.on('connection',(socket)=>{
     }
   })
   socket.on('message',async (obj)=>{
-    const {user,message} = JSON.parse(obj)
-    if (user.UserName && message && message.Content.trim())
+    if (obj)
     {
-      const IdUserOwner = await mysql.getIdUserOwner(user.UserName)
-      const result = await mysql.query('SELECT * FROM Friends WHERE `Match`=1 AND ((IdUserOwner=? AND IdUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?))',[socket.IdUserOwner,IdUserOwner,IdUserOwner,socket.IdUserOwner])
-      if (result.length > 0)
+      const {user,message} = JSON.parse(obj)
+      if (user.UserName && message && message.Content.trim() && socket.UserName)
       {
-        let sockerOfFriend = null
-        app.locals.sockets.map(item=>{
-          if (item.IdUserOwner === IdUserOwner)
-            sockerOfFriend = item
-        })
-        if(sockerOfFriend)
+        const IdUserOwner = await mysql.getIdUserOwner(user.UserName)
+        const result = await mysql.query('SELECT * FROM Friends WHERE `Match`=1 AND ((IdUserOwner=? AND IdUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?))',[socket.IdUserOwner,IdUserOwner,IdUserOwner,socket.IdUserOwner])
+        if (result.length > 0)
         {
-          sockerOfFriend.emit('message',JSON.stringify({user:{UserName:socket.UserName,Images:socket.Images,Active:1},message:{id:message.id,IdUserReceiver:IdUserOwner,Content:message.Content,date:new Date(Date.now()).toISOString()}}))
-          mysql.insert("Messages",{IdUserOwner:socket.IdUserOwner,IdUserReceiver:IdUserOwner,Content:message.Content})
+          let sockerOfFriend = null
+          app.locals.sockets.map(item=>{
+            if (item.IdUserOwner === IdUserOwner)
+              sockerOfFriend = item
+          })
+          if(sockerOfFriend)
+          {
+            sockerOfFriend.emit('message',JSON.stringify({user:{UserName:socket.UserName,Images:socket.Images,Active:1},message:{id:message.id,IdUserReceiver:IdUserOwner,Content:message.Content,date:new Date(Date.now()).toISOString()}}))
+            mysql.insert("Messages",{IdUserOwner:socket.IdUserOwner,IdUserReceiver:IdUserOwner,Content:message.Content})
+          }
+          else
+            mysql.insert("Messages",{IdUserOwner:socket.IdUserOwner,IdUserReceiver:IdUserOwner,Content:message.Content})
         }
-        else
-          mysql.insert("Messages",{IdUserOwner:socket.IdUserOwner,IdUserReceiver:IdUserOwner,Content:message.Content})
       }
     }
   })
   socket.on('disconnect',async ()=>{
     console.log("user Disconnected")
-    mysql.update('Users',{Active:0,LastLogin:new Date(Date.now())},{IdUserOwner:socket.IdUserOwner})
-    app.locals.sockets = app.locals.sockets.filter(item=>item.IdUserOwner !== socket.IdUserOwner)
-    setTimeout(()=>sendFriendMyState(0,socket.IdUserOwner,socket.UserName,app.locals.sockets),500)
+    if (socket.UserName)
+    {
+      mysql.update('Users',{Active:0,LastLogin:new Date(Date.now())},{IdUserOwner:socket.IdUserOwner})
+      app.locals.sockets = app.locals.sockets.filter(item=>item.IdUserOwner !== socket.IdUserOwner)
+      setTimeout(()=>sendFriendMyState(0,socket.IdUserOwner,socket.UserName,app.locals.sockets),500)
+    }
   })
 })
 app.use(cors())
@@ -91,9 +97,9 @@ app.use('/Notifications',auth,Notifications)
 app.use("/Profile", auth, Profile);
 app.use("/BlackList", auth, BlackList);
 app.use("/History", auth, History);
-app.get('/image/:image', (req, res) => {
-  res.sendFile(`${__dirname}/${req.params.image}`)
-})
+// app.get('/image/:image', (req, res) => {
+//   res.sendFile(`${__dirname}/${req.params.image}`)
+// })
 app.get('/images/:image', (req, res) => {
   res.sendFile(`${__dirname}/images/${req.params.image}`)
 })
@@ -101,4 +107,3 @@ app.use(tools.handleError)
 http.listen(process.env.PORT, () => {
   console.log(`Matcha server app listening at http://localhost:${process.env.PORT}`)
 })
-// mysql.getFriends(583)

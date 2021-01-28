@@ -43,7 +43,6 @@ function Layout(props) {
 function Dashboard(props) {
   const ctx = useContext(DataContext)
   const userJSON = JSON.parse(localStorage.getItem('userInfo'))
-  console.log({...userJSON},"USERJON")
   const [user, changeUser] = useState(userJSON);
   const width = useWindowSize();
   const [LayoutHide, changeLayoutHide] = useState(true);

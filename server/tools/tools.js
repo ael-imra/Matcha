@@ -104,6 +104,7 @@ let checkProfileOfYou = (token, UserName, locals) => {
   });
 };
 function handleError(err, req, res, next) {
+  console.log(err)
   if (err) req.app.locals.sendResponse(res, 400, 'Bad Request');
   else next();
 }
@@ -189,15 +190,21 @@ async function notification(req,Type,UserOwner,UserReceiver){
           if (item.IdUserOwner === IdUserReceiver)
             socketOfFriend = item
         })
+      const result = await locals.insert('Notifications',{IdUserOwner,IdUserReceiver,Type})
       if (socketOfFriend)
       {
-        const result = await locals.insert('Notifications',{IdUserOwner,IdUserReceiver,Type})
         const user = await locals.select('Users',['IdUserOwner','Images','UserName','LastLogin','Active'],{IdUserOwner})
         user[0].Images = JSON.parse(user[0].Images)[0]
         socketOfFriend.emit('notice',JSON.stringify({user:user[0],Type,IdNotification:result.insertId,DateCreation:new Date().toISOString()}))
       }
     }
   }
+}
+function checkIfHasOneImage(req,res,next){
+  if (JSON.parse(req.userInfo.Images).length > 0)
+    next()
+  else
+    res.app.locals.sendResponse(res,200,"You Need At lest One Image to do This Action")
 }
 module.exports = {
   fetchDataJSON,
@@ -213,4 +220,5 @@ module.exports = {
   getImageProfile,
   ifNotBlock,
   verifyIdTokenGoogle,
+  checkIfHasOneImage
 }
