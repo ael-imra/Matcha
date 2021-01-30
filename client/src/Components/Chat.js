@@ -54,10 +54,12 @@ function Chat(props) {
   useEffect(() => {
     ctx.ref.changeFriends = changeFriends
     ctx.ref.ChatContent = ChatContent
+    ctx.ref.changeHideLoader = changeHideLoader
     setTimeout(()=>ctx.ref.scrollDown(),0)
     return (()=>{
       ctx.ref.changeFriends = null
       ctx.ref.ChatContent = null
+      ctx.ref.changeHideLoader = null
     })
     // eslint-disable-next-line
   }, [])
@@ -66,15 +68,15 @@ function Chat(props) {
     if (scrollHeight - (scrollTop + offsetHeight) > 30)
       changeHideScrollDown(oldValue => oldValue ? oldValue : true)
     else changeHideScrollDown(false)
-    if (scrollTop === 0 && ctx.cache.friends[UserName] && !ctx.cache.friends[UserName].messages[0] === "limit") {
-      changeHideLoader(false)
-      ctx.ref.getMessages(UserName)
+    if (scrollTop === 0 && ctx.cache.friends[UserName] && ctx.cache.friends[UserName].messages[0] !== "limit") {
+    console.log('CHECK',ctx.cache.friends[UserName],ctx.cache.friends[UserName].messages[0])
+      ctx.ref.getMessages(ctx.cache.friends[UserName])
     }
   }
   function sendMessage(){
     if (chatTextValue.current.value.trim() !== "")
     {
-      ctx.ref.sendMessage({message:{id:friends[UserName].messages[friends[UserName].messages.length - 1].id + 1,Content:chatTextValue.current.value,date:new Date().toISOString(),IdUserReceiver:ctx.cache.chatUserInfo.IdUserOwner},user:{...ctx.cache.chatUserInfo}})
+      ctx.ref.sendMessage({message:{id:friends[UserName].messages[friends[UserName].messages.length - 1].id + 1,Content:chatTextValue.current.value,date:new Date().toISOString(),IdUserReceiver:ctx.cache.chatUserInfo.IdUserOwner},user:{...ctx.cache.chatUserInfo,messages:null}})
       chatTextValue.current.value = ""
       // setTimeout(() => ctx.ref.scrollDown(), 0)
     }
@@ -110,9 +112,9 @@ function Chat(props) {
                 return (
                   <ChatMessage
                     key={"Message"+msg.id}
-                    pos={msg.IdUserReceiver === ctx.cache.chatUserInfo.IdUserOwner?"right":"left"}
-                    background={msg.IdUserReceiver === ctx.cache.chatUserInfo.IdUserOwner?"#E6E8F4":"#3D88B7"}
-                    color={msg.IdUserReceiver === ctx.cache.chatUserInfo.IdUserOwner?"black":"white"}
+                    pos={msg.IdUserOwner !== ctx.cache.chatUserInfo.IdUserOwner?"right":"left"}
+                    background={msg.IdUserOwner !== ctx.cache.chatUserInfo.IdUserOwner?"#E6E8F4":"#3D88B7"}
+                    color={msg.IdUserOwner !== ctx.cache.chatUserInfo.IdUserOwner?"black":"white"}
                     message={msg.Content}
                     time={ctx.ref.ConvertDate(msg.date, 'time')}
                   />

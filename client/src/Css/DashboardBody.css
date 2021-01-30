@@ -16,7 +16,7 @@
   color: var(--color-QuickActionsMenu);
 }
 
-.DashboardBodyHeader > div {
+.DashboardBodyHeader > div:not(.Filter) {
   display: flex;
   flex-flow: row;
   justify-content: space-between;

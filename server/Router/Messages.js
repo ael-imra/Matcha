@@ -35,12 +35,7 @@ router.get('/:UserName/:index',async (req,res)=>{
     const messages = await locals.query('SELECT * FROM Messages WHERE (IdUserOwner=? AND IdUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?) ORDER BY `DateCreation` DESC LIMIT ?,?',[req.userInfo.IdUserOwner,IdUserReceiver,IdUserReceiver,req.userInfo.IdUserOwner,req.params.index,30])
     const arr = []
     if (messages.length > 0)
-    {
-      messages.map((item)=>{
-        item.myMessage = item.IdUserOwner === req.userInfo.IdUserOwner ? true : false
-        arr.push({myMessage:item.myMessage,date:item.DateCreation.toISOString(),Content:item.Content})
-      })
-    }
+      messages.map((item)=>arr.push({id:item.IdMessages,IdUserOwner:item.IdUserOwner,date:item.DateCreation.toISOString(),Content:item.Content}))
     if (arr.length === 0 || arr.length < 24)
       arr.push("limit")
     arr.reverse()

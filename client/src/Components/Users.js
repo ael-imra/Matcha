@@ -9,7 +9,9 @@ import { ImageLoader } from './ImageLoader'
 import { DataContext } from '../Context/AppContext'
 import '../Css/Users.css'
 import axios from 'axios'
+import { useHistory } from 'react-router-dom';
 function User(props) {
+  let history = useHistory();
   const [imageIndex, changeImageIndex] = useState(0)
   const [ratingValue, changeRatingValue] = useState({ avg: props.rating===null ?0:props.rating, userValue: 0 })
   function UserImageSlideButtonClick(event) {
@@ -86,7 +88,7 @@ function User(props) {
         {props.userInfo.Image?<div className="UserActionsAccept" onClick={()=>addFriend(props.userName)}>
           <CheckSVG width={20} height={20} fill="#44DB44"/>
         </div>:null}
-        <div className="UserActionsInfo" onClick={()=>window.location = `http://${window.location.hostname}:3000/profile/${props.userName}`}>
+        <div className="UserActionsInfo" onClick={()=>history.push(`/profile/${props.userName}`)}>
           <UserSVG width={20} height={20} fill="white" />
         </div>
         {props.userInfo.Image?<div className="UserActionsReport">
@@ -115,14 +117,14 @@ function Users() {
   useEffect(() => {
     ctx.ref.changeUsers = changeUsers
     ctx.ref.changeUsersLoader = changeUsersLoader
-    if (users.length === 0)
+    if (users.length === 0 && ctx.isLogin === 'Login')
       ctx.ref.getUsers(users.length,24)
     return (()=>ctx.ref.changeUsers = null)
     // eslint-disable-next-line
   }, [ctx.cache.filterData])
   function UsersScroll() {
     const { scrollHeight, scrollTop, offsetHeight } = usersRef.current
-    if (offsetHeight + scrollTop + 300 > scrollHeight && !usersLoader)
+    if (offsetHeight + scrollTop + 300 > scrollHeight && !usersLoader && users[users.length - 1] !== "limit")
     {
       if (length >= users.length)
         ctx.ref.getUsers(users.length,24)
@@ -148,13 +150,16 @@ function Users() {
   }
   function removeFriend(UserName){
     ctx.cache.users = ctx.cache.users.filter(item=>item.UserName!==UserName)
-    ctx.ref.getUsers(users.length-1,1)
+    if (users[users.length - 1] === "limit")
+      changeUsers([...ctx.cache.users])
+    else
+      ctx.ref.getUsers(users.length-1,1)
   }
   return (
-    <>
+    <>{console.log("USERS",users,ctx.cache.users)}
       <div className="Users" onScroll={UsersScroll} ref={usersRef}>
         {users.map((obj,index) => {
-          if (index < length)
+          if (index < length && obj !== "limit")
             return (<User
               key={obj.IdUserOwner}
               images={JSON.parse(obj.Images)}
@@ -167,7 +172,7 @@ function Users() {
               listInterest={JSON.parse(obj.ListInterest)}
               removeFriend={removeFriend}
               onClick={UserClick}
-              userInfo={JSON.parse(localStorage.userInfo)}
+              userInfo={localStorage.userInfo ? JSON.parse(localStorage.userInfo):{}}
             />)
           return (null)
         })}

@@ -29,7 +29,7 @@ async function auth(req, res, next) {
 }
 router.get('/Logout', auth, function (req, res) {
   if (req.userInfo) {
-    req.app.locals.update('Users', { JWT: null }, { JWT: req.userInfo.JWT });
+    req.app.locals.update('Users', { JWT: null,Active:0 }, { JWT: req.userInfo.JWT });
     req.app.locals.sendResponse(res, 200, "You're now logout");
   } else req.app.locals.sendResponse(res, 403, 'Something wrong please try again');
 });
@@ -41,7 +41,7 @@ router.post('/Login', async function (req, res) {
       Email,
       Password: md5(Password),
     });
-    const resultInfo = await locals.select('Users', ['FirstName', 'LastName', 'UserName', 'Images'], {
+    const resultInfo = await locals.select('Users', ['FirstName', 'LastName', 'UserName', 'Images','IdUserOwner'], {
       Email,
       Password: md5(Password),
     });

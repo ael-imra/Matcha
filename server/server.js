@@ -20,8 +20,6 @@ const io = require('socket.io')(http,{
   cors: {
     origin: "*",
   },
-  transports: ['websocket', 'polling'],
-  pingInterval: 60000
 })
 
 tools.init(app, {...mysql,...tools,sendMail,crypto,sockets:[]})
@@ -29,10 +27,14 @@ async function sendFriendMyState(Active,IdUserOwner,UserName,sockets)
 {
   const friends = await mysql.query('SELECT * FROM Friends WHERE `Match`=1 AND (IdUserOwner=? OR IdUserReceiver=?)',[IdUserOwner,IdUserOwner])
   if (friends.length > 0)
-    friends.map(friend=>sockets.map(item=>{
-      if ((item.IdUserOwner === friend.IdUserOwner || friend.IdUserReceiver === item.IdUserOwner) && item.IdUserOwner !== IdUserOwner)
-        item.emit('status',JSON.stringify({UserName,Active,date:new Date(Date.now()).toISOString()}))
-    }))
+    friends.map(friend=>{
+      if (friend.IdUserOwner !== IdUserOwner && sockets[friend.IdUserOwner])
+        sockets[friend.IdUserOwner].map(item=>item.emit('status',JSON.stringify({UserName,Active,date:new Date(Date.now()).toISOString()})))
+      else if ((friend.IdUserReceiver !== IdUserOwner) && sockets[friend.IdUserReceiver])
+        sockets[friend.IdUserReceiver].map(item=>item.emit('status',JSON.stringify({UserName,Active,date:new Date(Date.now()).toISOString()})))
+      // const socketsFind = searchOnSocket(sockets,[friend.IdUserOwner,friend.IdUserReceiver],IdUserOwner)
+      // socketsFind.map(item=>item.emit('status',JSON.stringify({UserName,Active,date:new Date(Date.now()).toISOString()})))
+    })
 }
 io.on('connection',(socket)=>{
   console.log("User Connected")
@@ -44,28 +46,30 @@ io.on('connection',(socket)=>{
       socket.IdUserOwner = result[0].IdUserOwner
       socket.UserName = result[0].UserName
       socket.Images = JSON.parse(result[0].Images)[0]
-      app.locals.sockets.push(socket)
-      setTimeout(()=>sendFriendMyState(1,result[0].IdUserOwner,result[0].UserName,app.locals.sockets),500)
+      if (app.locals.sockets[result[0].IdUserOwner])
+        app.locals.sockets[result[0].IdUserOwner].push(socket)
+      else
+        app.locals.sockets[result[0].IdUserOwner] = [socket]
+      if (app.locals.sockets[result[0].IdUserOwner].length === 1)
+        setTimeout(()=>sendFriendMyState(1,result[0].IdUserOwner,result[0].UserName,app.locals.sockets),500)
     }
   })
   socket.on('message',async (obj)=>{
     if (obj)
     {
+      console.log(JSON.parse(obj),"OBJ")
       const {user,message} = JSON.parse(obj)
+      const sockets = app.locals.sockets
       if (user.UserName && message && message.Content.trim() && socket.UserName)
       {
         const IdUserOwner = await mysql.getIdUserOwner(user.UserName)
         const result = await mysql.query('SELECT * FROM Friends WHERE `Match`=1 AND ((IdUserOwner=? AND IdUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?))',[socket.IdUserOwner,IdUserOwner,IdUserOwner,socket.IdUserOwner])
         if (result.length > 0)
         {
-          let sockerOfFriend = null
-          app.locals.sockets.map(item=>{
-            if (item.IdUserOwner === IdUserOwner)
-              sockerOfFriend = item
-          })
-          if(sockerOfFriend)
-          {
-            sockerOfFriend.emit('message',JSON.stringify({user:{UserName:socket.UserName,Images:socket.Images,Active:1},message:{id:message.id,IdUserReceiver:IdUserOwner,Content:message.Content,date:new Date(Date.now()).toISOString()}}))
+          if (sockets[user.IdUserOwner] && sockets[user.IdUserOwner].length > 0)
+            sockets[user.IdUserOwner].map(item=>item.emit('message',JSON.stringify({user:{UserName:socket.UserName,Images:socket.Images,Active:1},message:{id:message.id,IdUserOwner:socket.IdUserOwner,Content:message.Content,date:new Date(Date.now()).toISOString()}})))
+          if (sockets[socket.IdUserOwner] && sockets[socket.IdUserOwner].length > 0)
+            sockets[socket.IdUserOwner].map(item=>item.emit('message',JSON.stringify({user,message:{id:message.id,IdUserOwner:socket.IdUserOwner,Content:message.Content,date:new Date(Date.now()).toISOString()}})))
             mysql.insert("Messages",{IdUserOwner:socket.IdUserOwner,IdUserReceiver:IdUserOwner,Content:message.Content})
           }
           else
@@ -73,14 +77,19 @@ io.on('connection',(socket)=>{
         }
       }
     }
-  })
+  )
   socket.on('disconnect',async ()=>{
     console.log("user Disconnected")
     if (socket.UserName)
     {
-      mysql.update('Users',{Active:0,LastLogin:new Date(Date.now())},{IdUserOwner:socket.IdUserOwner})
-      app.locals.sockets = app.locals.sockets.filter(item=>item.IdUserOwner !== socket.IdUserOwner)
-      setTimeout(()=>sendFriendMyState(0,socket.IdUserOwner,socket.UserName,app.locals.sockets),500)
+      app.locals.sockets[socket.IdUserOwner] = app.locals.sockets[socket.IdUserOwner].filter(item=>item.id!==socket.id)
+      // app.locals.sockets = app.locals.sockets.filter(item=>item.id !== socket.id)
+      if (app.locals.sockets[socket.IdUserOwner].length === 0)
+      {
+        console.log("AFTER DISCONNECT",socket.IdUserOwner)
+        mysql.update('Users',{Active:0,LastLogin:new Date(Date.now())},{IdUserOwner:socket.IdUserOwner})
+        setTimeout(()=>sendFriendMyState(0,socket.IdUserOwner,socket.UserName,app.locals.sockets),500)
+      }
     }
   })
 })

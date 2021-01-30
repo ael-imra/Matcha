@@ -10,7 +10,7 @@ router.get('/',checkIfHasOneImage,async (req,res)=>{
     const resultObject = {}
     let count = 0
     result.map(async(item,index)=>{
-      const messages = await locals.query('SELECT IdMessages As "id",IdUserReceiver,Content,DateCreation As "date" FROM Messages WHERE (IdUserOwner=? AND idUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?) ORDER BY DateCreation DESC LIMIT 30',[req.userInfo.IdUserOwner,item.IdUserOwner,item.IdUserOwner,req.userInfo.IdUserOwner])
+      const messages = await locals.query('SELECT IdMessages As "id",IdUserOwner,Content,DateCreation As "date" FROM Messages WHERE (IdUserOwner=? AND idUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?) ORDER BY DateCreation DESC LIMIT 30',[req.userInfo.IdUserOwner,item.IdUserOwner,item.IdUserOwner,req.userInfo.IdUserOwner])
       const messagesReversed = messages.reverse()
       const IsRead = await locals.select('Messages','COUNT(*) AS IsRead',{IsRead:0,IdUserOwner:item.IdUserOwner,IdUserReceiver:req.userInfo.IdUserOwner})
       resultObject[result[index].UserName]={...item,Images:JSON.parse(item.Images)[0],messages:messagesReversed.length < 30 ? ["limit",...messagesReversed]:messagesReversed,IsRead:IsRead.length > 0 ? IsRead[0].IsRead:0}

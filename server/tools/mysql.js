@@ -81,7 +81,7 @@ mysql.filter = async function (values) {
       (SELECT IdUserReceiver FROM Friends WHERE u.IdUserOwner = IdUserReceiver AND IdUserOwner=?) AS friendreceiver,\
       (SELECT IdUserOwner FROM Friends WHERE u.IdUserOwner = IdUserOwner AND `Match`=1 AND IdUserReceiver=?) AS friendowner\
       FROM Users u \
-      WHERE u.IdUserOwner != ? AND u.UserName LIKE ? AND u.Gender=? AND u.Images != "[]"\
+      WHERE u.IdUserOwner != ? AND u.UserName LIKE ? AND (? = "Male Female" || u.Gender=?) > 0 AND u.Images != "[]"\
       HAVING Age >= ? AND Age <= ? AND ((rating IS NULL AND ? = 0) OR (rating >= ? AND rating <= ?)) AND friendowner IS NULL AND friendreceiver IS NULL'
       // 'SELECT u.IdUserOwner,u.UserName,u.Images,u.Gender,u.ListInterest,u.Latitude,u.Longitude,Year(CURDATE())-Year(u.DataBirthday) AS Age,(SELECT AVG(RatingValue) FROM Rating WHERE IdUserReceiver = u.IdUserOwner group by IdUserReceiver) AS rating,(SELECT IdUserReceiver FROM Friends WHERE u.IdUserOwner = IdUserReceiver AND IdUserOwner=?) AS friendreceiver,(SELECT IdUserOwner FROM Friends WHERE u.IdUserOwner = IdUserOwner AND `Match`=1 AND IdUserReceiver=?) AS friendowner FROM Users u WHERE u.IdUserOwner != ? AND u.UserName LIKE ? AND ' +
       // listInterest +
@@ -91,6 +91,7 @@ mysql.filter = async function (values) {
       values.IdUserOwner,
       values.IdUserOwner,
       values.name,
+      values.sexual,
       values.sexual,
       values.age[0],
       values.age[1],

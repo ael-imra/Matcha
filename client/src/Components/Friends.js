@@ -3,12 +3,14 @@ import { IconSendMessage, IconCircle } from './Icons'
 import { ImageLoader } from './ImageLoader'
 import '../Css/Friends.css'
 import { DataContext } from '../Context/AppContext'
+import { useHistory } from 'react-router-dom';
 function Friend(props) {
   const ctx = useContext(DataContext)
+  const history = useHistory()
   return (
     <div className="Friend" onClick={()=>{
         if (!ctx.cache.chatUserInfo.UserName)
-          window.location = `http://${window.location.hostname}:3000/profile/${props.name}`
+          history.push(`/profile/${props.name}`)
       }}>
       <div className="FriendImage">
         <ImageLoader

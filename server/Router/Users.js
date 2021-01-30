@@ -20,7 +20,8 @@ router.post('/',auth, async function (req, res) {
   const { Latitude, Longitude } = req.userInfo
   const { list, age, name, location,sexual,rating, start,length } = req.body
   const locals = req.app.locals
-  const filterResult = await locals.filter({
+  console.log(req.userInfo.Sexual,"Sexual")
+  let filterResult = await locals.filter({
     IdUserOwner:req.userInfo.IdUserOwner,
     name,
     age,
@@ -52,7 +53,12 @@ router.post('/',auth, async function (req, res) {
       return (count1 - count2)
     }
     filterResult.sort(cmp)
-    locals.sendResponse(res, 200, filterResult.slice(start,length+start), true)
+    filterResult = filterResult.slice(start,length+start)
+    console.log("LENGTH",filterResult.length,length)
+    if (filterResult.length < length)
+      filterResult.push("limit")
+    console.log("LENGTH",filterResult.length,length)  
+    locals.sendResponse(res, 200, filterResult, true)
   } 
   else locals.sendResponse(res, 400, 'someting wrong with your data')
 })

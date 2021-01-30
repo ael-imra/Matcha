@@ -11,7 +11,7 @@ router.get('/:start',async (req,res)=>{
   const locals = req.app.locals
   if (req.params.start >= 0)
   {
-    const result = await locals.query('SELECT u.UserName,u.Images,n.IdNotification,n.IdUserReceiver,n.IdUserOwner,n.Type,n.DateCreation FROM Users u,Notifications n WHERE u.IdUserOwner = n.IdUserOwner AND n.IdUserReceiver=? ORDER BY n.DateCreation DESC',[req.userInfo.IdUserOwner])
+    const result = await locals.query('SELECT u.UserName,u.Images,n.IdNotification,n.IdUserReceiver,n.IdUserOwner,n.Type,n.DateCreation FROM Users u,Notifications n WHERE u.IdUserOwner = n.IdUserOwner AND n.IdUserReceiver=? ORDER BY n.DateCreation DESC LIMIT ?,30',[req.userInfo.IdUserOwner,parseInt(req.params.start)])
     if (result.length > 0)
     {
       const IsRead = await locals.query('SELECT COUNT(*) AS IsRead FROM Notifications WHERE IsRead = 0 AND IdUserReceiver=?',[req.userInfo.IdUserOwner])
@@ -19,7 +19,7 @@ router.get('/:start',async (req,res)=>{
       {
         item.Images = JSON.parse(item.Images)[0]
         if (index + 1 === result.length)
-        locals.sendResponse(res,200,{data:result,IsRead:IsRead.length > 0 ? IsRead[0].IsRead : 0},true)
+          locals.sendResponse(res,200,{data:result,IsRead:IsRead.length > 0 ? IsRead[0].IsRead : 0},true)
       })
     }
     else

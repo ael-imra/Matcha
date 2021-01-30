@@ -82,7 +82,7 @@
 .QuickActions .MuiTab-textColorSecondary {
   color: var(--color-QuickActionsMenu);
 }
-.QuickActions .PrivateTabIndicator-colorSecondary-3 {
+.QuickActions .MuiTabs-fixed > span {
   background-color: #328fb4;
 }
 .CloseChat {

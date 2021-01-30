@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { DataContext } from '../Context/AppContext'
 import { NavLink } from 'react-router-dom';
 import { IconHome, IconProfile, IconMessages, IconHistory, IconSettings } from './Icons';
 import '../Css/Nav.css';
 function Nav(props) {
+  const ctx = useContext(DataContext)
   return (
     <nav style={props.style ? props.style : {}} className={props.className ? `Nav${props.className}` : 'Nav'}>
       <div className='Logo'>
@@ -33,7 +35,13 @@ function Nav(props) {
         </NavLink>
       </div>
       <div className='Logout'>
-        <NavLink className='NavLink' to='/logout' exact>
+        <NavLink className='NavLink' to='/logout' exact onClick={()=>{
+          if (ctx.socket && ctx.socket.current)
+          {
+            ctx.socket.current.close()
+            ctx.socket.current = null
+          }
+        }}>
           Logout
         </NavLink>
       </div>

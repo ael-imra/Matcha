@@ -87,10 +87,10 @@ const SingIn = (props) => {
                     if (typeof result.data === 'object') {
                       localStorage.setItem('token', result.data.accessToken);
                       if (result.data.data.IsActive === 1) {
-                        localStorage.setItem('userInfo', JSON.stringify({ FirstName: result.data.data.FirstName, Image: result.data.data.Images, UserName: result.data.data.UserName, LastName: result.data.data.LastName }));
+                        localStorage.setItem('userInfo', JSON.stringify({ ...result.data.data, Image: result.data.data.Images}));
                         props.dataHome.ChangeIsLogin('Login');
                       } else if (result.data.data.IsActive === 2) {
-                        localStorage.setItem('userInfo', JSON.stringify({ FirstName: result.data.data.FirstName, UserName: result.data.data.UserName, LastName: result.data.data.LastName }));
+                        localStorage.setItem('userInfo', JSON.stringify({ ...result.data.data,Image:null }));
                         history.push('/step');
                         props.dataHome.ChangeIsLogin('Step');
                       }

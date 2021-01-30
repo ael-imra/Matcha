@@ -7,6 +7,7 @@ import { ReactComponent as RateSVG } from '../Images/star.svg'
 import { ImageLoader } from './ImageLoader'
 import { DataContext } from '../Context/AppContext'
 import '../Css/Notification.css'
+import { useHistory } from 'react-router-dom';
 
 const types = {
   Like:{
@@ -36,8 +37,9 @@ const types = {
   }
 }
 function Notice(props) {
+  const history = useHistory()
   return (
-    <div className="Notice" onClick={()=>window.location = `http://${window.location.hostname}:3000/profile/${props.username}`}>
+    <div className="Notice" onClick={()=>history.push(`/profile/${props.username}`)}>
       <ImageLoader className="NoticeImage" src={props.img} alt={props.username} />
       <div className="NoticeColumn">
         <div className="NoticeRow">
@@ -63,6 +65,7 @@ function Notice(props) {
 function Notification(props) {
   const ctx = useContext(DataContext)
   const notificationsContent = useRef(null)
+  const [hideLoader,changeHideLoader] = useState(true)
   const [notifications,changeNotifications] = useState({...ctx.cache.notifications})
   function onScroll(){
     const { offsetHeight, scrollHeight, scrollTop } = notificationsContent.current
@@ -71,8 +74,12 @@ function Notification(props) {
   }
   useEffect(()=>{
     ctx.ref.changeNotifications = changeNotifications
-    ctx.ref.search(props.search)
-    return (()=>ctx.ref.changeNotifications = null)
+    ctx.ref.changeHideLoader = changeHideLoader
+    ctx.ref.search(props.search,'notifications')
+    return (()=>{
+      ctx.ref.changeNotifications = null
+      ctx.ref.changeHideLoader = null
+    })
   },[props.search])
   return (
     <div className="Notification" ref={notificationsContent} style={props.style ? props.style : {}} onScroll={onScroll}>
@@ -86,6 +93,7 @@ function Notification(props) {
           ConvertDate={ctx.ref.ConvertDate}
         />
       ))}
+      {!hideLoader ? <div className="NotificationLoader"></div>:null}
     </div>
   )
 }
