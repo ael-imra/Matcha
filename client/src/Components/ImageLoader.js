@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import Axios from 'axios'
 import '../Css/ImageLoader.css'
-import axios from 'axios'
 function ImageLoader(props) {
   const [imageLoaded, changeImageLoaded] = useState(false)
   const imageRef = useRef(null)

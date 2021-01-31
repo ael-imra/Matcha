@@ -67,7 +67,6 @@ const Step = (props) => {
         })
         .catch((error) => {});
     } catch (error) {
-      console.log('health check error');
     }
   };
   React.useEffect(() => {

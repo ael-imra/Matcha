@@ -79,7 +79,7 @@ function Notification(props) {
     return (()=>{
       ctx.ref.changeNotifications = null
       ctx.ref.changeHideLoader = null
-    })
+    })// eslint-disable-next-line
   },[props.search])
   return (
     <div className="Notification" ref={notificationsContent} style={props.style ? props.style : {}} onScroll={onScroll}>

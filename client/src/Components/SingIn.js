@@ -13,7 +13,6 @@ const SingIn = (props) => {
   const [DataInput, saveDataInput] = useState({ Email: '', Password: '' });
   const width = useWindowSize();
   let history = useHistory();
-  console.log('Login');
   return (
     <div className='sing'>
       <p className='t1' style={{ color: ctx.Mode === 'Dark' ? 'white' : 'black' }}>

@@ -98,12 +98,10 @@ export default function AppContext(props) {
       }),...array2])
     },
     getUsers: (start,length)=> {
-      console.log("ENTER FUN",start+length)
         if (ref.changeUsersLoader)
           ref.changeUsersLoader(true)
       axios.post(`Users`, { ...cache.filterData, start,length }).then(data=>{
         cache.users = ref.removeDeplicate(cache.users,data.data)
-        console.log("AFTER",[...cache.users],data.data)
         if (ref.changeUsers)
         {
           ref.changeUsers([...cache.users])
@@ -130,7 +128,7 @@ export default function AppContext(props) {
           ref.ChatContent.current.scrollTop = ref.ChatContent.current.scrollHeight - oldHeight
         ref.countIsRead()
       })
-      },
+    },
     getNotifications:()=>{
       if (ref.changeHideLoader)
         ref.changeHideLoader(false)
@@ -152,13 +150,34 @@ export default function AppContext(props) {
       if (ref.changeFriends)
         ref.changeFriends({...cache.friends})
     },
+    removeFriend:(userName)=>{
+      if (ref.changeChatUserInfo)
+        ref.changeChatUserInfo({})
+      if (cache.friends[userName])
+      {
+        delete cache.friends[userName]
+        if (ref.changeFriends)
+          ref.changeFriends({...cache.friends})
+      }
+    },
+    removeNotification:(userName)=>{
+      if (cache.notifications.data.length > 0)
+      {
+        cache.notifications.data.map((item,index)=>{
+          if (item.UserName === userName)
+            delete cache.notifications.data[index]
+          return (item)
+        })
+        if (ref.changeNotifications)
+          ref.changeNotifications({...cache.notifications})
+      }
+    },
     countIsRead:()=>{
       setTimeout(()=>{
         let countMessages = 0
         Object.values(cache.friends).map(value=>value.IsRead > 0?countMessages++:0)
         cache.IsRead.messages = countMessages
         cache.IsRead.notifications = cache.notifications.IsRead
-        console.log("CHECK ISREAD",countMessages)
         if (ref.changeIsRead)
           ref.changeIsRead({...cache.IsRead})
       },500)
@@ -173,6 +192,7 @@ export default function AppContext(props) {
           Object.keys(oldValue).map(key=>{
             if (key.indexOf(search) > -1)
               newObject[key] = oldValue[key]
+            return key
           })
           return (newObject)
         })
@@ -196,7 +216,7 @@ export default function AppContext(props) {
           changeIsLogin(result.data.IsActive === 1 ? 'Login' : result.data.IsActive === 2 ? 'Step' : 'Not login')
         })
         .catch((error) => {});
-    } catch (error) {}
+    } catch (error) {}// eslint-disable-next-line
   },[])
   useEffect(()=>{
     ref.reconfigAxios()
@@ -216,12 +236,10 @@ export default function AppContext(props) {
             const {message,user} = JSON.parse(messageObject)
             const myInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')):{}
             const friend = cache.friends[user.UserName]
-            console.log("FRIENDMESSAGE",{...cache.friends},JSON.parse(messageObject))
             if (friend)
               friend.messages.push({...message,id:makeID(friend.messages)})
             else
               cache.friends[user.UserName] = {...user,messages:[{...message,id:makeID(friend.messages)}]}
-            console.log("ISREAD",cache.friends[user.UserName].IdUserOwner, message.IdUserOwner,myInfo)
             cache.friends[user.UserName].IsRead = myInfo.IdUserOwner !== message.IdUserOwner ? cache.friends[user.UserName].IsRead + 1 : cache.friends[user.UserName].IsRead
             if (cache.chatUserInfo.UserName)
               ref.readMessages(cache.chatUserInfo.UserName)
@@ -230,7 +248,9 @@ export default function AppContext(props) {
             setTimeout(()=>ref.scrollDown(),0)
             ref.countIsRead()
           }
-          socket.current.on('message',(obj)=>ref.getMessage(obj))
+          socket.current.on('message',(obj)=>{
+            ref.getMessage(obj)
+          })
           socket.current.on('notice',(noticeObject)=>{
             const {user,Type,IdNotification,DateCreation} = JSON.parse(noticeObject)
             if (Type === "LikedBack")
@@ -245,7 +265,6 @@ export default function AppContext(props) {
             ref.countIsRead()
           })
           socket.current.on('status',(statusObject)=>{
-            console.log("ENTER STATUS")
             const {Active,date,UserName} = JSON.parse(statusObject)
             if (cache.friends[UserName])
             {

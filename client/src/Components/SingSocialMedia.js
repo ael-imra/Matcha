@@ -27,7 +27,6 @@ const SingSocialMedia = (props) => {
   });
   let history = useHistory();
   const responseGoogle = (response) => {
-    console.log("ENTER",response)
     try {
       if (props.type === 'sing in') {
         if (Validate('Email', response.profileObj.email)) {
@@ -63,7 +62,6 @@ const SingSocialMedia = (props) => {
               })
               .catch((error) => {});
           } catch (error) {
-            console.log('health check error');
           }
         }
       } else {
@@ -98,7 +96,6 @@ const SingSocialMedia = (props) => {
           });
         });
     } catch (error) {
-      console.log('health check error');
     }
   };
   return (

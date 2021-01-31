@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState} from 'react';
 import '../Css/App.css';
 import AppContext, { DataContext } from '../Context/AppContext';
 import Header from './Header';

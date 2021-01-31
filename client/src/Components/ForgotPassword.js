@@ -59,9 +59,7 @@ const ForgotPassword = (props) => {
                   success: '',
                 });
               });
-          } catch (error) {
-            console.log(error);
-          }
+          } catch (error) {}
         }}
         className='ft_btn'
         style={{

@@ -20,7 +20,8 @@
     "socket.io-client": "^3.0.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "startProduc": "npm run build && PORT=3000 serve -s build",
+    "startDev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -31,6 +32,8 @@
   "browserslist": {
     "production": [
       ">0.2%",
+      "Chrome >= 46",
+      "Firefox >= 41",
       "not dead",
       "not op_mini all"
     ],

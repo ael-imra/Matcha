@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useWindowSize } from './UseWindowSize';
 import Axios from 'axios';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -12,8 +12,10 @@ import { useHistory } from 'react-router-dom';
 import IconButton from '@material-ui/core/IconButton';
 import ImageUser from './ImageUser';
 import Skeleton from '@material-ui/lab/Skeleton';
+import { DataContext } from '../Context/AppContext';
 
 export default function ImageAndInfo(props) {
+  const ctx = useContext(DataContext)
   let history = useHistory();
   const width = useWindowSize();
   const [ifUpload, changeIfUpload] = React.useState(0);
@@ -60,6 +62,8 @@ export default function ImageAndInfo(props) {
   let BlockUser = (e) => {
     try {
       Axios.post(`/Profile/BlockUser/${props.userName}`, {}).then((result) => {
+        ctx.ref.removeFriend(props.userName)
+        ctx.ref.removeNotification(props.userName)
         history.push('/');
       });
     } catch (error) {}

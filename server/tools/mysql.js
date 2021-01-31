@@ -79,14 +79,14 @@ mysql.filter = async function (values) {
       Year(CURDATE())-Year(u.DataBirthday) AS Age,\
       (SELECT AVG(RatingValue) FROM Rating WHERE IdUserReceiver = u.IdUserOwner group by IdUserReceiver) AS rating,\
       (SELECT IdUserReceiver FROM Friends WHERE u.IdUserOwner = IdUserReceiver AND IdUserOwner=?) AS friendreceiver,\
-      (SELECT IdUserOwner FROM Friends WHERE u.IdUserOwner = IdUserOwner AND `Match`=1 AND IdUserReceiver=?) AS friendowner\
+      (SELECT IdUserOwner FROM Friends WHERE u.IdUserOwner = IdUserOwner AND `Match`=1 AND IdUserReceiver=?) AS friendowner,\
+      (SELECT IdBlacklist FROM Blacklist WHERE (IdUserOwner=? AND IdUserReceiver=u.IdUserOwner) OR (IdUserOwner=u.IdUserOwner AND IdUserReceiver=?)) AS blackList\
       FROM Users u \
       WHERE u.IdUserOwner != ? AND u.UserName LIKE ? AND (? = "Male Female" || u.Gender=?) > 0 AND u.Images != "[]"\
-      HAVING Age >= ? AND Age <= ? AND ((rating IS NULL AND ? = 0) OR (rating >= ? AND rating <= ?)) AND friendowner IS NULL AND friendreceiver IS NULL'
-      // 'SELECT u.IdUserOwner,u.UserName,u.Images,u.Gender,u.ListInterest,u.Latitude,u.Longitude,Year(CURDATE())-Year(u.DataBirthday) AS Age,(SELECT AVG(RatingValue) FROM Rating WHERE IdUserReceiver = u.IdUserOwner group by IdUserReceiver) AS rating,(SELECT IdUserReceiver FROM Friends WHERE u.IdUserOwner = IdUserReceiver AND IdUserOwner=?) AS friendreceiver,(SELECT IdUserOwner FROM Friends WHERE u.IdUserOwner = IdUserOwner AND `Match`=1 AND IdUserReceiver=?) AS friendowner FROM Users u WHERE u.IdUserOwner != ? AND u.UserName LIKE ? AND ' +
-      // listInterest +
-      // ' AND Year(CURDATE())-Year(u.DataBirthday) >= ? AND Year(CURDATE())-Year(u.DataBirthday) <= ? HAVING ((rating IS NULL AND ? = 0) OR (rating >= ? AND rating <= ?)) AND friendowner IS NULL AND friendreceiver IS NULL LIMIT ?,?'
+      HAVING Age >= ? AND Age <= ? AND ((rating IS NULL AND ? = 0) OR (rating >= ? AND rating <= ?)) AND friendowner IS NULL AND friendreceiver IS NULL AND blackList IS NULL'
     const result = await mysql.query(query, [
+      values.IdUserOwner,
+      values.IdUserOwner,
       values.IdUserOwner,
       values.IdUserOwner,
       values.IdUserOwner,
@@ -126,8 +126,8 @@ mysql.selectUsersBlocks = async function (idUserOwner) {
 };
 mysql.searchUsersBlocks = async function (idUserOwner, userName) {
   const result = await mysql.query(
-    `SELECT u.IdUserOwner,UserName,Email,Images FROM Users u INNER JOIN Blacklist b WHERE b.idUserOwner=? AND u.IdUserOwner = b.IdUserReceiver AND u.UserName LIKE '${userName}%' ORDER BY IdBlacklist DESC`,
-    idUserOwner
+    `SELECT u.IdUserOwner,UserName,Email,Images FROM Users u INNER JOIN Blacklist b WHERE b.idUserOwner=? AND u.IdUserOwner = b.IdUserReceiver AND u.UserName LIKE ? ORDER BY IdBlacklist DESC`,
+    [idUserOwner,userName+"%"]
   );
   return result;
 };
@@ -140,8 +140,8 @@ mysql.selectHistory = async function (idUserOwner) {
 };
 mysql.searchHistory = async function (idUserOwner, userName) {
   const result = await mysql.query(
-    `SELECT u.IdUserOwner,UserName,Content,Images,DateCreation FROM Users u INNER JOIN Hitory h WHERE h.idUserOwner=? AND u.IdUserOwner = h.IdUserReceiver AND u.UserName LIKE '${userName}%' ORDER BY IdHitory DESC`,
-    idUserOwner
+    `SELECT u.IdUserOwner,UserName,Content,Images,DateCreation FROM Users u INNER JOIN Hitory h WHERE h.idUserOwner=? AND u.IdUserOwner = h.IdUserReceiver AND u.UserName LIKE ? ORDER BY IdHitory DESC`,
+    [idUserOwner,userName+"%"]
   );
   return result;
 };

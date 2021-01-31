@@ -13,6 +13,10 @@ import { useHistory } from 'react-router-dom';
 function User(props) {
   let history = useHistory();
   const [imageIndex, changeImageIndex] = useState(0)
+  const [clickLoad,changeClickLoad] = useState({
+    addFriend:false,
+    blockFriend:false
+  })
   const [ratingValue, changeRatingValue] = useState({ avg: props.rating===null ?0:props.rating, userValue: 0 })
   function UserImageSlideButtonClick(event) {
     const index = [...event.target.parentNode.children].indexOf(event.target)
@@ -85,13 +89,21 @@ function User(props) {
         ))}
       </div>
       <div className="UserActions">
-        {props.userInfo.Image?<div className="UserActionsAccept" onClick={()=>addFriend(props.userName)}>
+        {props.userInfo.Image?<div className="UserActionsAccept" onClick={()=>{
+          if (!clickLoad.addFriend)
+          {
+            changeClickLoad(oldValue=>({...oldValue,addFriend:true}))
+            addFriend(props.userName)}}}>
           <CheckSVG width={20} height={20} fill="#44DB44"/>
         </div>:null}
         <div className="UserActionsInfo" onClick={()=>history.push(`/profile/${props.userName}`)}>
           <UserSVG width={20} height={20} fill="white" />
         </div>
-        {props.userInfo.Image?<div className="UserActionsReport">
+        {props.userInfo.Image?<div className="UserActionsReport" onClick={()=>{
+          if (!clickLoad.blockFriend)
+          {
+            changeClickLoad(oldValue=>({...oldValue,blockFriend:true}))
+            props.blockUser(props.userName)}}}>
           <BanSVG width={20} height={20} fill="#FB5454" />
         </div>:null}
       </div>
@@ -155,8 +167,12 @@ function Users() {
     else
       ctx.ref.getUsers(users.length-1,1)
   }
+  function blockUser(UserName){
+    axios.post(`/Profile/BlockUser/${UserName}`, {})
+    removeFriend(UserName)
+  }
   return (
-    <>{console.log("USERS",users,ctx.cache.users)}
+    <>
       <div className="Users" onScroll={UsersScroll} ref={usersRef}>
         {users.map((obj,index) => {
           if (index < length && obj !== "limit")
@@ -171,6 +187,7 @@ function Users() {
               distance={obj.distance}
               listInterest={JSON.parse(obj.ListInterest)}
               removeFriend={removeFriend}
+              blockUser={blockUser}
               onClick={UserClick}
               userInfo={localStorage.userInfo ? JSON.parse(localStorage.userInfo):{}}
             />)

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { DataContext } from '../Context/AppContext'
 import { NavLink } from 'react-router-dom';
-import { IconHome, IconProfile, IconMessages, IconHistory, IconSettings } from './Icons';
+import { IconHome, IconProfile, IconHistory} from './Icons';
 import '../Css/Nav.css';
 function Nav(props) {
   const ctx = useContext(DataContext)

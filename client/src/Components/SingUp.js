@@ -35,7 +35,6 @@ const SingUp = (props) => {
           });
         });
     } catch (error) {
-      console.log('health check error');
     }
   };
   return (

@@ -34,7 +34,6 @@ const ResetPassword = () => {
         })
         .catch((error) => {})
     } catch (error) {
-      console.log('health check error')
     }
     // eslint-disable-next-line
   }, [])
@@ -75,7 +74,6 @@ const ResetPassword = () => {
             })
           })
       } catch (error) {
-        console.log(error)
       }
   }
   return (

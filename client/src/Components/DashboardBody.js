@@ -11,6 +11,10 @@ import History from './History';
 import Axios from 'axios';
 import FilterListIcon from '@material-ui/icons/FilterList';
 
+function IconComponent(props){// eslint-disable-next-line
+  useEffect(()=>props.dataHome.ChangeStateMenu(),[])
+  return (<div style={{ transform: 'rotate(-180deg)' }}><IconMenu dataHome={props.dataHome}/></div>)
+}
 function DashboardBody(props) {
   let location = useLocation();
   const [hideFilter, changeHideFilter] = useState(true)
@@ -39,16 +43,7 @@ function DashboardBody(props) {
     <div className='DashboardBody' style={props.style ? props.style : {}}>
       <div className='DashboardBodyHeader'>
         <div>
-          {props.width <= 1250 ? (
-            <div style={{ transform: 'rotate(-180deg)' }}>
-              <IconMenu
-                dataHome={{
-                  showMenu: 0,
-                  ChangeStateMenu: () => props.changeLayoutHide((oldValue) => !oldValue),
-                }}
-              />
-            </div>
-          ) : null}
+          {props.width <= 1000 ? (<IconComponent dataHome={{showMenu: 0,ChangeStateMenu:props.changeLayoutHide}}/>) : null}
           <div className='DashboardBodyHeaderProfile'>
             {props.user.Image ? (
               <img src={props.user.Image} alt='profileImage' className='DashboardBodyHeaderProfileImage' />

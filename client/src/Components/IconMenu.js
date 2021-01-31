@@ -10,7 +10,7 @@ const IconMenu = (props) => {
         props.dataHome.showMenu ? 'icon-menu-active' : 'icon-menu-show'
       }`}
       onClick={() => {
-        props.dataHome.ChangeStateMenu(!props.dataHome.showMenu)
+        props.dataHome.ChangeStateMenu(oldValue=>!oldValue)
       }}
     >
       <div

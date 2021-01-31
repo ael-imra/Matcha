@@ -4,7 +4,7 @@ const {checkIfHasOneImage} = require('../tools/tools')
 
 router.get('/',checkIfHasOneImage,async (req,res)=>{
   const locals = req.app.locals
-  const result = await locals.query('SELECT u.IdUserOwner,u.Images,u.UserName,u.LastLogin,u.Active FROM Users u,Friends f WHERE f.Match=1 AND ((f.IdUserOwner=? AND u.IdUserOwner = f.IdUserReceiver) OR (f.IdUserReceiver=? AND u.IdUserOwner = f.IdUserOwner))',[req.userInfo.IdUserOwner,req.userInfo.IdUserOwner])
+  const result = await locals.query('SELECT u.IdUserOwner,u.Images,u.UserName,u.LastLogin,u.Active,(SELECT IdBlackList FROM Blacklist WHERE (IdUserReceiver =? AND IdUserOwner=u.IdUserOwner) OR (IdUserReceiver =u.IdUserOwner AND IdUserOwner=?)) AS blacklist FROM Users u,Friends f WHERE f.Match=1 AND ((f.IdUserOwner=? AND u.IdUserOwner = f.IdUserReceiver) OR (f.IdUserReceiver=? AND u.IdUserOwner = f.IdUserOwner)) HAVING blacklist IS NULL',[req.userInfo.IdUserOwner,req.userInfo.IdUserOwner,req.userInfo.IdUserOwner,req.userInfo.IdUserOwner])
   if (result.length > 0)
   {
     const resultObject = {}

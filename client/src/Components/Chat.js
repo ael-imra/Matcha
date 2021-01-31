@@ -32,7 +32,7 @@ function ChatMessage(props) {
         className="ChatMessageDelete"
         title="delete"
         style={{
-          left: props.pos === 'leftt' ? '84%' : '0',
+          left: props.pos === 'left' ? '84%' : '0',
           display: hideDeleteMessage ? 'block' : 'none',
         }}
       >
@@ -68,10 +68,8 @@ function Chat(props) {
     if (scrollHeight - (scrollTop + offsetHeight) > 30)
       changeHideScrollDown(oldValue => oldValue ? oldValue : true)
     else changeHideScrollDown(false)
-    if (scrollTop === 0 && ctx.cache.friends[UserName] && ctx.cache.friends[UserName].messages[0] !== "limit") {
-    console.log('CHECK',ctx.cache.friends[UserName],ctx.cache.friends[UserName].messages[0])
+    if (scrollTop === 0 && ctx.cache.friends[UserName] && ctx.cache.friends[UserName].messages[0] !== "limit")
       ctx.ref.getMessages(ctx.cache.friends[UserName])
-    }
   }
   function sendMessage(){
     if (chatTextValue.current.value.trim() !== "")
@@ -87,7 +85,7 @@ function Chat(props) {
       sendMessage()
     }}>
       <div className="ChatHeader"> 
-        <div className="ChatImage" style={ctx.cache.chatUserInfo.Active ? {'--color-online':'#44db44'} :{'--color-online':'#a5a5a5'}}>
+        <div className="ChatImage" style={friends[UserName].Active ? {'--color-online':'#44db44'} :{'--color-online':'#a5a5a5'}}>
           <ImageLoader src={ctx.cache.chatUserInfo.Images} alt={UserName}/>
         </div>
         <div className="ChatUserInfo">

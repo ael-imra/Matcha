@@ -83,7 +83,6 @@ function checkImages(images) {
 function handleError(err,req,res,next){
   if (err)
   {
-    console.log("ERRR")
     req.app.locals.sendResponse(res,400,"Bad Request")
   }
   else
@@ -104,7 +103,6 @@ let checkProfileOfYou = (token, UserName, locals) => {
   });
 };
 function handleError(err, req, res, next) {
-  console.log(err)
   if (err) req.app.locals.sendResponse(res, 400, 'Bad Request');
   else next();
 }

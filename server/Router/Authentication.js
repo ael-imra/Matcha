@@ -65,7 +65,6 @@ router.post('/LoginWithGoogle', async function (req, res) {
   const locals = req.app.locals;
   const { IdToken } = req.body;
   const Email = await locals.verifyIdTokenGoogle(IdToken);
-  console.log(Email)
   if (Email) {
     const result = await locals.select('Users', ['IdUserOwner', 'IsActive', 'JWT', 'Token'], {
       Email,

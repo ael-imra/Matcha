@@ -1,4 +1,5 @@
 const express = require('express')
+const fs = require('fs')
 const router = express.Router()
 const Validate = require('../tools/validate')
 const md5 = require('md5')
@@ -20,7 +21,6 @@ router.post('/',auth, async function (req, res) {
   const { Latitude, Longitude } = req.userInfo
   const { list, age, name, location,sexual,rating, start,length } = req.body
   const locals = req.app.locals
-  console.log(req.userInfo.Sexual,"Sexual")
   let filterResult = await locals.filter({
     IdUserOwner:req.userInfo.IdUserOwner,
     name,
@@ -31,7 +31,7 @@ router.post('/',auth, async function (req, res) {
   if (filterResult.length > 0){
     filterResult.map(item=>item.distance = haversine({ lat: item.Latitude, lng: item.Longitude },{ lat: Latitude, lng: Longitude })) 
     function cmp(a,b){
-      const keysNeedToCompare = ['distance','rating','age']
+      const keysNeedToCompare = ['distance','age','rating']
       let count1 = 0,count2 = 0
       list.push(...JSON.parse(req.userInfo.ListInterest))
       list.map(item=>{
@@ -54,10 +54,8 @@ router.post('/',auth, async function (req, res) {
     }
     filterResult.sort(cmp)
     filterResult = filterResult.slice(start,length+start)
-    console.log("LENGTH",filterResult.length,length)
     if (filterResult.length < length)
       filterResult.push("limit")
-    console.log("LENGTH",filterResult.length,length)  
     locals.sendResponse(res, 200, filterResult, true)
   } 
   else locals.sendResponse(res, 400, 'someting wrong with your data')

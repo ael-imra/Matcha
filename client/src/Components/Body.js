@@ -30,7 +30,6 @@ const Body = (props) => {
     if (ErrorMessages.error !== '' || ErrorMessages.warning !== '' || ErrorMessages.success !== '') changeShowMessage(true);
     else changeShowMessage(false);
   }, [ErrorMessages.error, ErrorMessages.warning, ErrorMessages.success]);
-  console.log('Body');
 
   function Error404() {
     React.useEffect(() => {

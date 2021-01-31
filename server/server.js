@@ -17,6 +17,7 @@ const Profile = require("./Router/Profile");
 const BlackList = require("./Router/BlackList");
 const History = require("./Router/History");
 const io = require('socket.io')(http,{
+  transports: ["websocket","polling"],
   cors: {
     origin: "*",
   },
@@ -50,14 +51,12 @@ io.on('connection',(socket)=>{
         app.locals.sockets[result[0].IdUserOwner].push(socket)
       else
         app.locals.sockets[result[0].IdUserOwner] = [socket]
-      if (app.locals.sockets[result[0].IdUserOwner].length === 1)
         setTimeout(()=>sendFriendMyState(1,result[0].IdUserOwner,result[0].UserName,app.locals.sockets),500)
     }
   })
   socket.on('message',async (obj)=>{
     if (obj)
     {
-      console.log(JSON.parse(obj),"OBJ")
       const {user,message} = JSON.parse(obj)
       const sockets = app.locals.sockets
       if (user.UserName && message && message.Content.trim() && socket.UserName)
@@ -86,7 +85,6 @@ io.on('connection',(socket)=>{
       // app.locals.sockets = app.locals.sockets.filter(item=>item.id !== socket.id)
       if (app.locals.sockets[socket.IdUserOwner].length === 0)
       {
-        console.log("AFTER DISCONNECT",socket.IdUserOwner)
         mysql.update('Users',{Active:0,LastLogin:new Date(Date.now())},{IdUserOwner:socket.IdUserOwner})
         setTimeout(()=>sendFriendMyState(0,socket.IdUserOwner,socket.UserName,app.locals.sockets),500)
       }
