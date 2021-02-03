@@ -4,25 +4,25 @@ import '../Css/QuickActions.css'
 import { Search } from './Search'
 import { Messages } from './Messages' // eslint-disable-next-line
 import { Chat } from './Chat' // eslint-disable-next-line
-import { IconButtonBack } from './Icons'
+import { IconBack } from './Icons'
 import { Notification } from './Notification'
 import { DataContext } from '../Context/AppContext'
-import {PeopleAlt as PeopleAltIcon,Mail as MailIcon,Notifications as NotificationsIcon} from '@material-ui/icons';
-import {Tabs,Tab,Paper,Badge} from '@material-ui/core';
+import { PeopleAlt as PeopleAltIcon, Mail as MailIcon, Notifications as NotificationsIcon } from '@material-ui/icons'
+import { Tabs, Tab, Paper, Badge } from '@material-ui/core'
 function QuickActions(props) {
   const ctx = useContext(DataContext)
   const [CurrentAction, ChangeCurrentAction] = useState('Friends')
   const [search, changeSearch] = useState('')
-  const [chatUserInfo,changeChatUserInfo] = useState({})
-  const [IsRead,changeIsRead] = useState({...ctx.cache.IsRead})
-  useEffect(()=>{
+  const [chatUserInfo, changeChatUserInfo] = useState({})
+  const [IsRead, changeIsRead] = useState({ ...ctx.cache.IsRead })
+  useEffect(() => {
     ctx.ref.changeChatUserInfo = changeChatUserInfo
     ctx.ref.changeIsRead = changeIsRead
-    return (()=>{
+    return () => {
       ctx.ref.changeChatUserInfo = null
       ctx.ref.changeIsRead = null
-    })// eslint-disable-next-line
-  },[])
+    } // eslint-disable-next-line
+  }, [])
   return (
     <div
       className="QuickActionsChatBox"
@@ -40,9 +40,7 @@ function QuickActions(props) {
       }}
     >
       <div
-        className={
-          props.className ? `QuickActions${props.className}` : 'QuickActions'
-        }
+        className={props.className ? `QuickActions${props.className}` : 'QuickActions'}
         style={
           props.style
             ? {
@@ -52,42 +50,62 @@ function QuickActions(props) {
             : { display: chatUserInfo.UserName ? 'none' : 'flex' }
         }
       >
-          <Paper square>
-            <Tabs
-            value={['Friends','Messages','Notification'].indexOf(CurrentAction)}
-            onChange={(event,value)=>{
-              ChangeCurrentAction(['Friends','Messages','Notification'][value])
-              if (value === 2)
-                ctx.ref.readNotifications()
+        <Paper square>
+          <Tabs
+            value={['Friends', 'Messages', 'Notification'].indexOf(CurrentAction)}
+            onChange={(event, value) => {
+              ChangeCurrentAction(['Friends', 'Messages', 'Notification'][value])
+              if (value === 2) ctx.ref.readNotifications()
             }}
-              variant="fullWidth"
-              indicatorColor="secondary"
-              textColor="secondary"
-              aria-label="icon label tabs example"
-            >
-              <Tab icon={<Badge color="secondary"><PeopleAltIcon /></Badge>} label="Friends" />
-              <Tab icon={<Badge color={IsRead.messages === 0 ? "secondary" : "error"} badgeContent={IsRead.messages} showZero><MailIcon /></Badge>} label="Messages" />
-              <Tab icon={<Badge color={IsRead.notifications === 0 ? "secondary" : "error"} badgeContent={IsRead.notifications} showZero><NotificationsIcon /></Badge>} label="Notification" />
-            </Tabs>
-          </Paper>
+            variant="fullWidth"
+            indicatorColor="secondary"
+            textColor="secondary"
+            aria-label="icon label tabs example"
+          >
+            <Tab
+              icon={
+                <Badge color="secondary">
+                  <PeopleAltIcon />
+                </Badge>
+              }
+              label="Friends"
+            />
+            <Tab
+              icon={
+                <Badge color={IsRead.messages === 0 ? 'secondary' : 'error'} badgeContent={IsRead.messages} showZero>
+                  <MailIcon />
+                </Badge>
+              }
+              label="Messages"
+            />
+            <Tab
+              icon={
+                <Badge color={IsRead.notifications === 0 ? 'secondary' : 'error'} badgeContent={IsRead.notifications} showZero>
+                  <NotificationsIcon />
+                </Badge>
+              }
+              label="Notification"
+            />
+          </Tabs>
+        </Paper>
         <Search search={search} changeSearch={changeSearch} />
-        {CurrentAction === 'Friends' ? <Friends search={search} />:null}
-        {CurrentAction === 'Messages' ? <Messages search={search} />:null}
-        {CurrentAction === 'Notification' ? <Notification search={search}/> : null}
+        {CurrentAction === 'Friends' ? <Friends search={search} /> : null}
+        {CurrentAction === 'Messages' ? <Messages search={search} /> : null}
+        {CurrentAction === 'Notification' ? <Notification search={search} /> : null}
       </div>
-      {chatUserInfo.UserName ? <div
+      {chatUserInfo.UserName ? (
+        <div
           className="CloseChat"
           onClick={() => {
             ctx.cache.chatUserInfo = {}
             changeChatUserInfo({})
           }}
         >
-          <IconButtonBack width={20} height={20} fill="#6e97ee" />
+          <IconBack width={20} height={20} fill="#6e97ee" />
           <div>Back To Messages</div>
-        </div>:null}
-      {chatUserInfo.UserName ? (
-        <Chat />
+        </div>
       ) : null}
+      {chatUserInfo.UserName ? <Chat /> : null}
     </div>
   )
 }

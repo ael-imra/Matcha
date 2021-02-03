@@ -20,8 +20,7 @@ export const language = [
     AlreadyAMember: 'Already a member',
     forgotPassword: 'forgot password',
     AccountDeactivated: 'This account is deactivated please visit your email',
-    FailLogin:
-      'We couldn’t find an account matching the Email and password you entered.Please check your Email and password and try again.',
+    FailLogin: 'We couldn’t find an account matching the Email and password you entered.Please check your Email and password and try again.',
   },
   {
     lang: 'FR',
@@ -31,8 +30,7 @@ export const language = [
     singin: 'Se connecter',
     singup: 'joindre maintenant',
     singup2: `s'inscrire`,
-    titre_home:
-      'Vous venez de trouver un meilleur moyen de communiquer avec vos amis',
+    titre_home: 'Vous venez de trouver un meilleur moyen de communiquer avec vos amis',
     singUpINfb: 'inscrivez-vous avec facebook',
     LoginINfb: 'Se connecter avec facebook',
     FirstName: 'Prénom',

@@ -1,41 +1,50 @@
 const express = require('express')
 const router = express.Router()
-const {checkIfHasOneImage} = require('../tools/tools')
-router.post('/',checkIfHasOneImage, async (req, res) => {
+const { checkIfHasOneImage } = require('../tools/tools')
+router.post('/', checkIfHasOneImage, async (req, res) => {
   const locals = req.app.locals
-  const {usernameReceiver,RatingValue} = req.body
-  if (
-    usernameReceiver &&
-    RatingValue &&
-    RatingValue >= 0 &&
-    RatingValue <= 5
-  ) {
+  const { usernameReceiver, RatingValue } = req.body
+  if (usernameReceiver && usernameReceiver !== req.userInfo.UserName && RatingValue && RatingValue >= 0 && RatingValue <= 5) {
     const IdUserReceiver = await locals.getIdUserOwner(usernameReceiver)
-    const resultCheckRating = await locals.select('Rating','*',{IdUserOwner:req.userInfo.IdUserOwner,IdUserReceiver})
+    const resultCheckRating = await locals.select('Rating', '*', {
+      IdUserOwner: req.userInfo.IdUserOwner,
+      IdUserReceiver,
+    })
     if (resultCheckRating.length > 0) {
-      const resultUpdateRating = await locals.update('Rating',{RatingValue},{IdUserOwner:req.userInfo.IdUserOwner,IdUserReceiver})
-      if (resultUpdateRating) locals.sendResponse(res,200,RatingValue.toString())
-      else locals.sendResponse(res,403,'Error Update Rating')
+      await locals.update('Rating', { RatingValue }, { IdUserOwner: req.userInfo.IdUserOwner, IdUserReceiver })
+      const result = await locals.select('Rating', ['SUM(RatingValue)/COUNT(RatingValue) "AVG"','COUNT(RatingValue) "CountReview"'], { IdUserReceiver })
+      locals.sendResponse(res, 200, result.length > 0 ? {AVG:result[0].AVG,CountReview:result[0].CountReview} : {AVG:0,CountReview:0},true)
     } else {
-      const resultInsertRating = await locals.insert('Rating',{IdUserOwner:req.userInfo.IdUserOwner,IdUserReceiver,RatingValue})
-      if (resultInsertRating)
-      {
-        const avgRatingValue = await locals.select('Rating','SUM(RatingValue)/Count(*) AS "AVG"',{IdUserReceiver})
-        locals.sendResponse(res,200,avgRatingValue && avgRatingValue.length > 0 && avgRatingValue[0].AVG ? avgRatingValue[0].AVG.toString() : '0')
-      }else locals.sendResponse(res,400,'Error On Insert Rating Value')
+      const resultInsertRating = await locals.insert('Rating', {
+        IdUserOwner: req.userInfo.IdUserOwner,
+        IdUserReceiver,
+        RatingValue,
+      })
+      if (resultInsertRating) {
+        const result = await locals.select('Rating', ['SUM(RatingValue)/COUNT(RatingValue) "AVG"','COUNT(RatingValue) "CountReview"'], { IdUserReceiver })
+        locals.sendResponse(res, 200, result.length > 0 ? {AVG:result[0].AVG,CountReview:result[0].CountReview} : {AVG:0,CountReview:0},true)
+      } else locals.sendResponse(res, 200, 'Error On Insert Rating Value')
     }
-    locals.notification(req,'Rate',req.userInfo.UserName,usernameReceiver)
-  }
-  else locals.sendResponse(res,400,'Bad Request')
+    locals.notification(req, 'Rate', req.userInfo.UserName, usernameReceiver)
+  } else locals.sendResponse(res, 200, 'Bad Request')
 })
-router.get('/:usernameOwner',checkIfHasOneImage, async (req, res) => {
+router.get('/myRating/:usernameReceiever',async (req,res)=>{
   const locals = req.app.locals
-  if (req.params && req.params.usernameOwner)
+  if (req.params && req.params.usernameReceiever)
   {
-    const IdUserReceiver = await locals.getIdUserOwner(req.params.usernameOwner)
-    const avgRatingValue = await locals.select('Rating','SUM(RatingValue)/Count(*) AS "AVG"',{IdUserReceiver})
-    locals.sendResponse(res,200,avgRatingValue && avgRatingValue.length > 0 && avgRatingValue[0].AVG ? avgRatingValue[0].AVG.toString() : '0')
+    const IdUserReceiver = await locals.getIdUserOwner(req.params.usernameReceiever)
+    const RatingValue = await locals.select('Rating', 'RatingValue', { IdUserOwner:req.userInfo.UserName,IdUserReceiver })
+    if (RatingValue.length > 0)
+      locals.sendResponse(res,200,RatingValue[0].RatingValue.toString())
   }
-  else locals.sendResponse(res,400,'bad request')
+  else locals.sendResponse(res, 200, 'bad request')
+})
+router.get('/:usernameReceiever', checkIfHasOneImage, async (req, res) => {
+  const locals = req.app.locals
+  if (req.params && req.params.usernameReceiever) {
+    const IdUserReceiver = await locals.getIdUserOwner(req.params.usernameReceiever)
+    const result = await locals.select('Rating', ['SUM(RatingValue)/COUNT(RatingValue) "AVG"','COUNT(RatingValue) "CountReview"'], { IdUserReceiver })
+    locals.sendResponse(res, 200, result.length > 0 ? {AVG:result[0].AVG,CountReview:result[0].CountReview} : {AVG:0,CountReview:0},true)
+  } else locals.sendResponse(res, 200, 'bad request')
 })
 module.exports = router

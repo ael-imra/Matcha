@@ -5,39 +5,30 @@ function ImageLoader(props) {
   const imageRef = useRef(null)
   useEffect(() => {
     let unmount = false
-    async function fetchDataImage(src)
-    {
-      try{
+    async function fetchDataImage(src) {
+      try {
         const res = await fetch(src)
         const data = await res.blob()
-        return (data)
-      }
-      catch(err){
-        return (await fetchDataImage(src))
+        return data
+      } catch (err) {
+        return await fetchDataImage(src)
       }
     }
-      fetchDataImage(props.src).then(data=>{
-        const reader = new FileReader()
-        reader.onload = () => {
-          if (!unmount) {
-            changeImageLoaded(true)
-            if (imageRef.current) imageRef.current.src = reader.result
-          }
+    fetchDataImage(props.src).then((data) => {
+      const reader = new FileReader()
+      reader.onload = () => {
+        if (!unmount) {
+          changeImageLoaded(true)
+          if (imageRef.current) imageRef.current.src = reader.result
         }
-        reader.readAsDataURL(data)
+      }
+      reader.readAsDataURL(data)
     })
     return () => (unmount = true) // eslint-disable-next-line
   }, [])
   return (
-    <div
-      className={`${props.className ? props.className : ''} ImageLoader`}
-      style={props.style ? props.style : {}}
-    >
-      {imageLoaded ? (
-        <img ref={imageRef} alt={props.alt} />
-      ) : (
-        <div className="ImageLoading"></div>
-      )}
+    <div className={`${props.className ? props.className : ''} ImageLoader`} style={props.style ? props.style : {}}>
+      {imageLoaded ? <img ref={imageRef} alt={props.alt} /> : <div className="ImageLoading"></div>}
     </div>
   )
 }

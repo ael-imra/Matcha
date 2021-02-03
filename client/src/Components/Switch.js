@@ -4,16 +4,10 @@ import '../Css/Switch.css'
 function Toggle(props) {
   const style = {
     transition: 'all 0.5s',
-    transform: props.list.indexOf(props.active)
-      ? 'translateX(29px)'
-      : 'translateX(5px)',
+    transform: props.list.indexOf(props.active) ? 'translateX(29px)' : 'translateX(5px)',
   }
   return (
-    <div
-      className="Toggle"
-      style={props.style ? props.style : {}}
-      onClick={() => props.switch()}
-    >
+    <div className="Toggle" style={props.style ? props.style : {}} onClick={() => props.switch()}>
       <div
         className="ToggleSwitcher"
         style={{
@@ -50,10 +44,7 @@ function Switch(props) {
   }
   return (
     <div className="Switch" style={props.style ? props.style : {}}>
-      <div
-        className="SwitchChooses"
-        style={{ transform: `translateY(${translate[props.active]}px)` }}
-      >
+      <div className="SwitchChooses" style={{ transform: `translateY(${translate[props.active]}px)` }}>
         {props.list.map((item, index) => (
           <div className="SwitchItem" key={index}>
             {item}
@@ -61,24 +52,8 @@ function Switch(props) {
         ))}
       </div>
       <div className="SwitchButtons">
-        <IconArrowUp
-          width={30}
-          height={30}
-          fill={props.style.color}
-          onClick={SwitchUp}
-          style={translate[props.active] === 0 ? { opacity: 0.3 } : {}}
-        />
-        <IconArrowDown
-          width={30}
-          height={30}
-          fill={props.style.color}
-          onClick={SwitchDown}
-          style={
-            translate[props.active] <= -1 * (props.list.length - 1) * 28
-              ? { opacity: 0.3 }
-              : {}
-          }
-        />
+        <IconArrowUp width={30} height={30} fill={props.style.color} onClick={SwitchUp} style={translate[props.active] === 0 ? { opacity: 0.3 } : {}} />
+        <IconArrowDown width={30} height={30} fill={props.style.color} onClick={SwitchDown} style={translate[props.active] <= -1 * (props.list.length - 1) * 28 ? { opacity: 0.3 } : {}} />
       </div>
     </div>
   )

@@ -59,11 +59,12 @@
   min-width: 270px;
   display: flex;
   flex-flow: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   box-sizing: border-box;
 }
 .FilterAdvanceSecond {
+  align-items: center;
   height: 100%;
 }
 .FilterAdvanceFirst > div {
@@ -82,6 +83,6 @@
 .FilterAdvanceLoactionValue {
   min-width: 300px;
 }
-/* .Filter .MuiInputBase-input {
-  border: 1px solid;
-} */
+.FilterAdvance .MuiChip-root * {
+  color: white !important;
+}

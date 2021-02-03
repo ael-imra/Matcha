@@ -10,8 +10,7 @@ function Countdown(props) {
         intervalID: IntervalID,
       }))
       props.changeCounterInfo((oldValue) => {
-        if (oldValue.counter < oldValue.counterNumber)
-          return { ...oldValue, counter: oldValue.counter + 1 }
+        if (oldValue.counter < oldValue.counterNumber) return { ...oldValue, counter: oldValue.counter + 1 }
         else {
           clearInterval(oldValue.intervalID)
           props.func()

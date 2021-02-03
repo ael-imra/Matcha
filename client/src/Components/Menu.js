@@ -35,9 +35,7 @@ const Menu = () => {
             list={['Light', 'Dark']}
             active={ctx.Mode}
             switch={() => {
-              ctx.changeMode((oldValue) =>
-                oldValue === 'Light' ? 'Dark' : 'Light'
-              )
+              ctx.changeMode((oldValue) => (oldValue === 'Light' ? 'Dark' : 'Light'))
             }}
             colors={['#03a9f1', '#292f3f']}
           />

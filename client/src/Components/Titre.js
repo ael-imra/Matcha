@@ -7,9 +7,7 @@ const Titre = (props) => {
   const ctx = useContext(DataContext)
   return (
     <div className="titre">
-      <p style={{ color: ctx.Mode === 'Dark' ? 'white' : 'black' }}>
-        {language[ctx.Lang].titre_home}
-      </p>
+      <p style={{ color: ctx.Mode === 'Dark' ? 'white' : 'black' }}>{language[ctx.Lang].titre_home}</p>
       <button
         className="ft_btn"
         onClick={() => {

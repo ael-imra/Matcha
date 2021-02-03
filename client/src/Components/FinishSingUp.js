@@ -7,16 +7,10 @@ const FinishSingUp = (props) => {
   const ctx = useContext(DataContext)
   return (
     <div>
-      <p
-        style={{ color: ctx.Mode === 'Dark' ? 'white' : 'black' }}
-        className="t1"
-      >
+      <p style={{ color: ctx.Mode === 'Dark' ? 'white' : 'black' }} className="t1">
         thank your for sing up in Matcha
       </p>
-      <p
-        className="t2-min "
-        style={{ color: ctx.Mode === 'Dark' ? 'white' : 'black' }}
-      >
+      <p className="t2-min " style={{ color: ctx.Mode === 'Dark' ? 'white' : 'black' }}>
         please verify your email address to continue sign up
       </p>
       <button

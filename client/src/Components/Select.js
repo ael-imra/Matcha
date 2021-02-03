@@ -1,12 +1,11 @@
-import React,{useState,useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import '../Css/Select.css'
 import Chip from '@material-ui/core/Chip'
 import TextField from '@material-ui/core/TextField'
 function Select(props) {
   function init(propsList, listActive) {
     const newArray = []
-    if (propsList && propsList.length > 0 && listActive && listActive.length >=0)
-    {
+    if (propsList && propsList.length > 0 && listActive && listActive.length >= 0) {
       propsList.map((item, index) =>
         newArray.push({
           id: index,
@@ -14,17 +13,13 @@ function Select(props) {
           selected: listActive && listActive.indexOf(item) > -1 ? true : false,
         })
       )
-      listActive.map((item) =>
-        propsList.indexOf(item) === -1
-          ? newArray.push({ id: newArray.length, value: item, selected: true })
-          : null
-      )
+      listActive.map((item) => (propsList.indexOf(item) === -1 ? newArray.push({ id: newArray.length, value: item, selected: true }) : null))
     }
     return newArray
   }
   const [list, changeList] = useState(init(props.list, props.active))
-  const [search, changeSearch] = useState('')// eslint-disable-next-line
-  useEffect(()=>changeList(init(props.list,props.active)),[props.active])
+  const [search, changeSearch] = useState('') // eslint-disable-next-line
+  useEffect(() => changeList(init(props.list, props.active)), [props.active,props.list])
   function getListActive(list) {
     const newArray = []
     list.map((item) => {
@@ -42,10 +37,7 @@ function Select(props) {
   function keyUp(event) {
     if (event.keyCode === 13) {
       const newIndex = list.length
-      const newArray = [
-        ...list,
-        { id: newIndex, value: event.target.value, selected: true },
-      ]
+      const newArray = [...list, { id: newIndex, value: event.target.value, selected: true }]
       event.target.value = ''
       changeSearch('')
       changeList(newArray)
@@ -55,36 +47,13 @@ function Select(props) {
   return (
     <div className="Select">
       <div className="SelectInput">
-        <TextField
-          id="list"
-          label="List Interset"
-          variant="outlined"
-          size="small"
-          onChange={(event) => changeSearch(event.target.value)}
-          onKeyUp={keyUp}
-        />
+        <TextField id="list" label="List Interset" variant="outlined" size="small" onChange={(event) => changeSearch(event.target.value)} onKeyUp={keyUp} />
       </div>
-      <div className="SelectItems">
-        {list.map((item, index) =>
-          item.selected ? (
-            <Chip
-              label={item.value}
-              key={item.id}
-              color="primary"
-              onDelete={() => changeItem(index, 0)}
-            />
-          ) : null
-        )}
-      </div>
+      <div className="SelectItems">{list.map((item, index) => (item.selected ? <Chip label={item.value} key={item.id} color="primary" onDelete={() => changeItem(index, 0)} /> : null))}</div>
       <div className="SelectList">
         {list.map((item, index) =>
-          !item.selected &&
-          item.value.toLowerCase().indexOf(search.toLowerCase()) > -1 ? (
-            <div
-              key={item.id}
-              className="SelectListItem"
-              onClick={() => changeItem(index, 1)}
-            >
+          !item.selected && item.value.toLowerCase().indexOf(search.toLowerCase()) > -1 ? (
+            <div key={item.id} className="SelectListItem" onClick={() => changeItem(index, 1)}>
               {item.value}
             </div>
           ) : null

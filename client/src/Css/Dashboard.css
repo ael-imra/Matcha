@@ -21,11 +21,7 @@
   content: '';
   width: 570px;
   height: 66px;
-  background: linear-gradient(
-    90deg,
-    var(--background-Nav) 50%,
-    var(--background-QuickActions) 50%
-  );
+  background: linear-gradient(90deg, var(--background-Nav) 50%, var(--background-QuickActions) 50%);
 }
 .LayoutSwitch {
   position: relative;

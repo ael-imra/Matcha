@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.NODEMAILER_PASS,
   },
 })
-function sendMail(subject,message,email, username, url) {
+function sendMail(subject, message, email, username, url) {
   const mailResult = {
     error: null,
     result: null,

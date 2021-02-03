@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from 'react'
 import { Loader } from './Loader'
 import { DataContext } from '../Context/AppContext'
-import {
-  IconSendMessage,
-  IconArrowDownChat,
-} from './Icons'
+import { IconSendMessage, IconArrowDownChat } from './Icons'
 import '../Css/Chat.css'
 import { ImageLoader } from './ImageLoader'
 
@@ -36,9 +33,7 @@ function ChatMessage(props) {
           display: hideDeleteMessage ? 'block' : 'none',
         }}
       >
-        <div style={{ color: 'red', fontSize: '13px', cursor: 'pointer' }}>
-          delete
-        </div>
+        <div style={{ color: 'red', fontSize: '13px', cursor: 'pointer' }}>delete</div>
       </div>
     </div>
   )
@@ -47,56 +42,60 @@ function Chat(props) {
   const [hideScrollDown, changeHideScrollDown] = useState(false)
   const [hideLoader, changeHideLoader] = useState(true)
   const ctx = useContext(DataContext)
-  const [friends,changeFriends] = useState({...ctx.cache.friends})
+  const [friends, changeFriends] = useState({ ...ctx.cache.friends })
   const ChatContent = useRef()
-  const chatTextValue=useRef("")
+  const chatTextValue = useRef('')
   const UserName = ctx.cache.chatUserInfo.UserName
   useEffect(() => {
     ctx.ref.changeFriends = changeFriends
     ctx.ref.ChatContent = ChatContent
     ctx.ref.changeHideLoader = changeHideLoader
-    setTimeout(()=>ctx.ref.scrollDown(),0)
-    return (()=>{
+    setTimeout(() => ctx.ref.scrollDown(), 0)
+    return () => {
       ctx.ref.changeFriends = null
       ctx.ref.ChatContent = null
       ctx.ref.changeHideLoader = null
-    })
+    }
     // eslint-disable-next-line
   }, [])
   function ShowScrollDown() {
     const { offsetHeight, scrollHeight, scrollTop } = ChatContent.current
-    if (scrollHeight - (scrollTop + offsetHeight) > 30)
-      changeHideScrollDown(oldValue => oldValue ? oldValue : true)
+    if (scrollHeight - (scrollTop + offsetHeight) > 30) changeHideScrollDown((oldValue) => (oldValue ? oldValue : true))
     else changeHideScrollDown(false)
-    if (scrollTop === 0 && ctx.cache.friends[UserName] && ctx.cache.friends[UserName].messages[0] !== "limit")
-      ctx.ref.getMessages(ctx.cache.friends[UserName])
+    if (scrollTop === 0 && ctx.cache.friends[UserName] && ctx.cache.friends[UserName].messages[0] !== 'limit') ctx.ref.getMessages(ctx.cache.friends[UserName])
   }
-  function sendMessage(){
-    if (chatTextValue.current.value.trim() !== "")
-    {
-      ctx.ref.sendMessage({message:{id:friends[UserName].messages[friends[UserName].messages.length - 1].id + 1,Content:chatTextValue.current.value,date:new Date().toISOString(),IdUserReceiver:ctx.cache.chatUserInfo.IdUserOwner},user:{...ctx.cache.chatUserInfo,messages:null}})
-      chatTextValue.current.value = ""
+  function sendMessage() {
+    if (chatTextValue.current.value.trim() !== '') {
+      ctx.ref.sendMessage({
+        message: {
+          id: ctx.ref.makeID(ctx.cache.friends[UserName].messages),
+          Content: chatTextValue.current.value,
+          date: new Date().toISOString(),
+          IdUserReceiver: ctx.cache.chatUserInfo.IdUserOwner,
+        },
+        user: { ...ctx.cache.chatUserInfo, messages: null },
+      })
+      chatTextValue.current.value = ''
       // setTimeout(() => ctx.ref.scrollDown(), 0)
     }
   }
   return (
-    <div className="Chat" style={props.style ? props.style : {}} onKeyUp={(event)=>{
-      if (event.keyCode === 13)
-      sendMessage()
-    }}>
-      <div className="ChatHeader"> 
-        <div className="ChatImage" style={friends[UserName].Active ? {'--color-online':'#44db44'} :{'--color-online':'#a5a5a5'}}>
-          <ImageLoader src={ctx.cache.chatUserInfo.Images} alt={UserName}/>
+    <div
+      className="Chat"
+      style={props.style ? props.style : {}}
+      onKeyUp={(event) => {
+        if (event.keyCode === 13) sendMessage()
+      }}
+    >
+      <div className="ChatHeader">
+        <div className="ChatImage" style={friends[UserName].Active ? { '--color-online': '#44db44' } : { '--color-online': '#a5a5a5' }}>
+          <ImageLoader src={ctx.cache.chatUserInfo.Images} alt={UserName} />
         </div>
         <div className="ChatUserInfo">
           <div className="ChatUserInfoName">{UserName}</div>
         </div>
       </div>
-      <div
-        className="ChatContent"
-        ref={ChatContent}
-        onScroll={ShowScrollDown}
-      >
+      <div className="ChatContent" ref={ChatContent} onScroll={ShowScrollDown}>
         {!hideLoader ? (
           <Loader
             style={{
@@ -105,34 +104,17 @@ function Chat(props) {
             }}
           />
         ) : null}
-        {friends[UserName] ? friends[UserName].messages.map(msg => {
-              if (msg !== "limit")
-                return (
-                  <ChatMessage
-                    key={"Message"+msg.id}
-                    pos={msg.IdUserOwner !== ctx.cache.chatUserInfo.IdUserOwner?"right":"left"}
-                    background={msg.IdUserOwner !== ctx.cache.chatUserInfo.IdUserOwner?"#E6E8F4":"#3D88B7"}
-                    color={msg.IdUserOwner !== ctx.cache.chatUserInfo.IdUserOwner?"black":"white"}
-                    message={msg.Content}
-                    time={ctx.ref.ConvertDate(msg.date, 'time')}
-                  />
-                )
+        {friends[UserName]
+          ? friends[UserName].messages.map((msg) => {
+              if (msg !== 'limit') return <ChatMessage key={'Message' + msg.id} pos={msg.IdUserOwner !== ctx.cache.chatUserInfo.IdUserOwner ? 'right' : 'left'} background={msg.IdUserOwner !== ctx.cache.chatUserInfo.IdUserOwner ? '#E6E8F4' : '#3D88B7'} color={msg.IdUserOwner !== ctx.cache.chatUserInfo.IdUserOwner ? 'black' : 'white'} message={msg.Content} time={ctx.ref.ConvertDate(msg.date, 'time')} />
               return null
-            }):null}
+            })
+          : null}
       </div>
-      {hideScrollDown ? (
-        <IconArrowDownChat
-          className="ScrollDown"
-          width={18}
-          height={18}
-          onClick={() =>ctx.ref.scrollDown()}
-        />
-      ) : null}
-      <div
-        className="ChatSendMessage"
-      >
+      {hideScrollDown ? <IconArrowDownChat className="ScrollDown" width={18} height={18} onClick={() => ctx.ref.scrollDown()} /> : null}
+      <div className="ChatSendMessage">
         <div className="ChatSendMessageButton">
-          <input type="text" placeholder="Enter Message" ref={chatTextValue}/>
+          <input type="text" placeholder="Enter Message" ref={chatTextValue} />
         </div>
         <div className="ChatSendButton">
           <IconSendMessage width={24} height={24} fill="#6e97ee" onClick={sendMessage} />

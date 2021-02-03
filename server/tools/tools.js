@@ -11,8 +11,7 @@ async function fetchDataJSON(country, latitude, longitude, ip) {
       Longitude: res.data.lon,
       City: res.data.city,
     }
-  } else if (latitude && longitude)
-    return fetchCity(country, latitude, longitude)
+  } else if (latitude && longitude) return fetchCity(country, latitude, longitude)
   return new Promise((resolve) => {
     resolve({ City: country, Latitude: latitude, Longitude: longitude })
   })
@@ -22,9 +21,7 @@ function fetchCity(country, Latitude, Longitude) {
   return new Promise(async (resolve) => {
     if (country) resolve(country)
     else {
-      const res = await axios.get(
-        `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=a9a78ca780d3456a9b8bf2b3e790a4b4`
-      )
+      const res = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=a9a78ca780d3456a9b8bf2b3e790a4b4`)
       resolve({
         City: res.data.results[0].components.city,
         Latitude,
@@ -43,50 +40,47 @@ function sendResponse(res, code, message, json) {
 function checkImage(src, locals) {
   return new Promise((resolve) => {
     if (src && src !== '') {
-      const base64Data = src.split(',');
+      const base64Data = src.split(',')
       if (base64Data.length > 1) {
-        const nameImage = locals.crypto.randomBytes(16).toString('hex');
-        const url = `http://localhost:${process.env.PORT}/images/${nameImage}.jpg`;
-        const buffer = Buffer.from(base64Data[1], 'base64');
+        const nameImage = locals.crypto.randomBytes(16).toString('hex')
+        const url = `http://localhost:${process.env.PORT}/images/${nameImage}.jpg`
+        const buffer = Buffer.from(base64Data[1], 'base64')
         Jimp.read(buffer, (err, res) => {
-          if (err) resolve(null);
+          if (err) resolve(null)
           else {
-            res.quality(40).write(`./images/${nameImage}.jpg`);
-            resolve(url);
+            res.quality(40).write(`./images/${nameImage}.jpg`)
+            resolve(url)
           }
-        });
-      } else resolve(null);
-    } else resolve(null);
-  });
+        })
+      } else resolve(null)
+    } else resolve(null)
+  })
 }
 function checkImages(images) {
- return new Promise((resolve) => {
-    let arr = [];
+  return new Promise((resolve) => {
+    let arr = []
     if (images.length > 0)
       images.forEach((image) => {
-        let base64Data = image.split(',');
+        let base64Data = image.split(',')
         if (base64Data.length > 1) {
-          const buffer = Buffer.from(base64Data[1], 'base64');
+          const buffer = Buffer.from(base64Data[1], 'base64')
           Jimp.read(buffer, (err, res) => {
             if (err) {
-              resolve(false);
+              resolve(false)
             } else {
-              arr.push('ok');
+              arr.push('ok')
             }
-            if (arr.length === images.length) resolve(true);
-          });
-        } else resolve(false);
-      });
-    else resolve(false);
-  });
+            if (arr.length === images.length) resolve(true)
+          })
+        } else resolve(false)
+      })
+    else resolve(false)
+  })
 }
-function handleError(err,req,res,next){
-  if (err)
-  {
-    req.app.locals.sendResponse(res,400,"Bad Request")
-  }
-  else
-    next()
+function handleError(err, req, res, next) {
+  if (err) {
+    req.app.locals.sendResponse(res, 200, 'Bad Request')
+  } else next()
 }
 let checkProfileOfYou = (token, UserName, locals) => {
   return new Promise(async (resolve) => {
@@ -94,17 +88,17 @@ let checkProfileOfYou = (token, UserName, locals) => {
       const result = await locals.select('Users', ['UserName'], {
         Token: token,
         IsActive: 1,
-      });
+      })
       if (result[0]) {
-        if (result[0].UserName === UserName) resolve(true);
-        else resolve(false);
-      } else resolve(false);
-    } else resolve(false);
-  });
-};
+        if (result[0].UserName === UserName) resolve(true)
+        else resolve(false)
+      } else resolve(false)
+    } else resolve(false)
+  })
+}
 function handleError(err, req, res, next) {
-  if (err) req.app.locals.sendResponse(res, 400, 'Bad Request');
-  else next();
+  if (err) req.app.locals.sendResponse(res, 200, 'Bad Request')
+  else next()
 }
 let getImage = (token, locals) => {
   return new Promise(async (resolve) => {
@@ -112,12 +106,12 @@ let getImage = (token, locals) => {
       const result = await locals.select('Users', ['Images'], {
         Token: token,
         IsActive: 1,
-      });
-      if (result[0]) resolve(result);
-      else resolve(false);
-    } else resolve(false);
-  });
-};
+      })
+      if (result[0]) resolve(result)
+      else resolve(false)
+    } else resolve(false)
+  })
+}
 
 let getPassword = (token, locals) => {
   return new Promise(async (resolve, reject) => {
@@ -125,38 +119,36 @@ let getPassword = (token, locals) => {
       const result = await locals.select('Users', ['Password'], {
         Token: token,
         IsActive: 1,
-      });
-      if (result[0]) resolve(result);
-      else resolve(false);
-    } else resolve(false);
-  });
-};
+      })
+      if (result[0]) resolve(result)
+      else resolve(false)
+    } else resolve(false)
+  })
+}
 function getImageProfile(users) {
   return new Promise((resolve) => {
-    let Array = [];
+    let Array = []
     users.forEach((user) => {
-      user.Images = JSON.parse(user.Images)[0];
-      Array.push('ok');
-      if (Array.length === users.length) 
-        resolve('ok');
-    });
-    if (Array.length === users.length) 
-     resolve('ok');
-  });
+      user.Images = JSON.parse(user.Images)[0]
+      Array.push('ok')
+      if (Array.length === users.length) resolve('ok')
+    })
+    if (Array.length === users.length) resolve('ok')
+  })
 }
 function ifNotBlock(IdUserOwner, IdUserReceiver, locals) {
   return new Promise(async (resolve) => {
     const result1 = await locals.select('Blacklist', '*', {
       IdUserOwner: IdUserOwner,
       IdUserReceiver: IdUserReceiver,
-    });
+    })
     const result2 = await locals.select('Blacklist', '*', {
       IdUserOwner: IdUserReceiver,
       IdUserReceiver: IdUserOwner,
-    });
-    if (!result1[0] && !result2[0]) resolve(true);
-    else resolve(false);
-  });
+    })
+    if (!result1[0] && !result2[0]) resolve(true)
+    else resolve(false)
+  })
 }
 function verifyIdTokenGoogle(id) {
   return new Promise(async (resolve) => {
@@ -164,38 +156,58 @@ function verifyIdTokenGoogle(id) {
       const ticket = await client.verifyIdToken({
         idToken: id,
         audience: '652872186498-sdfbthmnqp8tqnlnpmu3rsiv2v8rb8s5.apps.googleusercontent.com', // Specify the CLIENT_ID
-      });
-      const payload = ticket.getPayload();
-      const userEmail = payload;
-      resolve(userEmail.email);
+      })
+      const payload = ticket.getPayload()
+      const userEmail = payload
+      resolve(userEmail.email)
     } catch (error) {
-      resolve(false);
+      resolve(false)
     }
-  });
+  })
 }
-async function notification(req,Type,UserOwner,UserReceiver){
+async function notification(req, Type, UserOwner, UserReceiver) {
   const locals = req.app.locals
   const IdUserOwner = await locals.getIdUserOwner(UserOwner)
   const IdUserReceiver = await locals.getIdUserOwner(UserReceiver)
-  if (IdUserOwner && IdUserReceiver)
-  {
-    const checkSameNotification = await locals.select('Notifications','*',{IdUserOwner,IdUserReceiver,Type})
-    if (checkSameNotification.length > 0)
-      locals.delete('Notifications',{IdUserOwner,IdUserReceiver,Type})
-    const result = await locals.insert('Notifications',{IdUserOwner,IdUserReceiver,Type})
-    if (locals.sockets && locals.sockets.length > 0 && locals.sockets[IdUserReceiver])
-    {
-      const user = await locals.select('Users',['IdUserOwner','Images','UserName','LastLogin','Active'],{IdUserOwner})
+  const ifNotBlock = await locals.ifNotBlock(IdUserOwner,IdUserReceiver,locals)
+  if (IdUserOwner && IdUserReceiver && ifNotBlock) {
+    const checkSameNotification = await locals.select('Notifications', '*', {
+      IdUserOwner,
+      IdUserReceiver,
+      Type,
+    })
+    if (checkSameNotification.length > 0) locals.delete('Notifications', { IdUserOwner, IdUserReceiver, Type })
+    let result = {
+      insertId:null
+    }
+    if (Type !== "addFriend")
+      result = await locals.insert('Notifications', {
+        IdUserOwner,
+        IdUserReceiver,
+        Type,
+      })
+    if (locals.sockets && locals.sockets.length > 0 && locals.sockets[IdUserReceiver]) {
+      const user = await locals.select('Users', ['IdUserOwner', 'Images', 'UserName', 'LastLogin', 'Active'], { IdUserOwner })
+      const messages = await locals.query('SELECT IdMessages As "id",IdUserOwner,Content,DateCreation As "date" FROM Messages WHERE (IdUserOwner=? AND idUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?) ORDER BY DateCreation DESC LIMIT 30',[IdUserOwner,IdUserReceiver,IdUserReceiver,IdUserOwner])
+      user[0].messages = messages
       user[0].Images = JSON.parse(user[0].Images)[0]
-      locals.sockets[IdUserReceiver].map(item=>item.emit('notice',JSON.stringify({user:user[0],Type,IdNotification:result.insertId,DateCreation:new Date().toISOString()})))
+      locals.sockets[IdUserReceiver].map((item) =>
+        item.emit(
+          'notice',
+          JSON.stringify({
+            user: user[0],
+            Type,
+            IdNotification: result.insertId,
+            DateCreation: new Date().toISOString(),
+          })
+        )
+      )
     }
   }
 }
-function checkIfHasOneImage(req,res,next){
-  if (JSON.parse(req.userInfo.Images).length > 0)
-    next()
-  else
-    res.app.locals.sendResponse(res,200,"You Need At lest One Image to do This Action")
+function checkIfHasOneImage(req, res, next) {
+  if (JSON.parse(req.userInfo.Images).length > 0) next()
+  else res.app.locals.sendResponse(res, 200, 'You Need At lest One Image to do This Action')
 }
 module.exports = {
   fetchDataJSON,
@@ -211,5 +223,5 @@ module.exports = {
   getImageProfile,
   ifNotBlock,
   verifyIdTokenGoogle,
-  checkIfHasOneImage
+  checkIfHasOneImage,
 }

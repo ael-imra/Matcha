@@ -33,8 +33,7 @@ const ResetPassword = () => {
           }
         })
         .catch((error) => {})
-    } catch (error) {
-    }
+    } catch (error) {}
     // eslint-disable-next-line
   }, [])
   let UpdatePassword = () => {
@@ -73,8 +72,7 @@ const ResetPassword = () => {
               success: '',
             })
           })
-      } catch (error) {
-      }
+      } catch (error) {}
   }
   return (
     <div className="Step">
@@ -108,13 +106,7 @@ const ResetPassword = () => {
           >
             New password
           </p>
-          <Input
-            type="password"
-            name="Password"
-            checkError={{ findError, ChangeError }}
-            index={0}
-            Ref={inputRef}
-          />
+          <Input type="password" name="Password" checkError={{ findError, ChangeError }} index={0} Ref={inputRef} />
         </div>
         <div className="form-group" style={{ width: '100%' }}>
           <p
@@ -124,13 +116,7 @@ const ResetPassword = () => {
           >
             New password
           </p>
-          <Input
-            type="password"
-            name="Password"
-            checkError={{ findError, ChangeError }}
-            index={1}
-            Ref={inputRef}
-          />
+          <Input type="password" name="Password" checkError={{ findError, ChangeError }} index={1} Ref={inputRef} />
         </div>
         <Button
           variant="contained"

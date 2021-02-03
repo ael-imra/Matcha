@@ -1,7 +1,7 @@
-import React from 'react';
-import Textarea from './Textarea';
-import data from '../Data/interests.json';
-import { Select } from './Select';
+import React from 'react'
+import Textarea from './Textarea'
+import data from '../Data/interests.json'
+import { Select } from './Select'
 const Step2 = (props) => {
   return (
     <>
@@ -19,6 +19,6 @@ const Step2 = (props) => {
         />
       </div>
     </>
-  );
-};
-export default Step2;
+  )
+}
+export default Step2

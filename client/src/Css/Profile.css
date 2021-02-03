@@ -169,7 +169,7 @@
   margin-left: auto;
   margin-right: auto;
 }
-.MuiOutlinedInput-notchedOutline {
+.profile .MuiOutlinedInput-notchedOutline {
   border: none !important;
 }
 .MuiSelect-select:focus {

@@ -41,4 +41,4 @@ export const ModeStyle = {
       '--background-home': '#ffffff',
     },
   },
-};
+}

@@ -12,11 +12,7 @@ const ShowError = (props) => {
   })
   return (
     <div className="Container-Error">
-      <p style={{ marginLeft: '20px', marginRight: '20px' }}>
-        {props.DataError.showError === 1
-          ? language[ctx.Lang].AccountDeactivated
-          : language[ctx.Lang].FailLogin}
-      </p>
+      <p style={{ marginLeft: '20px', marginRight: '20px' }}>{props.DataError.showError === 1 ? language[ctx.Lang].AccountDeactivated : language[ctx.Lang].FailLogin}</p>
     </div>
   )
 }
