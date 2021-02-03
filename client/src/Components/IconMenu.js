@@ -6,9 +6,11 @@ const IconMenu = (props) => {
   const ctx = useContext(DataContext)
   return (
     <div
-      className={`${props.dataHome.showMenu ? 'icon-menu-active' : 'icon-menu-show'}`}
+      className={`${
+        props.dataHome.showMenu ? 'icon-menu-active' : 'icon-menu-show'
+      }`}
       onClick={() => {
-        props.dataHome.ChangeStateMenu((oldValue) => !oldValue)
+        props.dataHome.ChangeStateMenu(oldValue=>!oldValue)
       }}
     >
       <div

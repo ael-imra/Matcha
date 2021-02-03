@@ -4,7 +4,9 @@ const Line = (props) => {
   return (
     <div className="line">
       <hr />
-      <p style={{ color: props.color === 'Dark' ? 'white' : 'black' }}>{props.str}</p>
+      <p style={{ color: props.color === 'Dark' ? 'white' : 'black' }}>
+        {props.str}
+      </p>
       <hr />
     </div>
   )

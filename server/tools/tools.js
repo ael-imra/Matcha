@@ -39,22 +39,21 @@ function sendResponse(res, code, message, json) {
 }
 function checkImage(src, locals) {
   return new Promise((resolve) => {
-    if (src && src !== '') {
-      const base64Data = src.split(',')
+    if (src && src !== "") {
+      const base64Data = src.split(",");
       if (base64Data.length > 1) {
-        const nameImage = locals.crypto.randomBytes(16).toString('hex')
-        const url = `http://localhost:${process.env.PORT}/images/${nameImage}.jpg`
-        const buffer = Buffer.from(base64Data[1], 'base64')
+        const nameImage = locals.crypto.randomBytes(16).toString("hex");
+        const buffer = Buffer.from(base64Data[1], "base64");
         Jimp.read(buffer, (err, res) => {
-          if (err) resolve(null)
+          if (err) resolve(null);
           else {
-            res.quality(40).write(`./images/${nameImage}.jpg`)
-            resolve(url)
+            res.quality(40).write(`./images/${nameImage}.jpg`);
+            resolve(`/images/${nameImage}.jpg`);
           }
-        })
-      } else resolve(null)
-    } else resolve(null)
-  })
+        });
+      } else resolve(null);
+    } else resolve(null);
+  });
 }
 function checkImages(images) {
   return new Promise((resolve) => {
@@ -209,6 +208,30 @@ function checkIfHasOneImage(req, res, next) {
   if (JSON.parse(req.userInfo.Images).length > 0) next()
   else res.app.locals.sendResponse(res, 200, 'You Need At lest One Image to do This Action')
 }
+async function CheckActive(Email, locals) {
+  const result = await locals.query("SELECT COUNT(*) AS 'Count' FROM Users WHERE Email=? AND (IsActive=1 OR IsActive=2)", [Email]);
+  return result[0].Count === 1 ? true : false;
+}
+async function verifierToken(Token, locals) {
+  const result = await locals.query("SELECT COUNT(*) AS 'Count' FROM Users WHERE Token=? AND (IsActive=1 OR IsActive=2)", [Token]);
+  return result[0].Count === 1 ? true : false;
+}
+async function getRating(UserOwner, locals) {
+  const IdUserReceiver = await locals.getIdUserOwner(UserOwner);
+  const avgRatingValue = await locals.select("Rating", 'SUM(RatingValue)/Count(*) AS "AVG"', { IdUserReceiver });
+  return avgRatingValue && avgRatingValue.length > 0 && avgRatingValue[0].AVG ? avgRatingValue[0].AVG.toString() : "0";
+}
+async function CountRating(UserOwner, locals) {
+  const IdUserReceiver = await locals.getIdUserOwner(UserOwner);
+  const count = await locals.select("Rating", 'Count(*) AS "Count"', { IdUserReceiver });
+  return count[0].Count;
+}
+async function CountFriends(UserOwner, locals) {
+  const IdUserReceiver = await locals.getIdUserOwner(UserOwner);
+  const count = await locals.select("Friends", 'Count(*) AS "Count"', { IdUserReceiver, Match: 1 });
+  return count[0].Count;
+}
+
 module.exports = {
   fetchDataJSON,
   sendResponse,
@@ -224,4 +247,9 @@ module.exports = {
   ifNotBlock,
   verifyIdTokenGoogle,
   checkIfHasOneImage,
+  CheckActive,
+  verifierToken,
+  getRating,
+  CountRating,
+  CountFriends,
 }

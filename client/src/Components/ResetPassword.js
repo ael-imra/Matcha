@@ -1,142 +1,156 @@
-import React, { useContext, useRef, useState, useEffect } from 'react'
-import { useWindowSize } from './UseWindowSize'
-import { DataContext } from '../Context/AppContext'
-import Input from './Input'
-import { useHistory, useParams } from 'react-router-dom'
-import Button from '@material-ui/core/Button'
-import ImageForgetPassword from '../Images/forgot-password-animate.svg'
-import Axios from 'axios'
-const ResetPassword = () => {
-  const width = useWindowSize()
-  const ctx = useContext(DataContext)
-  const [findError, ChangeError] = useState(['', ''])
-  const [DataInput, saveDataInput] = useState([])
-  const inputRef = useRef([])
-  let history = useHistory()
-  let { token } = useParams()
-  inputRef.current = new Array(2)
-  useEffect(() => {
-    saveDataInput(inputRef.current)
-    inputRef.current[0].focus()
-  }, [])
+import React, { useContext, useState, useEffect } from "react";
+import { useWindowSize } from "./UseWindowSize";
+import { DataContext } from "../Context/AppContext";
+import Input from "./Input";
+import { useHistory, useParams } from "react-router-dom";
+import Button from "@material-ui/core/Button";
+import ImageForgetPassword from "../Images/forgot-password-animate.svg";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Axios from "axios";
+import { Validate } from "./Validate";
+const ResetPassword = (props) => {
+  const width = useWindowSize();
+  const ctx = useContext(DataContext);
+  const [password, changePassword] = React.useState({
+    NewPassword: "",
+    ConfirmPassword: "",
+  });
+  const [PageLoader, changePageLoader] = useState("");
+  let history = useHistory();
+  let { token } = useParams();
   useEffect(() => {
     try {
-      Axios.get(`/user/verifierToken/${token}`)
+      Axios.post(`/Users/verifierToken`, { Token: token })
         .then((result) => {
-          if (result.data[0].Count === 0) {
-            ctx.ChangeErrorMessages({
-              error: 'Token not found',
-              warning: '',
-              success: '',
-            })
-            history.push(`/`)
-          }
+          if (result.data === false) {
+            props.dataHome.ChangeErrorMessages({
+              error: "Token not found",
+              warning: "",
+              success: "",
+            });
+            history.push(`/`);
+          } else changePageLoader(true);
         })
-        .catch((error) => {})
-    } catch (error) {}
-    // eslint-disable-next-line
-  }, [])
+        .catch((error) => {});
+    } catch (error) {
+      console.log("health check error");
+    }
+    //eslint-disable-next-line
+  }, []);
   let UpdatePassword = () => {
-    let i = -1
-    findError.forEach((item, key) => {
-      if (item !== true) {
-        i = 1
-        DataInput[key].value = ''
-        DataInput[key].className = 'Input input-error'
-        DataInput[key].placeholder = findError[key]
-      }
-    })
-    if (DataInput[0].value !== DataInput[1].value) {
-      DataInput[1].value = ''
-      DataInput[1].className = 'Input input-error'
-      DataInput[1].placeholder = 'password not match'
-    } else if (i === -1)
+    if (password.ConfirmPassword !== password.NewPassword) {
+      props.dataHome.ChangeErrorMessages({
+        error: "password not match",
+        warning: "",
+        success: "",
+      });
+    } else if (Validate("Password", password.ConfirmPassword))
       try {
-        Axios.post('http://localhost:5000/user/ResetPassword', {
-          password: DataInput[0].value,
-          confirm: DataInput[1].value,
-          token: token,
+        Axios.post("/Users/ResetPassword", {
+          Password: password.NewPassword,
+          Confirm: password.ConfirmPassword,
+          Token: token,
         })
-          .then((result) => {
-            ctx.ChangeErrorMessages({
-              error: '',
-              warning: '',
-              success: 'Your password has been reset successfully!',
-            })
-            history.push(`/`)
+          .then(() => {
+            props.dataHome.ChangeErrorMessages({
+              error: "",
+              warning: "",
+              success: "Your password has been reset successfully!",
+            });
+            history.push(`/`);
           })
-          .catch((error) => {
-            ctx.ChangeErrorMessages({
-              error: '',
-              warning: 'Error: Network Error',
-              success: '',
-            })
-          })
+          .catch((error) => {});
       } catch (error) {}
-  }
-  return (
-    <div className="Step">
-      <div
-        style={{
-          width: '580px',
-          height: '550px',
-          transform: 'translateY(-30px)',
-          display: 'flex',
-          alignItems: 'baseline',
-          justifyContent: 'center',
-          flexDirection: 'column',
-        }}
-      >
-        <p
-          className="t3"
+    else
+      props.dataHome.ChangeErrorMessages({
+        error: "password not valid",
+        warning: "",
+        success: "",
+      });
+  };
+  if (PageLoader)
+    return (
+      <div className='Step'>
+        <div
           style={{
-            marginBottom: '37px',
-            marginTop: '0px',
-            color: ctx.Mode === 'Dark' ? 'white' : 'black',
-            fontSize: width <= 885 ? '18px' : '28px',
+            width: "580px",
+            height: "550px",
+            transform: "translateY(-30px)",
+            display: "flex",
+            alignItems: "baseline",
+            justifyContent: "center",
+            flexDirection: "column",
           }}
         >
-          Reset Password
-        </p>
-        <div className="form-group" style={{ width: '100%' }}>
           <p
+            className='t3'
             style={{
-              color: ctx.Mode === 'Dark' ? 'white' : 'black',
+              marginBottom: "37px",
+              marginTop: "0px",
+              color: ctx.Mode === "Dark" ? "white" : "black",
+              fontSize: width <= 885 ? "18px" : "28px",
             }}
           >
-            New password
+            Reset Password
           </p>
-          <Input type="password" name="Password" checkError={{ findError, ChangeError }} index={0} Ref={inputRef} />
-        </div>
-        <div className="form-group" style={{ width: '100%' }}>
-          <p
+          <div className='form-group' style={{ width: "100%" }}>
+            <p
+              style={{
+                color: ctx.Mode === "Dark" ? "white" : "black",
+              }}
+            >
+              New password
+            </p>
+            <Input
+              DefaultValue={password.NewPassword}
+              Onchange={(newPassword) => {
+                changePassword((oldValue) => ({ ...oldValue, NewPassword: newPassword }));
+              }}
+              Disabled='false'
+              Type='password'
+              PlaceHolder='New Password'
+              Style={{ marginBottom: "10px" }}
+            />
+          </div>
+          <div className='form-group' style={{ width: "100%" }}>
+            <p
+              style={{
+                color: ctx.Mode === "Dark" ? "white" : "black",
+              }}
+            >
+              Confirm password
+            </p>
+            <Input
+              DefaultValue={password.ConfirmPassword}
+              Onchange={(confirmPassword) => {
+                changePassword((oldValue) => ({ ...oldValue, ConfirmPassword: confirmPassword }));
+              }}
+              Disabled='false'
+              Type='password'
+              PlaceHolder='Confirm password'
+              Style={{ marginBottom: "10px" }}
+            />
+          </div>
+          <Button
+            variant='contained'
+            color='primary'
+            onClick={UpdatePassword}
             style={{
-              color: ctx.Mode === 'Dark' ? 'white' : 'black',
+              fontWeight: "900",
+              borderRadius: "8px",
+              backgroundColor: "#03a9f1",
+              marginTop: "20px",
             }}
           >
-            New password
-          </p>
-          <Input type="password" name="Password" checkError={{ findError, ChangeError }} index={1} Ref={inputRef} />
+            Create New Password
+          </Button>
         </div>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={UpdatePassword}
-          style={{
-            fontWeight: '900',
-            borderRadius: '8px',
-            backgroundColor: '#03a9f1',
-            marginTop: '20px',
-          }}
-        >
-          Create New Password
-        </Button>
+        <div className='Image-step'>
+          <img src={ImageForgetPassword} alt='...' style={{ width: "550px", height: "100%" }} />
+        </div>
       </div>
-      <div className="Image-step">
-        <img src={ImageForgetPassword} alt="..." />
-      </div>
-    </div>
-  )
-}
+    );
+  else return <CircularProgress />;
+};
 
-export default ResetPassword
+export default ResetPassword;

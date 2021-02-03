@@ -209,8 +209,8 @@ export default function AppContext(props) {
     try {
       Axios.get('/users')
         .then((result) => {
-          if (result.data.IsActive === 2) history.push('/step')
-          changeIsLogin(result.data.IsActive === 1 ? 'Login' : result.data.IsActive === 2 ? 'Step' : 'Not login')
+          if (result.data === 2) history.push('/step')
+          changeIsLogin(result.data === 1 ? 'Login' : result.data === 2 ? 'Step' : 'Not login')
         })
         .catch((error) => {})
     } catch (error) {} // eslint-disable-next-line

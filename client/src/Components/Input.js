@@ -1,29 +1,48 @@
-import React, { useContext, useEffect } from 'react'
-import '../Css/ft-input.css'
-import { Validate } from './Validate'
-import { DataContext } from '../Context/AppContext'
+import React from "react";
+import "../Css/ft-input.css";
 
-const FtInput = (props) => {
-  let ArrError = props.checkError.findError
-  const ctx = useContext(DataContext)
+export default function Input(props) {
   let blue = (e) => {
-    ctx.Mode === 'Light' ? (e.target.className = 'Input input-light') : (e.target.className = 'Input input-dark')
-    let ArrayError = props.checkError.findError
-    if (!Validate(props.name, e.target.value)) {
-      ArrayError[props.index] = e.target.value.length === 0 ? 'the input is empty' : `${props.name} not valid`
-    } else ArrayError[props.index] = Validate(props.name, e.target.value)
-    props.checkError.ChangeError([...ArrayError])
-  }
+    e.target.className = "Input";
+    if (props.OnBlur) props.OnBlur(e.target.value.trim());
+  };
   let focus = (e) => {
-    if (e.target.className === 'Input input-error') e.target.placeholder = ''
-    ctx.Mode === 'Light' ? (e.target.className = 'Input input-active-light') : (e.target.className = 'Input input-active-dark')
-  }
-  useEffect(() => {
-    if (ArrError[props.index] === '') ArrError[props.index] = 'the input is empty'
-    props.checkError.ChangeError([...ArrError])
-    // eslint-disable-next-line
-  }, [])
-  return <input type={props.type} onBlur={blue} onFocus={focus} className={ctx.Mode === 'Light' ? 'Input input-light' : 'Input input-dark'} ref={(el) => (props.Ref.current[props.index] = el)} />
+    e.target.className = "Input input-active";
+  };
+  if (!props.Textarea)
+    return (
+      <input
+        onBlur={blue}
+        onFocus={focus}
+        type={props.Type}
+        className='Input'
+        onChange={(e) => {
+          props.Onchange(e.target.value);
+        }}
+        value={props.DefaultValue || ""}
+        placeholder={props.PlaceHolder || ""}
+        style={props.Style || {}}
+        disabled={!props.Disabled}
+        onKeyUp={(e) => {
+          if (e.keyCode === 13 && props.OnEnter) props.OnEnter();
+        }}
+      />
+    );
+  else
+    return (
+      <textarea
+        className='Input'
+        rows='4'
+        onBlur={blue}
+        onFocus={focus}
+        disabled={!props.Disabled}
+        type={props.Type}
+        style={{ height: "100px", resize: "none", overflowY: "auto", lineHeight: "22px", paddingTop: "8px", paddingRight: "12px", paddingBottom: "8px", ...props.Style }}
+        placeholder={props.PlaceHolder || ""}
+        value={props.DefaultValue || ""}
+        onChange={(e) => {
+          props.Onchange(e.target.value);
+        }}
+      ></textarea>
+    );
 }
-
-export default FtInput
