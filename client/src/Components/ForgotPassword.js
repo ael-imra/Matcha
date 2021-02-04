@@ -10,10 +10,10 @@ const ForgotPassword = (props) => {
   const ctx = useContext(DataContext);
   return (
     <div className='abs'>
-      <p style={{ color: ctx.Mode === "Dark" ? "white" : "black" }} className='t3'>
+      <p style={{ color: ctx.cache.Mode === "Dark" ? "white" : "black" }} className='t3'>
         Forgat Password
       </p>
-      <p className='t2' style={{ color: ctx.Mode === "Dark" ? "white" : "black" }}>
+      <p className='t2' style={{ color: ctx.cache.Mode === "Dark" ? "white" : "black" }}>
         enter your email address to reset your password
       </p>
       <Input

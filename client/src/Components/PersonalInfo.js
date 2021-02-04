@@ -95,6 +95,7 @@ export default function PersonalInfo(props) {
         if (props.InfoUser.ListInterest.length === 0 || props.InfoUser.ListInterest.length > 5) inputsError.push("ListInterest is not valid or greater than 5");
         if (props.InfoUser.Biography.trim().length > 100 || props.InfoUser.Biography.trim() === 0) inputsError.push("Biography is not Valid, must not be empty or greater than 100 letters");
         if (inputsError.every((items) => items === "")) {
+          ctx.cache.users = []
           UpdateInfoUser();
           props.changeShowSuccess(true);
         } else {
@@ -179,7 +180,7 @@ export default function PersonalInfo(props) {
 
       <div className='infoUser'>
         <p className='labelInfo'>DateBirthday</p>
-        <input type='date' className='inputDateBirthday' style={{ color: ctx.Mode === "Dark" ? "white" : "black" }} value={props.InfoUser.DataBirthday} onChange={ChangeDateBirthday} disabled={!props.UserNameAndEmail.isProfileOfYou} />
+        <input type='date' className='inputDateBirthday' style={{ color: ctx.cache.Mode === "Dark" ? "white" : "black" }} value={props.InfoUser.DataBirthday} onChange={ChangeDateBirthday} disabled={!props.UserNameAndEmail.isProfileOfYou} />
       </div>
       <div className='infoUser'>
         <p className='labelInfo'>City :</p>

@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
+import { DataContext } from "../Context/AppContext";
 import "../Css/inputDate.css";
 import { useWindowSize } from "./UseWindowSize";
 
 const Step1 = (props) => {
   const width = useWindowSize();
-
+  const ctx = useContext(DataContext)
   return (
     <>
       <p
@@ -12,7 +13,7 @@ const Step1 = (props) => {
         style={{
           marginBottom: "37px",
           marginTop: "0px",
-          color: props.Mode === "Dark" ? "white" : "black",
+          color: ctx.cache.Mode === "Dark" ? "white" : "black",
           fontSize: width <= 885 ? "18px" : "28px",
         }}
       >

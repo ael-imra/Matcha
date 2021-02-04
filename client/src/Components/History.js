@@ -67,7 +67,6 @@ export default function History() {
               style={{
                 marginTop: "0px",
                 marginBottom: "0px",
-                backgroundColor: "var(--background-QuickActions)",
                 marginLeft: "0px",
               }}
             >

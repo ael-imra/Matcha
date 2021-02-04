@@ -6,7 +6,7 @@ const Titre = (props) => {
   const ctx = useContext(DataContext);
   return (
     <div className='titre'>
-      <p style={{ color: ctx.Mode === "Dark" ? "white" : "black" }}>You just found a better way to connect with your friends</p>
+      <p style={{ color: ctx.cache.Mode === "Dark" ? "white" : "black" }}>You just found a better way to connect with your friends</p>
       <button
         className='ft_btn'
         onClick={() => {

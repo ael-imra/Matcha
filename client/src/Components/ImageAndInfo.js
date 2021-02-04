@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useContext} from "react";
 import { useWindowSize } from "./UseWindowSize";
 import Axios from "axios";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -14,9 +14,11 @@ import ImageUser from "./ImageUser";
 import Skeleton from "@material-ui/lab/Skeleton";
 import ProfileImage from "./ProfileImage";
 import Rating from "@material-ui/lab/Rating";
+import {DataContext} from '../Context/AppContext'
 
 export default function ImageAndInfo(props) {
   let history = useHistory();
+  const ctx = useContext(DataContext)
   const width = useWindowSize();
   const [ifUpload, changeIfUpload] = React.useState(0);
   const [ratingValue, changeRatingValue] = React.useState({ userValue: 0 });
@@ -81,14 +83,16 @@ export default function ImageAndInfo(props) {
       }
     }
   };
-  let BlockUser = (e) => {
+  let BlockUser = () => {
     try {
       Axios.post(`/Profile/BlockUser/${props.userName}`, {}).then((result) => {
+        ctx.ref.removeFriend(props.userName)
+        ctx.ref.removeNotification(props.userName)
         history.push("/");
       });
     } catch (error) {}
   };
-  let ReportUser = (e) => {
+  let ReportUser = () => {
     try {
       Axios.post(`/Profile/ReportUser/${props.userName}`, {}).then((result) => {
         if (result.data === "successful")
@@ -99,16 +103,20 @@ export default function ImageAndInfo(props) {
       });
     } catch (error) {}
   };
-  let like = (e) => {
+  let like = () => {
     try {
       Axios.post(`/Friends/Invite/`, { UserName: props.userName }).then((result) => {
-        console.log(result.data);
-        props.ChangeInfoUser({ ...props.InfoUser, CheckFriends: result.data === "Friend has been created" ? 1 : 0 });
-      });
+        props.ChangeInfoUser(()=>{
+          if (result.data === "Friend has been created" || result.data === 'Friend has been updated')
+            return ({ ...props.InfoUser, CheckFriends: 1})
+          ctx.ref.removeFriend(props.userName)
+          ctx.ref.removeNotification(props.userName)
+          return ({ ...props.InfoUser, CheckFriends: 0})
+      })})
     } catch (error) {}
   };
 
-  let deleteImageProfile = (e) => {
+  let deleteImageProfile = () => {
     try {
       Axios.post("/Profile/DeleteImage", { index: 0 }).then((result) => {
         let arrayImage = props.InfoUser.Images;

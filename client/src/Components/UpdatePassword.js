@@ -48,7 +48,7 @@ export default function UpdatePassword(props) {
         });
         props.formUpdatePasswordClose();
       }}
-      style={ModeStyle[ctx.Mode].Dashboard}
+      style={ModeStyle[ctx.cache.Mode].Dashboard}
     >
       <DialogTitle id='form-dialog-title'>Change password</DialogTitle>
       <DialogContent>

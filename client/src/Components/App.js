@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState,useEffect } from 'react'
 import '../Css/App.css'
 import AppContext, { DataContext } from '../Context/AppContext'
 import Header from './Header'
@@ -10,10 +10,15 @@ import { ModeStyle } from '../Data/ModeStyle'
 
 function App() {
   const ctx = useContext(DataContext)
-  const [StateHome, ChangeHome] = useState(1)
+  const [Mode, changeMode] = useState('Light')
+  const [StateHome, ChangeHome] = useState(1)// eslint-disable-next-line
+  useEffect(()=>{
+    ctx.ref.changeMode = changeMode
+    return (()=>ctx.ref.changeMode=null)
+  })
   if (ctx.isLogin === 'Step' || ctx.isLogin === 'Not login') {
     return (
-      <div className="App" style={ModeStyle[ctx.Mode].Dashboard}>
+      <div className="App" style={ModeStyle[Mode].Dashboard}>
         <Header dataHome={{ StateHome, ChangeHome }} />
         <Body dataHome={{ StateHome, ChangeHome, ChangeIsLogin: ctx.changeIsLogin }} />
       </div>
@@ -25,15 +30,15 @@ function App() {
 
 function AppContainer() {
   return (
-    <AppContext>
       <Router>
-        <Switch>
-          <Route>
-            <App />
-          </Route>
-        </Switch>
+        <AppContext>
+          <Switch>
+            <Route>
+              <App />
+            </Route>
+          </Switch>
+        </AppContext>
       </Router>
-    </AppContext>
   )
 }
 //DataBirthday

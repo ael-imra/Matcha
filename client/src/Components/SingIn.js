@@ -63,16 +63,16 @@ const SingIn = (props) => {
   };
   return (
     <div className='sing'>
-      <p className='t1' style={{ color: ctx.Mode === "Dark" ? "white" : "black" }}>
+      <p className='t1' style={{ color: ctx.cache.Mode === "Dark" ? "white" : "black" }}>
         Sing in To matcha
       </p>
       <SingSocialMedia titre='sing in with Google' type='sing in' ChangeIsLogin={props.dataHome.ChangeIsLogin} />
-      <Line str={"Or"} color={ctx.Mode} />
+      <Line str={"Or"} color={ctx.cache.Mode} />
       <div className='form-sing'>
         <div className='form-group' style={{ width: "100%" }}>
           <p
             style={{
-              color: ctx.Mode === "Dark" ? "white" : "black",
+              color: ctx.cache.Mode === "Dark" ? "white" : "black",
             }}
           >
             Email
@@ -89,7 +89,7 @@ const SingIn = (props) => {
         <div className='form-group' style={{ width: "100%" }}>
           <p
             style={{
-              color: ctx.Mode === "Dark" ? "white" : "black",
+              color: ctx.cache.Mode === "Dark" ? "white" : "black",
             }}
           >
             Password
@@ -117,7 +117,7 @@ const SingIn = (props) => {
               right: "15px",
               cursor: "pointer",
               top: "5px",
-              color: ctx.Mode === "Dark" ? "white" : "black",
+              color: ctx.cache.Mode === "Dark" ? "white" : "black",
             }}
             onClick={() => {
               props.dataHome.ChangeHome(4);
@@ -141,7 +141,7 @@ const SingIn = (props) => {
         </button>
         <p
           style={{
-            color: ctx.Mode === "Dark" ? "white" : "black",
+            color: ctx.cache.Mode === "Dark" ? "white" : "black",
           }}
         >
           Already a member?

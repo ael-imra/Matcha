@@ -36,9 +36,15 @@ router.get('/readMessages/:UserName', async (req, res) => {
     locals.sendResponse(res, 200, 'all messages is readed')
   } else locals.sendResponse(res, 200, 'UserName not found')
 })
-// router.get('/deleteMessage/:id',async (req,res)=>{
-
-// })
+router.get('/deleteMessage/:id',async (req,res)=>{
+  if (req.params.id > 0)
+  {
+    req.app.locals.delete('Messages',{IdUserOwner:req.userInfo.IdUserOwner,IdMessages:req.params.id})
+    req.app.locals.sendResponse(res,200,"message deleted")
+  }
+  else
+    req.app.locals.sendResponse(res,200,"bad request")
+})
 
 router.get('/:UserName/:index', async (req, res) => {
   const locals = req.app.locals

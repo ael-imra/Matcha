@@ -85,6 +85,9 @@
 .QuickActions .MuiTabs-fixed > span {
   background-color: #328fb4;
 }
+.QuickActions .MuiButtonBase-root:first-child .MuiBadge-badge {
+  display: none;
+}
 .CloseChat {
   display: flex;
   flex-flow: row nowrap;

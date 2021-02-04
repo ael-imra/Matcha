@@ -11,7 +11,7 @@ require('dotenv').config({
 router.get("/", auth, async function (req, res) {
   const locals = req.app.locals;
   locals.sendResponse(res, 200, req.userInfo.IsActive, true);
-})
+});
 
 router.post('/', auth, async function (req, res) {
   const { Latitude, Longitude } = req.userInfo
@@ -28,7 +28,7 @@ router.post('/', auth, async function (req, res) {
   const listInterest = [...list,...JSON.parse(req.userInfo.ListInterest)]
   if (filterResult.length > 0) {
     filterResult.map(item => {
-      item.rating = item.rating === null ? 0 : item.rating
+      item.rating = item.rating === null ? 0 : item.rating-(item.CountReport/100) < 0 ? 0 : item.rating-(item.CountReport/100)
       item.distance = haversine({ lat: item.Latitude, lng: item.Longitude }, { lat: Latitude, lng: Longitude })
       const km = item.distance/1000
       if ((location[1] === 1000 && km >= location[0]) || (km >= location[0] && km <= location[1]))
@@ -57,6 +57,15 @@ router.post('/', auth, async function (req, res) {
   } else locals.sendResponse(res, 200, 'someting wrong with your data')
 })
 
+
+router.get('/listInterest',auth,async function(req,res){
+  const result = await req.app.locals.select('Users','ListInterest')
+  const myList = await req.app.locals.select('Users','ListInterest',{IdUserOwner:req.userInfo.IdUserOwner})
+  let listInterest = []
+  result.map(item=>listInterest.push(...JSON.parse(item.ListInterest)))
+  listInterest = [...new Set(listInterest)]
+  req.app.locals.sendResponse(res,200,{list:listInterest,active:myList.length>0?JSON.parse(myList[0].ListInterest):[]},true)
+})
 router.post("/CheckActive", async function (req, res) {
   const { Email, Password } = req.body;
   const locals = req.app.locals;
@@ -101,7 +110,6 @@ router.get("/Active", async function (req, res) {
 router.post("/ResetPassword", async function (req, res) {
   const { Token, Password, Confirm } = req.body;
   const locals = req.app.locals;
-  console.log(req.body);
   if (Token && Validate("Password", Confirm) && Password === Confirm) {
     const result = await locals.verifierToken(Token, locals)
     if (result) {

@@ -86,7 +86,10 @@ function DashboardBody(props) {
               ''
             )}
 
-            <Toggle list={['Dark', 'Light']} active={ctx.Mode} switch={() => ctx.changeMode((oldValue) => (oldValue === 'Dark' ? 'Light' : 'Dark'))} colors={['#FD7A48', '#7C79E4']} />
+            <Toggle list={['Dark', 'Light']} active={ctx.cache.Mode} switch={() =>ctx.ref.changeMode(oldValue=>{
+                ctx.cache.Mode = oldValue === 'Dark' ? 'Light' : 'Dark'
+                return (ctx.cache.Mode)
+            })} colors={['#FD7A48', '#7C79E4']} />
           </div>
         </div>
         {!hideFilter ? <Filter /> : null}
@@ -98,7 +101,6 @@ function DashboardBody(props) {
             <Users />
           </Route>
           <Route path="/profile/:userName">
-            
             <Profile user={props.user} changeUser={props.changeUser} />
           </Route>
           <Route path="/history">

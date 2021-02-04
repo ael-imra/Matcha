@@ -38,15 +38,15 @@ const SingUp = (props) => {
   };
   return (
     <div className='sing'>
-      <p className='t1' style={{ color: ctx.Mode === "Dark" ? "white" : "black" }}>
+      <p className='t1' style={{ color: ctx.cache.Mode === "Dark" ? "white" : "black" }}>
         Sign up to Matcha
       </p>
       <SingSocialMedia ChangeErrorMessages={props.dataHome.ChangeErrorMessages} type='sing up' titre='sing up with Google' />
-      <Line str='Or' color={ctx.Mode} />
+      <Line str='Or' color={ctx.cache.Mode} />
       <div className='form-sing'>
         <div className='inline-group'>
           <div className='form-group'>
-            <p className='t1' style={{ color: ctx.Mode === "Dark" ? "white" : "black" }}>
+            <p className='t1' style={{ color: ctx.cache.Mode === "Dark" ? "white" : "black" }}>
               First Name
             </p>
             <Input
@@ -61,7 +61,7 @@ const SingUp = (props) => {
           <div className='form-group'>
             <p
               style={{
-                color: ctx.Mode === "Dark" ? "white" : "black",
+                color: ctx.cache.Mode === "Dark" ? "white" : "black",
               }}
             >
               Last Name
@@ -80,7 +80,7 @@ const SingUp = (props) => {
           <div className='form-group'>
             <p
               style={{
-                color: ctx.Mode === "Dark" ? "white" : "black",
+                color: ctx.cache.Mode === "Dark" ? "white" : "black",
               }}
             >
               Use Name
@@ -97,7 +97,7 @@ const SingUp = (props) => {
           <div className='form-group'>
             <p
               style={{
-                color: ctx.Mode === "Dark" ? "white" : "black",
+                color: ctx.cache.Mode === "Dark" ? "white" : "black",
               }}
             >
               Password
@@ -115,7 +115,7 @@ const SingUp = (props) => {
         <div className='form-group' style={{ width: "100%" }}>
           <p
             style={{
-              color: ctx.Mode === "Dark" ? "white" : "black",
+              color: ctx.cache.Mode === "Dark" ? "white" : "black",
             }}
           >
             Email
@@ -164,7 +164,7 @@ const SingUp = (props) => {
         </button>
         <p
           style={{
-            color: ctx.Mode === "Dark" ? "white" : "black",
+            color: ctx.cache.Mode === "Dark" ? "white" : "black",
           }}
         >
           Already a member ?

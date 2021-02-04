@@ -111,11 +111,11 @@ const Step = (props) => {
     return (
       <div className='Step'>
         <div className='Info-step'>
-          <p className='t3' style={{ color: ctx.Mode === "Dark" ? "white" : "black" }}>
+          <p className='t3' style={{ color: ctx.cache.Mode === "Dark" ? "white" : "black" }}>
             {`Steps ${NbrStep}`}
           </p>
           <div>
-            <SwitchStep NrStep={NbrStep} Mode={ctx.Mode} InfoStep={infoStep} ChangeInfoStep={changeInfoStep} />
+            <SwitchStep NrStep={NbrStep} Mode={ctx.cache.Mode} InfoStep={infoStep} ChangeInfoStep={changeInfoStep} />
           </div>
           <div>
             <Button

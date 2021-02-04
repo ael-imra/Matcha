@@ -5,8 +5,6 @@ import { ReactComponent as ProfileSVG } from '../Images/avatar.svg'
 import { ReactComponent as HomeSVG } from '../Images/home.svg'
 import { ReactComponent as CloseSVG } from '../Images/close.svg'
 import { ReactComponent as CircleSVG } from '../Images/circle.svg'
-import { ReactComponent as ArrowDownSVG } from '../Images/arrowDown.svg'
-import { ReactComponent as ArrowUpSVG } from '../Images/arrowUp.svg'
 import { ReactComponent as ArrowDownChatSVG } from '../Images/arrowDownChat.svg'
 import { ReactComponent as SendMessageSVG } from '../Images/sendMessage.svg'
 import { ReactComponent as BackSVG } from '../Images/back.svg'
@@ -27,8 +25,6 @@ const IconProfile = (props) => <ProfileSVG className="Icons" {...props} />
 const IconHome = (props) => <HomeSVG className="Icons" {...props} />
 const IconClose = (props) => <CloseSVG className="Icons" {...props} />
 const IconCircle = (props) => <CircleSVG className="Icons" {...props} />
-const IconArrowDown = (props) => <ArrowDownSVG className="Icons" {...props} />
-const IconArrowUp = (props) => <ArrowUpSVG className="Icons" {...props} />
 const IconArrowDownChat = (props) => <ArrowDownChatSVG className="Icons" {...props} />
 const IconBack = (props) => <BackSVG className="Icons" {...props} />
 const IconUnlike = (props) => <UnlikeSVG className="Icons" {...props} />
@@ -42,4 +38,4 @@ const IconCheck = (props) => <CheckSVG className="Icons" {...props} />
 const IconPin = (props) => <PinSVG className="Icons" {...props} />
 const IconSendMessage = (props) => <SendMessageSVG className="Icons" {...props} />
 
-export { IconHome, IconProfile, IconHistory, IconFriends, IconSearch, IconCircle, IconArrowDown, IconArrowDownChat, IconArrowUp, IconSendMessage, IconBack, IconClose, IconPin, IconCheck, IconBan, IconInfo, IconStar, IconView, IconHeart, IconUnlike }
+export { IconHome, IconProfile, IconHistory, IconFriends, IconSearch, IconCircle, IconArrowDownChat, IconSendMessage, IconBack, IconClose, IconPin, IconCheck, IconBan, IconInfo, IconStar, IconView, IconHeart, IconUnlike }

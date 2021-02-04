@@ -15,17 +15,17 @@ const IconMenu = (props) => {
     >
       <div
         style={{
-          backgroundColor: ctx.Mode === 'Dark' ? 'white' : 'black',
+          backgroundColor: ctx.cache.Mode === 'Dark' ? 'white' : 'black',
         }}
       ></div>
       <div
         style={{
-          backgroundColor: ctx.Mode === 'Dark' ? 'white' : 'black',
+          backgroundColor: ctx.cache.Mode === 'Dark' ? 'white' : 'black',
         }}
       ></div>
       <div
         style={{
-          backgroundColor: ctx.Mode === 'Dark' ? 'white' : 'black',
+          backgroundColor: ctx.cache.Mode === 'Dark' ? 'white' : 'black',
         }}
       ></div>
     </div>

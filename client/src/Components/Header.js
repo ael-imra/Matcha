@@ -17,7 +17,7 @@ const Header = (props) => {
         <img src={logo} alt='...' />
         <p
           style={{
-            color: ctx.Mode === 'Dark' ? 'white' : 'black',
+            color: ctx.cache.Mode === 'Dark' ? 'white' : 'black',
           }}>
           Matcha
         </p>
@@ -25,10 +25,11 @@ const Header = (props) => {
       <div className='menu'>
         <Toggle
           list={['Light', 'Dark']}
-          active={ctx.Mode}
-          switch={() => {
-            ctx.changeMode((oldValue) => (oldValue === 'Light' ? 'Dark' : 'Light'));
-          }}
+          active={ctx.cache.Mode}
+          switch={() => {ctx.ref.changeMode(oldValue=>{
+                ctx.cache.Mode = oldValue === 'Dark' ? 'Light' : 'Dark'
+                return (ctx.cache.Mode)
+            })}}
           colors={['#03a9f1', '#292f3f']}
         />
         <button

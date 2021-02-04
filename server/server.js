@@ -75,6 +75,11 @@ io.on('connection', (socket) => {
         const result = await mysql.query('SELECT * FROM Friends WHERE `Match`=1 AND ((IdUserOwner=? AND IdUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?))', [socket.IdUserOwner, IdUserOwner, IdUserOwner, socket.IdUserOwner])
         ifNotBlock = await app.locals.ifNotBlock(IdUserOwner,socket.IdUserOwner,app.locals)
         if (result.length > 0 && ifNotBlock) {
+          const resultInsert = await mysql.insert('Messages', {
+            IdUserOwner: socket.IdUserOwner,
+            IdUserReceiver: IdUserOwner,
+            Content: message.Content,
+          })
           if (sockets[user.IdUserOwner] && sockets[user.IdUserOwner].length > 0)
             sockets[user.IdUserOwner].map((item) =>
               item.emit(
@@ -86,7 +91,7 @@ io.on('connection', (socket) => {
                     Active: 1,
                   },
                   message: {
-                    id: message.id,
+                    id: resultInsert.insertId,
                     IdUserOwner: socket.IdUserOwner,
                     Content: message.Content,
                     date: new Date(Date.now()).toISOString(),
@@ -101,7 +106,7 @@ io.on('connection', (socket) => {
                 JSON.stringify({
                   user,
                   message: {
-                    id: message.id,
+                    id: resultInsert.insertId,
                     IdUserOwner: socket.IdUserOwner,
                     Content: message.Content,
                     date: new Date(Date.now()).toISOString(),
@@ -109,11 +114,6 @@ io.on('connection', (socket) => {
                 })
               )
             )
-          mysql.insert('Messages', {
-            IdUserOwner: socket.IdUserOwner,
-            IdUserReceiver: IdUserOwner,
-            Content: message.Content,
-          })
         }
       }
     }
@@ -130,7 +130,6 @@ io.on('connection', (socket) => {
   })
 })
 app.use(cors())
-app.use(express.json())
 app.use(bodyParser.json({ limit: '50mb' }))
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 app.use('/Authentication', Authentication)

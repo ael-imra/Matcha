@@ -30,7 +30,7 @@ async function auth(req, res, next) {
 }
 router.get("/Logout", auth, function (req, res) {
   if (req.userInfo) {
-    req.app.locals.update("Users", { JWT: null }, { JWT: req.userInfo.JWT });
+    req.app.locals.update("Users", { Active:0 }, { JWT: req.userInfo.JWT });
     req.app.locals.sendResponse(res, 200, "You're now logout");
   } else req.app.locals.sendResponse(res, 403, "Something wrong please try again");
 });
@@ -66,7 +66,6 @@ router.post("/LoginWithGoogle", async function (req, res) {
   const locals = req.app.locals;
   const { IdToken } = req.body;
   const Email = await locals.verifyIdTokenGoogle(IdToken);
-  console.log(Email);
   if (Email) {
     const result = await locals.select("Users", ["IdUserOwner", "IsActive", "JWT", "Token"], {
       Email,

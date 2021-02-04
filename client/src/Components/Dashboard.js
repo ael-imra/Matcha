@@ -51,8 +51,8 @@ function Dashboard(props) {
     if (width >= 1000 && !LayoutHide) changeLayoutHide(true) // eslint-disable-next-line
   }, [width])
   return (
-    <div className="Dashboard" style={ModeStyle[ctx.Mode].Dashboard}>
-      {width <= 1400 ? (
+    <div className="Dashboard" style={ModeStyle[ctx.cache.Mode].Dashboard}>
+      {width <= 1600 ? (
         <Layout
           style={{
             width: LayoutHide ? '285px' : '0px',
@@ -62,9 +62,9 @@ function Dashboard(props) {
           user={user}
         />
       ) : null}
-      {width >= 1400 ? <Nav user={user} /> : null}
+      {width > 1600 ? <Nav user={user} /> : null}
       <DashboardBody style={{ zIndex: 7 }} changeLayoutHide={() => changeLayoutHide((oldValue) => !oldValue)} width={width} user={user} changeUser={changeUser} ChangeIsLogin={props.ChangeIsLogin} />
-      {width >= 1400 ? <QuickActions /> : null}
+      {width > 1600 ? <QuickActions /> : null}
     </div>
   )
 }

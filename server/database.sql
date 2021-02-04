@@ -75,11 +75,11 @@ CREATE TABLE IF NOT EXISTS `Blacklist` (
     FOREIGN KEY (IdUserOwner) REFERENCES `Users`(IdUserOwner),
     FOREIGN KEY (IdUserReceiver) REFERENCES `Users`(IdUserOwner)
 );
-CREATE TABLE IF NOT EXISTS `report` (
-    `Idreport` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS `Report` (
+    `IdReport` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `IdUserOwner` INT NOT NULL,
     `IdUserReceiver` INT NOT NULL,
-    `Datereport` VARCHAR(255),
+    `DateReport` DateTime DEFAULT NOW(),
     FOREIGN KEY (IdUserOwner) REFERENCES `Users`(IdUserOwner),
     FOREIGN KEY (IdUserReceiver) REFERENCES `Users`(IdUserOwner)
 );

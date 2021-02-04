@@ -87,7 +87,7 @@ const ResetPassword = (props) => {
             style={{
               marginBottom: "37px",
               marginTop: "0px",
-              color: ctx.Mode === "Dark" ? "white" : "black",
+              color: ctx.cache.Mode === "Dark" ? "white" : "black",
               fontSize: width <= 885 ? "18px" : "28px",
             }}
           >
@@ -96,7 +96,7 @@ const ResetPassword = (props) => {
           <div className='form-group' style={{ width: "100%" }}>
             <p
               style={{
-                color: ctx.Mode === "Dark" ? "white" : "black",
+                color: ctx.cache.Mode === "Dark" ? "white" : "black",
               }}
             >
               New password
@@ -115,7 +115,7 @@ const ResetPassword = (props) => {
           <div className='form-group' style={{ width: "100%" }}>
             <p
               style={{
-                color: ctx.Mode === "Dark" ? "white" : "black",
+                color: ctx.cache.Mode === "Dark" ? "white" : "black",
               }}
             >
               Confirm password

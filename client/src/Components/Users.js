@@ -14,7 +14,7 @@ function User(props) {
     blockFriend: false,
   })
   const [ratingValue, changeRatingValue] = useState({
-    avg: props.rating === null ? 0 : props.rating,
+    avg: props.rating === null ? 0 : parseFloat(props.rating).toFixed(1),
     userValue: props.myRating,
   })
   function UserImageSlideButtonClick(event) {
@@ -25,13 +25,13 @@ function User(props) {
     axios
       .post('Rating', {
         usernameReceiver,
-        RatingValue: parseFloat(parseFloat(value).toFixed(1)),
+        RatingValue: parseFloat(value).toFixed(1),
       })
       .then((data) =>{
         if (data.data instanceof Object && parseFloat(data.data.AVG) >= 0 && parseFloat(data.data.AVG) <= 5)
           changeRatingValue(() => ({
               userValue: value,
-              avg: parseFloat(parseFloat(data.data.AVG).toFixed(1)),
+              avg: parseFloat(data.data.AVG).toFixed(1),
             })
           )
         })
@@ -124,10 +124,11 @@ function User(props) {
 }
 function Users() {
   const ctx = useContext(DataContext)
-  const [users, changeUsers] = useState(() => [...ctx.cache.users])
+  const [users, changeUsers] = useState(() => [...[...ctx.cache.users].splice(0,24)])
   const [usersLoader, changeUsersLoader] = useState(false)
   const [length, changeLength] = useState(24)
   const usersRef = useRef()
+  console.log("USERS",[...users],[...ctx.cache.users])
   useEffect(() => {
     ctx.ref.changeUsers = changeUsers
     ctx.ref.changeUsersLoader = changeUsersLoader
@@ -138,7 +139,8 @@ function Users() {
   function UsersScroll() {
     const { scrollHeight, scrollTop, offsetHeight } = usersRef.current
     if (offsetHeight + scrollTop + 300 > scrollHeight && !usersLoader && users[users.length - 1] !== 'limit') {
-      if (length >= users.length) ctx.ref.getUsers(users.length, 24)
+      if (length >= ctx.cache.users.length) ctx.ref.getUsers(ctx.cache.users.length, 24)
+      else changeUsers([...[...ctx.cache.users].splice(0,length+24)])
       changeLength((oldValue) => oldValue + 24)
     }
   }

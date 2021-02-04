@@ -66,7 +66,8 @@ mysql.filter = async function (values) {
       (SELECT AVG(RatingValue) FROM Rating WHERE IdUserOwner=? AND  IdUserReceiver = u.IdUserOwner group by IdUserReceiver) AS myRating,\
       (SELECT IdUserReceiver FROM Friends WHERE u.IdUserOwner = IdUserReceiver AND IdUserOwner=?) AS friendreceiver,\
       (SELECT IdUserOwner FROM Friends WHERE u.IdUserOwner = IdUserOwner AND `Match`=1 AND IdUserReceiver=?) AS friendowner,\
-      (SELECT IdBlacklist FROM Blacklist WHERE (IdUserOwner=? AND IdUserReceiver=u.IdUserOwner) OR (IdUserOwner=u.IdUserOwner AND IdUserReceiver=?)) AS blackList\
+      (SELECT IdBlacklist FROM Blacklist WHERE (IdUserOwner=? AND IdUserReceiver=u.IdUserOwner) OR (IdUserOwner=u.IdUserOwner AND IdUserReceiver=?)) AS blackList,\
+      (SELECT COUNT(IdReport) FROM Report WHERE IdUserReceiver=u.IdUserOwner) AS CountReport\
       FROM Users u \
       WHERE u.IdUserOwner != ? AND u.UserName LIKE ? AND (? = "Male Female" || u.Gender=?) > 0 AND u.Images != "[]"\
       HAVING Age >= ? AND Age <= ? AND ((rating IS NULL AND ? = 0) OR (rating >= ? AND rating <= ?)) AND friendowner IS NULL AND friendreceiver IS NULL AND blackList IS NULL'

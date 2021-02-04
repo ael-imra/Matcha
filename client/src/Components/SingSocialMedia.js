@@ -96,7 +96,7 @@ const SingSocialMedia = (props) => {
         onClose={() => {
           changeShowFormPassword(false);
         }}
-        style={ModeStyle[ctx.Mode].Dashboard}
+        style={ModeStyle[ctx.cache.Mode].Dashboard}
       >
         <DialogTitle id='form-dialog-title'>Create password</DialogTitle>
         <DialogContent>

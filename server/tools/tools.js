@@ -188,6 +188,8 @@ async function notification(req, Type, UserOwner, UserReceiver) {
     if (locals.sockets && locals.sockets.length > 0 && locals.sockets[IdUserReceiver]) {
       const user = await locals.select('Users', ['IdUserOwner', 'Images', 'UserName', 'LastLogin', 'Active'], { IdUserOwner })
       const messages = await locals.query('SELECT IdMessages As "id",IdUserOwner,Content,DateCreation As "date" FROM Messages WHERE (IdUserOwner=? AND idUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?) ORDER BY DateCreation DESC LIMIT 30',[IdUserOwner,IdUserReceiver,IdUserReceiver,IdUserOwner])
+      const IsRead = await locals.select("Messages","COUNT(IsRead) AS IsRead",{IdUserReceiver:req.userInfo.IdUserOwner,IsRead:0})
+      user[0].IsRead = IsRead.length > 0 ? IsRead[0].IsRead : 0
       user[0].messages = messages
       user[0].Images = JSON.parse(user[0].Images)[0]
       locals.sockets[IdUserReceiver].map((item) =>

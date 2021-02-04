@@ -6,17 +6,10 @@ import { useHistory } from 'react-router-dom'
 
 export const DataContext = createContext()
 export default function AppContext(props) {
-  let history = useHistory()
-  const [Mode, changeMode] = useState('Light')
-  const [Lang, changeLang] = useState(0)
+  const history = useHistory()
   const [isLogin, changeIsLogin] = useState('')
-  const [userInfo, changeUserInfo] = useState({})
-  const [ErrorMessages, ChangeErrorMessages] = useState({
-    error: '',
-    warning: '',
-    success: '',
-  })
   const cache = {
+    Mode:'Light',
     friends: {},
     users: [],
     notifications: {
@@ -163,10 +156,23 @@ export default function AppContext(props) {
         if (ref.changeFriends) ref.changeFriends({ ...cache.friends })
       }
     },
+    removeMessage:(UserName,id)=>{
+      if (cache.friends[UserName])
+      {
+        axios.get(`Messages/deleteMessage/${id}`).then(data=>{
+          if(data.data === 'message deleted')
+          {
+            cache.friends[UserName].messages.map((item,index)=>item.id === id?cache.friends[UserName].messages.splice(index,1):0)
+            if (ref.changeFriends)
+              ref.changeFriends({...cache.friends})
+          }
+        })
+      }
+    },
     removeNotification: (userName) => {
       if (cache.notifications.data.length > 0) {
         cache.notifications.data.map((item, index) => {
-          if (item.UserName === userName) delete cache.notifications.data[index]
+          if (item.UserName === userName) cache.notifications.data.splice(index,1)
           return item
         })
         if (ref.changeNotifications) ref.changeNotifications({ ...cache.notifications })
@@ -209,7 +215,9 @@ export default function AppContext(props) {
     try {
       Axios.get('/users')
         .then((result) => {
-          if (result.data === 2) history.push('/step')
+          if (result.data === 2){
+            history.push('/step')
+          }
           changeIsLogin(result.data === 1 ? 'Login' : result.data === 2 ? 'Step' : 'Not login')
         })
         .catch((error) => {})
@@ -301,14 +309,6 @@ export default function AppContext(props) {
   return (
     <DataContext.Provider
       value={{
-        Mode,
-        Lang,
-        changeLang,
-        changeMode,
-        ErrorMessages,
-        ChangeErrorMessages,
-        userInfo,
-        changeUserInfo,
         socket,
         ref,
         cache,

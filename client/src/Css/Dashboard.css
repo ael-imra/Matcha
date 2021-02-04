@@ -34,7 +34,7 @@
   align-items: center;
   margin: 10px;
   margin-top: 20px;
-  background-color: #f0f0f0;
+  background-color: var(--background-DashboardBody);
   border-radius: 6px;
   z-index: 3;
   transition: 1s;
@@ -43,7 +43,7 @@
   width: 120px;
   height: 28px;
   position: absolute;
-  background-color: var(--background-Friend);
+  background-color: var(--background-QuickActions);
   border-radius: 7px;
   transition: left 0.7s linear;
 }
