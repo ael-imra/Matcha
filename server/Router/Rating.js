@@ -10,41 +10,27 @@ router.post('/', checkIfHasOneImage, async (req, res) => {
       IdUserOwner: req.userInfo.IdUserOwner,
       IdUserReceiver,
     })
-    if (resultCheckRating.length > 0) {
-      await locals.update('Rating', { RatingValue }, { IdUserOwner: req.userInfo.IdUserOwner, IdUserReceiver })
-      const result = await locals.select('Rating', ['SUM(RatingValue)/COUNT(RatingValue) "AVG"','COUNT(RatingValue) "CountReview"'], { IdUserReceiver })
-      locals.sendResponse(res, 200, result.length > 0 ? {AVG:result[0].AVG,CountReview:result[0].CountReview} : {AVG:0,CountReview:0},true)
-    } else {
-      const resultInsertRating = await locals.insert('Rating', {
-        IdUserOwner: req.userInfo.IdUserOwner,
-        IdUserReceiver,
-        RatingValue,
-      })
-      if (resultInsertRating) {
-        const result = await locals.select('Rating', ['SUM(RatingValue)/COUNT(RatingValue) "AVG"','COUNT(RatingValue) "CountReview"'], { IdUserReceiver })
-        locals.sendResponse(res, 200, result.length > 0 ? {AVG:result[0].AVG,CountReview:result[0].CountReview} : {AVG:0,CountReview:0},true)
-      } else locals.sendResponse(res, 200, 'Error On Insert Rating Value')
-    }
+    if (resultCheckRating.length > 0) await locals.update('Rating', { RatingValue }, { IdUserOwner: req.userInfo.IdUserOwner, IdUserReceiver })
+    else await locals.insert('Rating', { IdUserOwner: req.userInfo.IdUserOwner, IdUserReceiver, RatingValue})
+    const result = await locals.select('Rating', ['SUM(RatingValue)/COUNT(RatingValue) "AVG"', 'COUNT(RatingValue) "CountReview"'], { IdUserReceiver })
     locals.notification(req, 'Rate', req.userInfo.UserName, usernameReceiver)
+    locals.sendResponse(res, 200, result.length > 0 ? { AVG: result[0].AVG, CountReview: result[0].CountReview } : { AVG: 0, CountReview: 0 }, true)
   } else locals.sendResponse(res, 200, 'Bad Request')
 })
-router.get('/myRating/:usernameReceiever',async (req,res)=>{
-  const locals = req.app.locals
-  if (req.params && req.params.usernameReceiever)
-  {
-    const IdUserReceiver = await locals.getIdUserOwner(req.params.usernameReceiever)
-    const RatingValue = await locals.select('Rating', 'RatingValue', { IdUserOwner:req.userInfo.UserName,IdUserReceiver })
-    if (RatingValue.length > 0)
-      locals.sendResponse(res,200,RatingValue[0].RatingValue.toString())
-  }
-  else locals.sendResponse(res, 200, 'bad request')
-})
-router.get('/:usernameReceiever', checkIfHasOneImage, async (req, res) => {
+router.get('/myRating/:usernameReceiever', async (req, res) => {
   const locals = req.app.locals
   if (req.params && req.params.usernameReceiever) {
     const IdUserReceiver = await locals.getIdUserOwner(req.params.usernameReceiever)
-    const result = await locals.select('Rating', ['SUM(RatingValue)/COUNT(RatingValue) "AVG"','COUNT(RatingValue) "CountReview"'], { IdUserReceiver })
-    locals.sendResponse(res, 200, result.length > 0 ? {AVG:result[0].AVG,CountReview:result[0].CountReview} : {AVG:0,CountReview:0},true)
+    const RatingValue = await locals.select('Rating', 'RatingValue', { IdUserOwner: req.userInfo.UserName, IdUserReceiver})
+    if (RatingValue.length > 0) locals.sendResponse(res, 200, RatingValue[0].RatingValue.toString())
   } else locals.sendResponse(res, 200, 'bad request')
 })
+// router.get('/:usernameReceiever', checkIfHasOneImage, async (req, res) => {
+//   const locals = req.app.locals
+//   if (req.params && req.params.usernameReceiever) {
+//     const IdUserReceiver = await locals.getIdUserOwner(req.params.usernameReceiever)
+//     const result = await locals.select('Rating', ['SUM(RatingValue)/COUNT(RatingValue) "AVG"', 'COUNT(RatingValue) "CountReview"'], { IdUserReceiver })
+//     locals.sendResponse(res, 200, result.length > 0 ? { AVG: result[0].AVG, CountReview: result[0].CountReview } : { AVG: 0, CountReview: 0 }, true)
+//   } else locals.sendResponse(res, 200, 'bad request')
+// })
 module.exports = router

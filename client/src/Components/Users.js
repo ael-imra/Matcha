@@ -8,6 +8,7 @@ import axios from 'axios'
 import { useHistory } from 'react-router-dom'
 function User(props) {
   let history = useHistory()
+  const ctx = useContext(DataContext)
   const [imageIndex, changeImageIndex] = useState(0)
   const [clickLoad, changeClickLoad] = useState({
     addFriend: false,
@@ -29,11 +30,14 @@ function User(props) {
       })
       .then((data) =>{
         if (data.data instanceof Object && parseFloat(data.data.AVG) >= 0 && parseFloat(data.data.AVG) <= 5)
+        {
+          ctx.cache.users[props.index].rating = parseFloat(data.data.AVG).toFixed(1)
           changeRatingValue(() => ({
               userValue: value,
               avg: parseFloat(data.data.AVG).toFixed(1),
             })
           )
+        }
         })
   }
   function addFriend(UserName) {
@@ -128,7 +132,6 @@ function Users() {
   const [usersLoader, changeUsersLoader] = useState(false)
   const [length, changeLength] = useState(24)
   const usersRef = useRef()
-  console.log("USERS",[...users],[...ctx.cache.users])
   useEffect(() => {
     ctx.ref.changeUsers = changeUsers
     ctx.ref.changeUsersLoader = changeUsersLoader
@@ -166,7 +169,7 @@ function Users() {
     <>
       <div className="Users" onScroll={UsersScroll} ref={usersRef}>
         {users.map((obj, index) => {
-          if (index < length && obj !== 'limit') return <User key={obj.IdUserOwner} IdUserOwner={obj.IdUserOwner} images={JSON.parse(obj.Images)} city={obj.City} rating={obj.rating} myRating={obj.myRating} gender={obj.Gender} age={obj.Age} userName={obj.UserName} distance={obj.distance} listInterest={JSON.parse(obj.ListInterest)} removeUser={removeUser} blockUser={blockUser} onClick={UserClick} userInfo={localStorage.userInfo ? JSON.parse(localStorage.userInfo) : {}} />
+          if (index < length && obj !== 'limit') return <User index={index} key={obj.IdUserOwner} IdUserOwner={obj.IdUserOwner} images={JSON.parse(obj.Images)} city={obj.City} rating={obj.rating} myRating={obj.myRating} gender={obj.Gender} age={obj.Age} userName={obj.UserName} distance={obj.distance} listInterest={JSON.parse(obj.ListInterest)} removeUser={removeUser} blockUser={blockUser} onClick={UserClick} userInfo={localStorage.userInfo ? JSON.parse(localStorage.userInfo) : {}} />
           return null
         })}
       </div>

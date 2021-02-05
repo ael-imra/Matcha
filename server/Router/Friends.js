@@ -4,12 +4,7 @@ const { checkIfHasOneImage } = require('../tools/tools')
 
 router.get('/', checkIfHasOneImage, async (req, res) => {
   const locals = req.app.locals
-  const result = await locals.query('SELECT u.IdUserOwner,u.Images,u.UserName,u.LastLogin,u.Active,(SELECT IdBlackList FROM Blacklist WHERE (IdUserReceiver =? AND IdUserOwner=u.IdUserOwner) OR (IdUserReceiver =u.IdUserOwner AND IdUserOwner=?)) AS blacklist FROM Users u,Friends f WHERE f.Match=1 AND ((f.IdUserOwner=? AND u.IdUserOwner = f.IdUserReceiver) OR (f.IdUserReceiver=? AND u.IdUserOwner = f.IdUserOwner)) HAVING blacklist IS NULL', [
-    req.userInfo.IdUserOwner,
-    req.userInfo.IdUserOwner,
-    req.userInfo.IdUserOwner,
-    req.userInfo.IdUserOwner,
-  ])
+  const result = await locals.query('SELECT u.IdUserOwner,u.Images,u.UserName,u.LastLogin,u.Active,(SELECT IdBlackList FROM Blacklist WHERE (IdUserReceiver =? AND IdUserOwner=u.IdUserOwner) OR (IdUserReceiver =u.IdUserOwner AND IdUserOwner=?)) AS blacklist FROM Users u,Friends f WHERE f.Match=1 AND ((f.IdUserOwner=? AND u.IdUserOwner = f.IdUserReceiver) OR (f.IdUserReceiver=? AND u.IdUserOwner = f.IdUserOwner)) HAVING blacklist IS NULL', [req.userInfo.IdUserOwner, req.userInfo.IdUserOwner, req.userInfo.IdUserOwner, req.userInfo.IdUserOwner])
   if (result.length > 0) {
     const resultObject = {}
     let count = 0
@@ -64,8 +59,8 @@ router.post('/Invite', checkIfHasOneImage, async (req, res) => {
             IdUserReceiver: checkFriends[0].IdUserReceiver,
           })
         } else if (checkFriends[0].IdUserReceiver === req.userInfo.IdUserOwner && !checkFriends[0].Match) {
-          locals.notification(req, 'LikedBack', UserReceiver,UserOwner)
-          locals.notification(req, 'addFriend',UserOwner,UserReceiver)
+          locals.notification(req, 'LikedBack', UserReceiver, UserOwner)
+          locals.notification(req, 'addFriend', UserOwner, UserReceiver)
           locals.update(
             'Friends',
             { Match: 1 },

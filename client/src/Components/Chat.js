@@ -68,7 +68,6 @@ function Chat(props) {
     if (chatTextValue.current.value.trim() !== '') {
       ctx.ref.sendMessage({
         message: {
-          id: ctx.ref.makeID(ctx.cache.friends[UserName].messages),
           Content: chatTextValue.current.value,
           date: new Date().toISOString(),
           IdUserReceiver: ctx.cache.chatUserInfo.IdUserOwner,

@@ -55,11 +55,10 @@ mysql.delete = async function (table, values) {
   return result
 }
 mysql.filter = async function (values) {
-  if (values && values.IdUserOwner && values.age && values.age.length === 2 && values.rating && values.rating.length === 2 && values.sexual) {
+  if (values && values.IdUserOwner && values.age instanceof Array && values.age.length === 2 && values.age[0] >=18 && values.age[1] <= 80 && values.rating instanceof Array && values.rating.length === 2 && values.rating[0]>=0 && values.rating[1] <= 5 && values.sexual) {
     values.name = values.name ? '%' + values.name + '%' : '%%'
     values.sexual = values instanceof Array ? JSON.stringify(values.sexual) : values.sexual
-    const query =
-      'SELECT \
+    const query = 'SELECT \
       u.IdUserOwner,u.UserName,u.Images,u.Gender,u.ListInterest,u.Latitude,u.Longitude,\
       Year(CURDATE())-Year(u.DataBirthday) AS Age,\
       (SELECT AVG(RatingValue) FROM Rating WHERE IdUserReceiver = u.IdUserOwner group by IdUserReceiver) AS rating,\

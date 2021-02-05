@@ -70,7 +70,6 @@ function DashboardBody(props) {
             <span>{`${props.user.FirstName} ${props.user.LastName}`}</span>
           </div>
           <div className="DashboardBodyHeaderSettings">
-            {/* <IconSettings width={19} height={19} fill='#a5a5a5' /> */}
             {location.pathname === '/' ? (
               <FilterListIcon
                 onClick={() => changeHideFilter((oldValue) => !oldValue)}

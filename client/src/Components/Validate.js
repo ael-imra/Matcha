@@ -2,8 +2,8 @@ import Jimp from "jimp";
 function Validate(name, value) {
   const list = {
     // eslint-disable-next-line
-    Name: /^[a-zA-Z ]{5,}$/g.test(value), // eslint-disable-next-line
-    Username: /^[a-zA-Z0-9 \.\-_]{5,15}$/g.test(value), // eslint-disable-next-line
+    Name: /^[a-zA-Z0-9 ]{2,}$/g.test(value), // eslint-disable-next-line
+    Username: /^[a-zA-Z0-9\.\-_]{5,15}$/g.test(value), // eslint-disable-next-line
     Email: /^[\S+]{5,40}@\S+\.\S+$/g.test(value), // eslint-disable-next-line
     Password: /^[ -~]{8,30}$/g.test(value),
   };

@@ -55,7 +55,9 @@ async function sendFriendMyState(Active, IdUserOwner, UserName, sockets) {
 io.on('connection', (socket) => {
   console.log('User Connected')
   socket.on('token', async (token) => {
-    const result = await mysql.select('Users', ['UserName', 'IdUserOwner', 'Images'], { JWT: token })
+    const result = await mysql.select('Users', ['UserName', 'IdUserOwner', 'Images'], {
+      JWT: token,
+    })
     if (result.length > 0) {
       mysql.update('Users', { Active: 1 }, { IdUserOwner: result[0].IdUserOwner, UserName: result[0].UserName })
       socket.IdUserOwner = result[0].IdUserOwner
@@ -73,7 +75,7 @@ io.on('connection', (socket) => {
       if (user.UserName && message && message.Content.trim() && socket.UserName) {
         const IdUserOwner = await mysql.getIdUserOwner(user.UserName)
         const result = await mysql.query('SELECT * FROM Friends WHERE `Match`=1 AND ((IdUserOwner=? AND IdUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?))', [socket.IdUserOwner, IdUserOwner, IdUserOwner, socket.IdUserOwner])
-        ifNotBlock = await app.locals.ifNotBlock(IdUserOwner,socket.IdUserOwner,app.locals)
+        ifNotBlock = await app.locals.ifNotBlock(IdUserOwner, socket.IdUserOwner, app.locals)
         if (result.length > 0 && ifNotBlock) {
           const resultInsert = await mysql.insert('Messages', {
             IdUserOwner: socket.IdUserOwner,
