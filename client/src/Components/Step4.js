@@ -4,18 +4,21 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import CheckIcon from "@material-ui/icons/Check";
 import Button from "@material-ui/core/Button";
 import { useWindowSize } from "./UseWindowSize";
+import { checkImages } from './Validate'
 
 const Step4 = (props) => {
   const width = useWindowSize();
   let getImage = (e) => {
     if (e.target.files && e.target.files[0]) {
       let reader = new FileReader();
-      reader.onload = function () {
+      reader.onload = async function () {
+        if (await checkImages([reader.result])) {
         let DataStep = props.InfoStep;
         if (DataStep.step5.length < 5) {
           DataStep.step5.push({ src: reader.result, default: 0 });
           props.ChangeInfoStep({ ...DataStep });
         }
+      }
       };
       reader.readAsDataURL(e.target.files[0]);
     }
@@ -43,7 +46,6 @@ const Step4 = (props) => {
         <input
           className='file-input'
           type='file'
-          multiple
           onChange={getImage}
           onClick={(e) => {
             e.target.value = "";

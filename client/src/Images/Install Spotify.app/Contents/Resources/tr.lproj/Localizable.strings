@@ -1,0 +1,48 @@
+/*
+  Localizable.strings
+
+  Copyright Spotify. All rights reserved.
+*/
+
+
+"sInstallerOsxAskUserToAuthenticate." = "Spotify kurmak için izin gerekli.";
+"sInstallerOsxAskUserToQuitSpotify" = "Lütfen Spotify'dan çık ve tekrar dene";
+"sInstallerOsxContinueInBackground" = "Arka planda devam et";
+"sInstallerOsxDownloadFailedErrorDescription" = "Spotify indirilirken bir hata oluştu.";
+"sInstallerOsxDownloadFailedRetryIn" = "İndirme başarısız. %1$ds içinde tekrar denenecek.";
+"sInstallerOsxDownloadingSpotify" = "Spotify indiriliyor...";
+"sInstallerOsxExtractionFailedErrorDescription" = "Spotify çıkarılırken bir hata oluştu.";
+"sInstallerOsxGenericErrorDescription" = "Spotify kurulurken bir hata oluştu.";
+"sInstallerOsxInstallFailedErrorDescription" = "Spotify yüklenirken bir hata oluştu.";
+"sInstallerOsxInstallationFailed" = "Kurulum Başarısız";
+"sInstallerOsxInstallationFailedDefaultButtonTitle" = "Spotify.com'dan indir";
+"sInstallerOsxInstallationIncompleteContinueButtonTitle" = "Kuruluma Devam Et";
+"sInstallerOsxInstallationIncompleteDesc" = "Spotify kurulumu tamamlanmak üzere. Çıkmak istiyor musun?";
+"sInstallerOsxInstallationIncompleteTitle" = "YüklemeTamamlanmadı";
+"sInstallerOsxInstallingSpotify" = "Spotify yükleniyor...";
+"sInstallerOsxMMAboutInstallSpotify" = "Spotify Yüklemesi hakkına";
+"sInstallerOsxMMBringAllToFront" = "Tümünü Öne Getir";
+"sInstallerOsxMMHelp" = "Yardım";
+"sInstallerOsxMMHideInstallSpotify" = "Spotify Yüklemesini gizle";
+"sInstallerOsxMMHideOthers" = "Diğerlerini Gizle";
+"sInstallerOsxMMInstallSpotify" = "Spotify'ı Yükle";
+"sInstallerOsxMMInstallSpotifyHelp" = "Spotify Yardım'ı yükle";
+"sInstallerOsxMMMinimize" = "Küçült";
+"sInstallerOsxMMQuitInstallSpotify" = "Spotify Yüklemesinden çık";
+"sInstallerOsxMMServices" = "Hizmetler";
+"sInstallerOsxMMShowAll" = "Tümünü Göster";
+"sInstallerOsxMMWindow" = "Pencere";
+"sInstallerOsxMMZoom" = "Yaklaştır";
+"sInstallerOsxMountFailedErrorDescription" = "İndirilen Spotify disk görüntüsü bağlanırken bir hata oluştu.";
+"sInstallerOsxMoveApplicationButtonDoNotMove" = "Taşıma";
+"sInstallerOsxMoveApplicationButtonMove" = "Uygulamalar Klasörüne Taşı";
+"sInstallerOsxMoveApplicationCouldNotMove" = "Uygulamalar klasörüne taşınamadı";
+"sInstallerOsxMoveApplicationQuestionInfoInDownloadsFolder" = "Bu sayede İndirilenler klasörün düzenli kalır.";
+"sInstallerOsxMoveApplicationQuestionInfoWillRequirePasswd" = "Bunun için yönetici parolası gerekli.";
+"sInstallerOsxMoveApplicationQuestionMessage" = "İstersen kendimi Uygulamalar klasörüne taşıyabilirim.";
+"sInstallerOsxMoveApplicationQuestionTitle" = "Uygulama klasörüne taşınsın mı?";
+"sInstallerOsxMoveApplicationQuestionTitleHome" = "Ana klasöründeki Uygulamalar klasörüne taşınsın mı?";
+"sInstallerOsxQuitButtonTitle" = "Çıkış";
+"sInstallerOsxUnsupportedPlatformDesc" = "Üzgünüz, Spotify Intel işlemciyle çalışan Mac OS X 10.5 veya üstünü gerektirir.";
+"sInstallerOsxUnsupportedPlatformHelp" = "Spotify.com'da daha fazlasını bul";
+"sInstallerOsxUnsupportedPlatformTitle" = "Desteklenmeyen Platform";

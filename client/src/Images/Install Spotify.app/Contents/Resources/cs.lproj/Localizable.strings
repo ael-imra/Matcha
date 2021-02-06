@@ -1,0 +1,48 @@
+/*
+  Localizable.strings
+
+  Copyright Spotify. All rights reserved.
+*/
+
+
+"sInstallerOsxAskUserToAuthenticate." = "Spotify potřebuje svolení k instalaci.";
+"sInstallerOsxAskUserToQuitSpotify" = "Ukonči prosím Spotify a zkus to znovu";
+"sInstallerOsxContinueInBackground" = "Pokračovat na pozadí";
+"sInstallerOsxDownloadFailedErrorDescription" = "Během pokusu o stažení Spotify došlo k chybě.";
+"sInstallerOsxDownloadFailedRetryIn" = "Stahování se nezdařilo. Další pokus za %1$d s.";
+"sInstallerOsxDownloadingSpotify" = "Stahování Spotify…";
+"sInstallerOsxExtractionFailedErrorDescription" = "Během pokusu o extrakci Spotify došlo k chybě.";
+"sInstallerOsxGenericErrorDescription" = "Během pokusu o instalaci Spotify došlo k chybě.";
+"sInstallerOsxInstallFailedErrorDescription" = "Během pokusu o instalaci Spotify došlo k chybě.";
+"sInstallerOsxInstallationFailed" = "Instalace se nezdařila";
+"sInstallerOsxInstallationFailedDefaultButtonTitle" = "Stahuj ze Spotify.com";
+"sInstallerOsxInstallationIncompleteContinueButtonTitle" = "Pokračovat v instalaci";
+"sInstallerOsxInstallationIncompleteDesc" = "Instalace Spotify byla téměř dokončena. Opravdu chceš skončit?";
+"sInstallerOsxInstallationIncompleteTitle" = "Instalace je neúplná";
+"sInstallerOsxInstallingSpotify" = "Instalace Spotify…";
+"sInstallerOsxMMAboutInstallSpotify" = "O instalaci Spotify";
+"sInstallerOsxMMBringAllToFront" = "Vše do popředí";
+"sInstallerOsxMMHelp" = "Nápověda";
+"sInstallerOsxMMHideInstallSpotify" = "Skrýt instalaci Spotify";
+"sInstallerOsxMMHideOthers" = "Skrýt ostatní";
+"sInstallerOsxMMInstallSpotify" = "Instalovat Spotify";
+"sInstallerOsxMMInstallSpotifyHelp" = "Instalace Nápovědy Spotify";
+"sInstallerOsxMMMinimize" = "Minimalizovat";
+"sInstallerOsxMMQuitInstallSpotify" = "Ukončit instalaci Spotify";
+"sInstallerOsxMMServices" = "Služby";
+"sInstallerOsxMMShowAll" = "Zobrazit vše";
+"sInstallerOsxMMWindow" = "Okno";
+"sInstallerOsxMMZoom" = "Zoom";
+"sInstallerOsxMountFailedErrorDescription" = "Během pokusu o připojení staženého obrazu disku Spotify došlo k chybě.";
+"sInstallerOsxMoveApplicationButtonDoNotMove" = "Nepřesouvat";
+"sInstallerOsxMoveApplicationButtonMove" = "Přesunout do složky Aplikace";
+"sInstallerOsxMoveApplicationCouldNotMove" = "Přesunutí do složky Aplikace nebylo možné";
+"sInstallerOsxMoveApplicationQuestionInfoInDownloadsFolder" = "Složka Stažené položky tak zůstane přehledná.";
+"sInstallerOsxMoveApplicationQuestionInfoWillRequirePasswd" = "Měj na paměti, že tato operace bude vyžadovat heslo správce.";
+"sInstallerOsxMoveApplicationQuestionMessage" = "Pokud budeš chtít, mohu se přesunout do složky Aplikace.";
+"sInstallerOsxMoveApplicationQuestionTitle" = "Přesunout do složky Aplikace?";
+"sInstallerOsxMoveApplicationQuestionTitleHome" = "Přesunout do složky Aplikace ve složce Domů?";
+"sInstallerOsxQuitButtonTitle" = "Ukončit";
+"sInstallerOsxUnsupportedPlatformDesc" = "Je nám líto, Spotify vyžaduje Mac OS X 10.5 nebo novější na procesoru Intel.";
+"sInstallerOsxUnsupportedPlatformHelp" = "Více nalezneš na Spotify.com";
+"sInstallerOsxUnsupportedPlatformTitle" = "Nepodporovaná platforma";

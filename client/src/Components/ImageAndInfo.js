@@ -1,4 +1,4 @@
-import React,{useContext} from "react";
+import React, { useContext } from "react";
 import { useWindowSize } from "./UseWindowSize";
 import Axios from "axios";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -14,25 +14,28 @@ import ImageUser from "./ImageUser";
 import Skeleton from "@material-ui/lab/Skeleton";
 import ProfileImage from "./ProfileImage";
 import Rating from "@material-ui/lab/Rating";
+import ExploreIcon from "@material-ui/icons/Explore";
+import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import {DataContext} from '../Context/AppContext'
 
 export default function ImageAndInfo(props) {
-  let history = useHistory();
   const ctx = useContext(DataContext)
+  let history = useHistory();
   const width = useWindowSize();
   const [ifUpload, changeIfUpload] = React.useState(0);
-  const [ratingValue, changeRatingValue] = React.useState({ userValue: 0 });
+  const [ratingValue, changeRatingValue] = React.useState({ userValue: parseFloat(props.InfoUser.MyRating) });
   function clickRating(value, usernameReceiver) {
     Axios.post("Rating", {
       usernameReceiver,
       RatingValue: parseFloat(parseFloat(value).toFixed(1)),
-    }).then((data) =>
-      parseFloat(data.data) >= 0 && parseFloat(data.data) <= 5
-        ? changeRatingValue(() => ({
-            userValue: value,
-          }))
-        : 0
-    );
+    }).then((data) => {
+      if (typeof data.data === "object") {
+        props.ChangeInfoUser({ ...props.InfoUser, YourRating: data.data.AVG, CountRating: data.data.CountReview });
+        changeRatingValue(() => ({
+          userValue: value,
+        }));
+      }
+    });
   }
   const getImage = (e) => {
     if (ifUpload === 0) {
@@ -47,7 +50,6 @@ export default function ImageAndInfo(props) {
           let reader = new FileReader();
           reader.onload = async function () {
             let image = reader.result;
-            console.log(image, "ok");
             if (await checkImages([image])) {
               try {
                 Axios.post("/Profile/AddImage", { image: image }).then((result) => {
@@ -92,9 +94,9 @@ export default function ImageAndInfo(props) {
       });
     } catch (error) {}
   };
-  let ReportUser = () => {
+  let ReportUser = (e) => {
     try {
-      Axios.post(`/Profile/ReportUser/${props.userName}`, {}).then((result) => {
+      Axios.get(`/Profile/ReportUser/${props.userName}`).then((result) => {
         if (result.data === "successful")
           props.changeUserNameAndEmail({
             ...props.UserNameAndEmail,
@@ -115,8 +117,33 @@ export default function ImageAndInfo(props) {
       })})
     } catch (error) {}
   };
+  let updatePosition = (e) => {
+    e.target.closest("button").style.display = "none";
+    props.changeShowSuccess(true);
+    function success(pos) {
+      try {
+        Axios.post(`/Profile/UpdatePosition`, {
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+        }).then((result) => {});
+      } catch (error) {}
+    }
+    async function error() {
+      const response = await Axios.get("https://ipinfo.io/json", {
+        headers: {
+          Authorization: "Bearer 98b6dabb89ced1",
+        },
+      });
+      try {
+        Axios.post(`/Profile/UpdatePosition`, {
+          ip: response.data.ip,
+        }).then((result) => {});
+      } catch (error) {}
+    }
+    navigator.geolocation.getCurrentPosition(success, error);
+  };
 
-  let deleteImageProfile = () => {
+  let deleteImageProfile = (e) => {
     try {
       Axios.post("/Profile/DeleteImage", { index: 0 }).then((result) => {
         let arrayImage = props.InfoUser.Images;
@@ -138,7 +165,7 @@ export default function ImageAndInfo(props) {
           {props.InfoUser.Images[0] !== "XXX" ? (
             <>
               <ProfileImage Image={props.InfoUser.Images[0]} UserName={props.UserNameAndEmail.userName} Style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", fontSize: "65px" }} />
-              {props.UserNameAndEmail.isProfileOfYou ? (
+              {props.UserNameAndEmail.isProfileOfYou && props.InfoUser.Images[0] ? (
                 <div className='deleteProfile'>
                   <IconButton color='primary' component='span' onClick={deleteImageProfile}>
                     <DeleteIcon style={{ color: "var(--color-QuickActionsMenu)" }} />
@@ -157,7 +184,7 @@ export default function ImageAndInfo(props) {
           <p className='Email'>{props.UserNameAndEmail.isProfileOfYou ? props.UserNameAndEmail.email : props.InfoUser.Active === 1 ? "Online" : props.InfoUser.LastLogin}</p>
           <div className='CountReviewFriend'>
             <div>
-              <p>{props.InfoUser.YourRating}</p>
+              <p>{parseFloat(props.InfoUser.YourRating).toFixed(1)}</p>
               <p>{`${props.InfoUser.CountRating} reviews`}</p>
             </div>
             <div></div>
@@ -167,19 +194,47 @@ export default function ImageAndInfo(props) {
             </div>
           </div>
           {props.UserNameAndEmail.isProfileOfYou ? (
-            <button
-              className='ft_btn'
-              style={{
-                marginTop: "30px",
-                backgroundColor: "var(--background-Nav)",
-              }}
-              onClick={formUpdatePasswordShow}
-            >
-              Update Password
-            </button>
+            <div style={{ width: "100%", display: "flex", flexWrap: "wrap", justifyContent: "space-evenly", alignItems: "center", height: "95px" }}>
+              <Button
+                variant='contained'
+                color='secondary'
+                startIcon={<VpnKeyIcon />}
+                onClick={formUpdatePasswordShow}
+                style={{
+                  marginTop: "15px",
+                  fontWeight: "600",
+                  fontSize: "11px",
+                  paddingBottom: "5px",
+                  paddingTop: "5px",
+                  paddingLeft: "12px",
+                  paddingRight: "12px",
+                  backgroundColor: "var(--background-Nav)",
+                }}
+              >
+                Update Password
+              </Button>
+              <Button
+                variant='contained'
+                color='secondary'
+                startIcon={<ExploreIcon />}
+                onClick={updatePosition}
+                style={{
+                  marginTop: "15px",
+                  fontWeight: "600",
+                  fontSize: "11px",
+                  paddingBottom: "5px",
+                  paddingTop: "5px",
+                  paddingLeft: "12px",
+                  paddingRight: "12px",
+                  backgroundColor: "var(--background-Nav)",
+                }}
+              >
+                refresh GPS
+              </Button>
+            </div>
           ) : (
             <>
-              <Rating name='simple-controlled' value={ratingValue.userValue} max={5} precision={0.5} onChange={(event, value) => clickRating(value, props.UserNameAndEmail.userName)} />
+              <Rating name='simple-controlled' value={ratingValue.userValue} max={5} precision={0.5} onChange={(event, value) => clickRating(value, props.UserNameAndEmail.userName)} style={{ marginTop: "10px" }} />
               <div
                 style={{
                   display: "flex",
@@ -194,7 +249,7 @@ export default function ImageAndInfo(props) {
                   startIcon={<BlockIcon />}
                   onClick={BlockUser}
                   style={{
-                    marginTop: "30px",
+                    marginTop: "15px",
                     fontWeight: "600",
                     fontSize: "13px",
                     paddingBottom: "5px",
@@ -213,7 +268,7 @@ export default function ImageAndInfo(props) {
                     onClick={ReportUser}
                     startIcon={<ReportIcon />}
                     style={{
-                      marginTop: "30px",
+                      marginTop: "15px",
                       fontWeight: "600",
                       fontSize: "13px",
                       paddingBottom: "5px",
@@ -232,7 +287,7 @@ export default function ImageAndInfo(props) {
                     color='secondary'
                     startIcon={<FavoriteIcon />}
                     style={{
-                      marginTop: "30px",
+                      marginTop: "15px",
                       fontWeight: "600",
                       fontSize: "13px",
                       paddingBottom: "5px",
@@ -251,7 +306,7 @@ export default function ImageAndInfo(props) {
                     color='secondary'
                     startIcon={<FavoriteIcon />}
                     style={{
-                      marginTop: "30px",
+                      marginTop: "15px",
                       fontWeight: "600",
                       fontSize: "13px",
                       paddingBottom: "5px",

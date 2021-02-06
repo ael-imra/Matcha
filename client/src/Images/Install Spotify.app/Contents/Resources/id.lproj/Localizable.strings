@@ -1,0 +1,48 @@
+/*
+  Localizable.strings
+
+  Copyright Spotify. All rights reserved.
+*/
+
+
+"sInstallerOsxAskUserToAuthenticate." = "Spotify perlu izin untuk menginstal.";
+"sInstallerOsxAskUserToQuitSpotify" = "Keluar dari Spotify dan coba lagi";
+"sInstallerOsxContinueInBackground" = "Lanjutkan di latar belakang";
+"sInstallerOsxDownloadFailedErrorDescription" = "Terjadi kesalahan saat mencoba men-download Spotify.";
+"sInstallerOsxDownloadFailedRetryIn" = "Download gagal. Mencoba lagi dalam %1$ddtk.";
+"sInstallerOsxDownloadingSpotify" = "Men-download Spotify…";
+"sInstallerOsxExtractionFailedErrorDescription" = "Terjadi kesalahan saat mencoba mengekstrak Spotify.";
+"sInstallerOsxGenericErrorDescription" = "Terjadi kesalahan saat mencoba memasang Spotify.";
+"sInstallerOsxInstallFailedErrorDescription" = "Terjadi kesalahan saat mencoba memasang Spotify.";
+"sInstallerOsxInstallationFailed" = "Pemasangan Gagal";
+"sInstallerOsxInstallationFailedDefaultButtonTitle" = "Download dari Spotify.com";
+"sInstallerOsxInstallationIncompleteContinueButtonTitle" = "Lanjutkan Pemasangan";
+"sInstallerOsxInstallationIncompleteDesc" = "Pemasangan Spotify hampir selesai. Yakin ingin berhenti?";
+"sInstallerOsxInstallationIncompleteTitle" = "Pemasangan Tidak Selesai";
+"sInstallerOsxInstallingSpotify" = "Memasang Spotify…";
+"sInstallerOsxMMAboutInstallSpotify" = "Tentang Memasang Spotify";
+"sInstallerOsxMMBringAllToFront" = "Bawa Semua ke Depan";
+"sInstallerOsxMMHelp" = "Bantuan";
+"sInstallerOsxMMHideInstallSpotify" = "Sembunyikan Pemasangan Spotify";
+"sInstallerOsxMMHideOthers" = "Sembunyikan Lainnya";
+"sInstallerOsxMMInstallSpotify" = "Pasang Spotify";
+"sInstallerOsxMMInstallSpotifyHelp" = "Pasang Bantuan Spotify";
+"sInstallerOsxMMMinimize" = "Minimalkan";
+"sInstallerOsxMMQuitInstallSpotify" = "Keluar dari Pemasangan Spotify";
+"sInstallerOsxMMServices" = "Layanan";
+"sInstallerOsxMMShowAll" = "Tampilkan Semua";
+"sInstallerOsxMMWindow" = "Jendela";
+"sInstallerOsxMMZoom" = "Zoom";
+"sInstallerOsxMountFailedErrorDescription" = "Terjadi kesalahan saat mencoba menampilkan citra disk Spotify yang ter-download.";
+"sInstallerOsxMoveApplicationButtonDoNotMove" = "Jangan dipindah";
+"sInstallerOsxMoveApplicationButtonMove" = "Pindah ke folder Aplikasi";
+"sInstallerOsxMoveApplicationCouldNotMove" = "Tidak dapat dipindah ke folder Aplikasi";
+"sInstallerOsxMoveApplicationQuestionInfoInDownloadsFolder" = "Ini akan menjaga folder Downloads tetap rapi.";
+"sInstallerOsxMoveApplicationQuestionInfoWillRequirePasswd" = "Perhatikan bahwa ini memerlukan sandi administrator.";
+"sInstallerOsxMoveApplicationQuestionMessage" = "Aku bisa pindahkan sendiri ke folder Aplikasi jika kamu inginkan.";
+"sInstallerOsxMoveApplicationQuestionTitle" = "Pindah ke folder Aplikasi?";
+"sInstallerOsxMoveApplicationQuestionTitleHome" = "Pindah ke folder Aplikasi di folder Beranda kamu?";
+"sInstallerOsxQuitButtonTitle" = "Keluar";
+"sInstallerOsxUnsupportedPlatformDesc" = "Maaf, Spotify membutuhkan Mac OS X 10.5 atau versi lebih baru dengan prosesor Intel.";
+"sInstallerOsxUnsupportedPlatformHelp" = "Cari tahu selengkapnya di Spotify.com";
+"sInstallerOsxUnsupportedPlatformTitle" = "Platform Tidak didukung";

@@ -1,0 +1,48 @@
+/*
+  Localizable.strings
+
+  Copyright Spotify. All rights reserved.
+*/
+
+
+"sInstallerOsxAskUserToAuthenticate." = "Το Spotify χρειάζεται άδεια για εγκατάσταση.";
+"sInstallerOsxAskUserToQuitSpotify" = "Βγες από το Spotify και προσπάθησε ξανά";
+"sInstallerOsxContinueInBackground" = "Συνέχιση στο παρασκήνιο";
+"sInstallerOsxDownloadFailedErrorDescription" = "Προέκυψε σφάλμα κατά την προσπάθεια λήψης του Spotify.";
+"sInstallerOsxDownloadFailedRetryIn" = "Το download απέτυχε. Νέα προσπάθεια σε %1$dδ.";
+"sInstallerOsxDownloadingSpotify" = "Λήψη του Spotify…";
+"sInstallerOsxExtractionFailedErrorDescription" = "Προέκυψε σφάλμα κατά την προσπάθεια εξαγωγής του Spotify.";
+"sInstallerOsxGenericErrorDescription" = "Προέκυψε σφάλμα κατά την προσπάθεια εγκατάστασης του Spotify.";
+"sInstallerOsxInstallFailedErrorDescription" = "Προέκυψε σφάλμα κατά την προσπάθεια εγκατάστασης του Spotify.";
+"sInstallerOsxInstallationFailed" = "Η εγκατάσταση απέτυχε";
+"sInstallerOsxInstallationFailedDefaultButtonTitle" = "Λήψη από το Spotify.com";
+"sInstallerOsxInstallationIncompleteContinueButtonTitle" = "Συνέχιση εγκατάστασης";
+"sInstallerOsxInstallationIncompleteDesc" = "Η εγκατάσταση του Spotify έχει σχεδόν ολοκληρωθεί. Θέλεις πραγματικά να βγεις από το πρόγραμμα;";
+"sInstallerOsxInstallationIncompleteTitle" = "Ημιτελής εγκατάσταση";
+"sInstallerOsxInstallingSpotify" = "Εγκατάσταση του Spotify…";
+"sInstallerOsxMMAboutInstallSpotify" = "Σχετικά με την εγκατάσταση του Spotify";
+"sInstallerOsxMMBringAllToFront" = "Μεταφορά όλων στο προσκήνιο";
+"sInstallerOsxMMHelp" = "Βοήθεια";
+"sInstallerOsxMMHideInstallSpotify" = "Απόκρυψη της εγκατάστασης του Spotify";
+"sInstallerOsxMMHideOthers" = "Απόκρυψη άλλων";
+"sInstallerOsxMMInstallSpotify" = "Εγκατάσταση Spotify";
+"sInstallerOsxMMInstallSpotifyHelp" = "Εγκατάσταση της Βοήθειας του Spotify";
+"sInstallerOsxMMMinimize" = "Ελαχιστοποίηση";
+"sInstallerOsxMMQuitInstallSpotify" = "Έξοδος από την εγκατάσταση του Spotify";
+"sInstallerOsxMMServices" = "Υπηρεσίες";
+"sInstallerOsxMMShowAll" = "Εμφάνιση όλων";
+"sInstallerOsxMMWindow" = "Παράθυρο";
+"sInstallerOsxMMZoom" = "Ζουμ";
+"sInstallerOsxMountFailedErrorDescription" = "Προέκυψε σφάλμα κατά την προσπάθεια φόρτωσης του ειδώλου δίσκου του Spotify που κατέβασες.";
+"sInstallerOsxMoveApplicationButtonDoNotMove" = "Να μη μετακινηθεί";
+"sInstallerOsxMoveApplicationButtonMove" = "Μετακίνηση στο φάκελο Εφαρμογές";
+"sInstallerOsxMoveApplicationCouldNotMove" = "Δεν ήταν δυνατή η μετακίνηση στο φάκελο Εφαρμογές";
+"sInstallerOsxMoveApplicationQuestionInfoInDownloadsFolder" = "Αυτό θα διατηρήσει τακτοποιημένο το φάκελο Λήψεις.";
+"sInstallerOsxMoveApplicationQuestionInfoWillRequirePasswd" = "Έχε υπόψιν ότι θα χρειαστεί κωδικός πρόσβασης διαχειριστή.";
+"sInstallerOsxMoveApplicationQuestionMessage" = "Μπορώ να μετακινηθώ στο φάκελο Εφαρμογές αν θέλεις.";
+"sInstallerOsxMoveApplicationQuestionTitle" = "Μετακίνηση στο φάκελο Εφαρμογές;";
+"sInstallerOsxMoveApplicationQuestionTitleHome" = "Μετακίνηση στον φάκελο Εφαρμογές που βρίσκεται στον φάκελο Home;";
+"sInstallerOsxQuitButtonTitle" = "Έξοδος";
+"sInstallerOsxUnsupportedPlatformDesc" = "Δυστυχώς, το Spotify απαιτεί Mac OS X 10.5 ή νεότερη έκδοση σε υπολογιστή με επεξεργαστή Intel.";
+"sInstallerOsxUnsupportedPlatformHelp" = "Μάθε περισσότερα στο Spotify.com";
+"sInstallerOsxUnsupportedPlatformTitle" = "Πλατφόρμα που δεν υποστηρίζεται";

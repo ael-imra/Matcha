@@ -3,6 +3,7 @@
   height: 100%;
   display: flex;
   justify-content: space-evenly;
+  overflow: auto;
 }
 .profile > div:nth-of-type(1) {
   width: 530px;
@@ -26,6 +27,7 @@
   align-items: center;
 }
 .profile > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) {
+  width: 100%;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -89,7 +91,7 @@
 }
 .CountReviewFriend {
   width: 350px;
-  height: 85px;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -126,7 +128,8 @@
   border-radius: 5px;
 }
 .profile > div:nth-of-type(2) {
-  width: 730px;
+  width: 55%;
+  max-width: 730px;
   height: 993px;
   background-color: var(--background-QuickActions);
   border-radius: 8px;
@@ -157,7 +160,7 @@
   font-size: 16px;
   font-weight: 600;
   letter-spacing: 1px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   margin-top: 23px;
   color: var(--color-QuickActionsMenu);
   width: 35%;
@@ -169,7 +172,7 @@
   margin-left: auto;
   margin-right: auto;
 }
-.profile .MuiOutlinedInput-notchedOutline {
+.MuiOutlinedInput-notchedOutline {
   border: none !important;
 }
 .MuiSelect-select:focus {
@@ -313,9 +316,6 @@
   .infoUser {
     width: 500px;
   }
-  .profile > div:nth-of-type(2) {
-    width: 570px;
-  }
   .labelInfo {
     font-size: 15px;
   }
@@ -417,7 +417,7 @@
     margin-top: 20px;
   }
   .profile > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) {
-    width: 50%;
+    width: 95%;
   }
   .Images {
     width: 95%;

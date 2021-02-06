@@ -41,7 +41,5 @@ function AppContainer() {
       </Router>
   )
 }
-//DataBirthday
-//
 
 export default AppContainer

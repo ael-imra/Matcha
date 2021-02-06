@@ -41,10 +41,12 @@ function Nav(props) {
           to="/logout"
           exact
           onClick={() => {
+            localStorage.clear()
             if (ctx.socket && ctx.socket.current) {
               ctx.socket.current.close()
               ctx.socket.current = null
             }
+            window.location.reload()
           }}
         >
           Logout

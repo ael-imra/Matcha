@@ -1,0 +1,48 @@
+/*
+  Localizable.strings
+
+  Copyright Spotify. All rights reserved.
+*/
+
+
+"sInstallerOsxAskUserToAuthenticate." = "Spotify 需要獲得權限才能進行安裝。";
+"sInstallerOsxAskUserToQuitSpotify" = "請退出 Spotify，然後再試一次";
+"sInstallerOsxContinueInBackground" = "繼續在背景執行";
+"sInstallerOsxDownloadFailedErrorDescription" = "嘗試下載 Spotify 時發生錯誤。";
+"sInstallerOsxDownloadFailedRetryIn" = "下載失敗。%1$d 後再試一次。";
+"sInstallerOsxDownloadingSpotify" = "下載 Spotify 中…";
+"sInstallerOsxExtractionFailedErrorDescription" = "擷取 Spotify 時發生錯誤。";
+"sInstallerOsxGenericErrorDescription" = "嘗試安裝 Spotify 時發生錯誤。";
+"sInstallerOsxInstallFailedErrorDescription" = "安裝 Spotify 時發生錯誤。";
+"sInstallerOsxInstallationFailed" = "安裝失敗";
+"sInstallerOsxInstallationFailedDefaultButtonTitle" = "從 Spotify.com 下載";
+"sInstallerOsxInstallationIncompleteContinueButtonTitle" = "繼續安裝";
+"sInstallerOsxInstallationIncompleteDesc" = "Spotify 的安裝即將完成。你真的要退出嗎？";
+"sInstallerOsxInstallationIncompleteTitle" = "安裝未完成";
+"sInstallerOsxInstallingSpotify" = "正在安裝 Spotify…";
+"sInstallerOsxMMAboutInstallSpotify" = "關於安裝 Spotify";
+"sInstallerOsxMMBringAllToFront" = "全部前置";
+"sInstallerOsxMMHelp" = "說明中心";
+"sInstallerOsxMMHideInstallSpotify" = "隠藏安裝 Spotify";
+"sInstallerOsxMMHideOthers" = "隱藏其他";
+"sInstallerOsxMMInstallSpotify" = "安裝 Spotify";
+"sInstallerOsxMMInstallSpotifyHelp" = "安裝 Spotify 說明中心";
+"sInstallerOsxMMMinimize" = "最小化";
+"sInstallerOsxMMQuitInstallSpotify" = "退出安裝 Spotify";
+"sInstallerOsxMMServices" = "服務";
+"sInstallerOsxMMShowAll" = "顯示全部";
+"sInstallerOsxMMWindow" = "視窗";
+"sInstallerOsxMMZoom" = "縮放";
+"sInstallerOsxMountFailedErrorDescription" = "掛載已下載的 Spotify 硬碟影像檔時發生錯誤。";
+"sInstallerOsxMoveApplicationButtonDoNotMove" = "不要移動";
+"sInstallerOsxMoveApplicationButtonMove" = "移到應用程式資料夾";
+"sInstallerOsxMoveApplicationCouldNotMove" = "無法移到應用程式資料夾";
+"sInstallerOsxMoveApplicationQuestionInfoInDownloadsFolder" = "可讓下載資料夾井然有序。";
+"sInstallerOsxMoveApplicationQuestionInfoWillRequirePasswd" = "請注意，此步驟需要輸入管理員的密碼。";
+"sInstallerOsxMoveApplicationQuestionMessage" = "同意的話，我可移至應用程式資料夾。";
+"sInstallerOsxMoveApplicationQuestionTitle" = "要移至應用程式資料夾嗎？";
+"sInstallerOsxMoveApplicationQuestionTitleHome" = "要把應用程式資料夾移動至首頁資料夾嗎？";
+"sInstallerOsxQuitButtonTitle" = "退出";
+"sInstallerOsxUnsupportedPlatformDesc" = "很抱歉，Spotify 需要 Mac OS X 10.5 或更新版本才能在 Intel 處理器上執行。";
+"sInstallerOsxUnsupportedPlatformHelp" = "詳細內容都在 Spotify.com";
+"sInstallerOsxUnsupportedPlatformTitle" = "不支援的平台";

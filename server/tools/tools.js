@@ -1,34 +1,16 @@
 const axios = require('axios')
 const Jimp = require('jimp')
+const { OAuth2Client } = require('google-auth-library')
+const client = new OAuth2Client()
 function init(app, obj) {
   for (const [key, value] of Object.entries(obj)) app.locals[key] = value
 }
-async function fetchDataJSON(country, latitude, longitude, ip) {
-  if (!latitude && ip) {
-    const res = await axios.get(`http://ip-api.com/json/${ip}`)
-    return {
-      Latitude: res.data.lat,
-      Longitude: res.data.lon,
-      City: res.data.city,
-    }
-  } else if (latitude && longitude) return fetchCity(country, latitude, longitude)
-  return new Promise((resolve) => {
-    resolve({ City: country, Latitude: latitude, Longitude: longitude })
-  })
-}
-
-function fetchCity(country, Latitude, Longitude) {
-  return new Promise(async (resolve) => {
-    if (country) resolve(country)
-    else {
-      const res = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=a9a78ca780d3456a9b8bf2b3e790a4b4`)
-      resolve({
-        City: res.data.results[0].components.city,
-        Latitude,
-        Longitude,
-      })
-    }
-  })
+async function fetchDataJSON(ip) {
+  const res = await axios.get(`http://ip-api.com/json/${ip}`)
+  return {
+    Latitude: res.data.lat,
+    Longitude: res.data.lon,
+  }
 }
 
 function sendResponse(res, code, message, json) {
@@ -75,6 +57,11 @@ function checkImages(images) {
       })
     else resolve(false)
   })
+}
+function handleError(err, req, res, next) {
+  if (err) {
+    req.app.locals.sendResponse(res, 200, 'Bad Request')
+  } else next()
 }
 let checkProfileOfYou = (token, UserName, locals) => {
   return new Promise(async (resolve) => {
@@ -215,25 +202,37 @@ async function verifierToken(Token, locals) {
 }
 async function getRating(UserOwner, locals) {
   const IdUserReceiver = await locals.getIdUserOwner(UserOwner)
-  const avgRatingValue = await locals.select('Rating', 'SUM(RatingValue)/Count(*) AS "AVG"', {
-    IdUserReceiver,
-  })
+  const avgRatingValue = await locals.select('Rating', 'SUM(RatingValue)/Count(*) AS "AVG"', { IdUserReceiver })
+  return avgRatingValue && avgRatingValue.length > 0 && avgRatingValue[0].AVG ? avgRatingValue[0].AVG.toString() : '0'
+}
+async function myRating(UserOwner, UserReceiver, locals) {
+  const IdUserReceiver = await locals.getIdUserOwner(UserOwner)
+  const IdUserOwner = await locals.getIdUserOwner(UserReceiver)
+  const avgRatingValue = await locals.select('Rating', 'SUM(RatingValue)/Count(*) AS "AVG"', { IdUserReceiver, IdUserOwner })
   return avgRatingValue && avgRatingValue.length > 0 && avgRatingValue[0].AVG ? avgRatingValue[0].AVG.toString() : '0'
 }
 async function CountRating(UserOwner, locals) {
   const IdUserReceiver = await locals.getIdUserOwner(UserOwner)
-  const count = await locals.select('Rating', 'Count(*) AS "Count"', {
-    IdUserReceiver,
-  })
+  const count = await locals.select('Rating', 'Count(*) AS "Count"', { IdUserReceiver })
   return count[0].Count
 }
 async function CountFriends(UserOwner, locals) {
   const IdUserReceiver = await locals.getIdUserOwner(UserOwner)
-  const count = await locals.select('Friends', 'Count(*) AS "Count"', {
-    IdUserReceiver,
-    Match: 1,
-  })
+  const count = await locals.select('Friends', 'Count(*) AS "Count"', { IdUserReceiver, Match: 1 })
   return count[0].Count
+}
+
+async function checkIp(ip) {
+  return (await axios.get(`http://ip-api.com/json/${ip}`)).data.status === 'success' ? true : false
+}
+async function checkPosition(Latitude, Longitude) {
+  try {
+    const res = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${parseFloat(Latitude)}+${parseFloat(Longitude)}&key=a9a78ca780d3456a9b8bf2b3e790a4b4`)
+    if (res.data.results[0].components.city && res.data.results[0].components.city !== 0) return true
+    else return false
+  } catch (error) {
+    return false
+  }
 }
 
 module.exports = {
@@ -256,4 +255,7 @@ module.exports = {
   getRating,
   CountRating,
   CountFriends,
+  myRating,
+  checkIp,
+  checkPosition,
 }

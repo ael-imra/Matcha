@@ -1,17 +1,17 @@
-const express = require('express')
-const router = express.Router()
-const Validate = require('../tools/validate')
-const md5 = require('md5')
-const haversine = require('haversine-distance')
-const { auth } = require('./Authentication')
-require('dotenv').config({
-  path: __dirname + '/../.env',
-})
+const express = require("express");
+const router = express.Router();
+const Validate = require("../tools/validate");
+const md5 = require("md5");
+const haversine = require("haversine-distance");
+const { auth } = require("./Authentication");
+require("dotenv").config({
+  path: __dirname + "/../.env",
+});
 
-router.get('/', auth, async function (req, res) {
-  const locals = req.app.locals
-  locals.sendResponse(res, 200, req.userInfo.IsActive, true)
-})
+router.get("/", auth, async function (req, res) {
+  const locals = req.app.locals;
+  locals.sendResponse(res, 200, req.userInfo.IsActive, true);
+});
 
 router.post('/', auth, async function (req, res) {
   const { Latitude, Longitude } = req.userInfo
@@ -72,84 +72,68 @@ router.get('/listInterest', auth, async function (req, res) {
     true
   )
 })
-router.post('/CheckActive', async function (req, res) {
-  const { Email, Password } = req.body
-  const locals = req.app.locals
-  if (Email && Password) {
-    const result = await locals.select('Users', '*', {
-      Email,
-      Password,
-      IsActive: 1,
-    })
-    if (result && result.length > 0) locals.sendResponse(res, 200, result, true)
-    else locals.sendResponse(res, 400, 'User Not Found')
-  } else locals.sendResponse(res, 400, 'Bad Request')
-})
 
-router.post('/ForgatPassword', async function (req, res) {
-  const { Email } = req.body
-  const locals = req.app.locals
-  if (Validate('Email', Email)) {
-    const result = await locals.select('Users', '*', { Email })
+router.post("/ForgatPassword", async function (req, res) {
+  const { Email } = req.body;
+  const locals = req.app.locals;
+  if (Validate("Email", Email)) {
+    const result = await locals.select("Users", "*", { Email });
     if (result && result.length !== 0) {
       if (await locals.CheckActive(Email, locals)) {
-        locals.sendMail('create new password your email address', 'to create new password', Email, result[0].UserName, `${process.env.CLIENT_PROTOCOL}://${process.env.CLIENT_HOST}:${process.env.CLIENT_PORT}/ForgatPassword/${result[0].Token}`)
-        locals.sendResponse(res, 200, result[0].Email)
-      } else locals.sendResponse(res, 200, 'Email not Active')
-    } else locals.sendResponse(res, 200, 'Email not Found')
-  } else locals.sendResponse(res, 200, 'Bad Request')
-})
-router.post('/verifierToken', async function (req, res) {
-  const { Token } = req.body
-  const locals = req.app.locals
-  res.send(await locals.verifierToken(Token, locals))
-})
+        locals.sendMail("create new password your email address", "to create new password", Email, result[0].UserName, `${process.env.CLIENT_PROTOCOL}://${process.env.CLIENT_HOST}:${process.env.CLIENT_PORT}/ForgatPassword/${result[0].Token}`);
+        locals.sendResponse(res, 200, result[0].Email);
+      } else locals.sendResponse(res, 200, "Email not Active");
+    } else locals.sendResponse(res, 200, "Email not Found");
+  } else locals.sendResponse(res, 200, "Bad Request");
+});
+router.post("/verifierToken", async function (req, res) {
+  const { Token } = req.body;
+  const locals = req.app.locals;
+  res.send(await locals.verifierToken(Token, locals));
+});
 
-router.get('/Active', async function (req, res) {
-  const Token = req.query.token
-  const locals = req.app.locals
+router.get("/Active", async function (req, res) {
+  const Token = req.query.token;
+  const locals = req.app.locals;
   if (Token) {
-    const result = await locals.select('Users', "COUNT(*) AS 'Count'", {
-      Token,
-    })
+    const result = await locals.select("Users", "COUNT(*) AS 'Count'", { Token });
     if (result && result.length > 0 && result[0].Count === 1) {
-      locals.update('Users', { IsActive: 2, Token: locals.crypto.randomBytes(64).toString('hex') }, { Token })
-      locals.sendResponse(res, 200, 'Account Now is Active')
-    } else locals.sendResponse(res, 400, 'Account Not Found')
-  } else locals.sendResponse(res, 400, 'Account Not Found')
-})
+      locals.update("Users", { IsActive: 2, Token: locals.crypto.randomBytes(64).toString("hex") }, { Token });
+      locals.sendResponse(res, 200, "Account Now is Active");
+    } else locals.sendResponse(res, 400, "Account Not Found");
+  } else locals.sendResponse(res, 400, "Account Not Found");
+});
 
-router.post('/ResetPassword', async function (req, res) {
-  const { Token, Password, Confirm } = req.body
-  const locals = req.app.locals
-  if (Token && Validate('Password', Confirm) && Password === Confirm) {
-    const result = await locals.verifierToken(Token, locals)
+router.post("/ResetPassword", async function (req, res) {
+  const { Token, Password, Confirm } = req.body;
+  const locals = req.app.locals;
+  console.log(req.body);
+  if (Token && Validate("Password", Confirm) && Password === Confirm) {
+    const result = await locals.verifierToken(Token, locals);
     if (result) {
-      const resultUpdate = await locals.update(
-        'Users',
-        {
-          Password: md5(Password),
-          Token: locals.crypto.randomBytes(64).toString('hex'),
-          JWT: null,
-        },
-        { Token }
-      )
-      if (resultUpdate) locals.sendResponse(res, 200, 'Account is Active')
-      else locals.sendResponse(res, 403, 'Error on Update Password')
-    } else locals.sendResponse(res, 400, 'account not found')
-  } else locals.sendResponse(res, 400, 'Bad Request')
-})
+      const resultUpdate = await locals.update("Users", { Password: md5(Password), Token: locals.crypto.randomBytes(64).toString("hex"), JWT: null }, { Token });
+      if (resultUpdate) locals.sendResponse(res, 200, "Account is Active");
+      else locals.sendResponse(res, 403, "Error on Update Password");
+    } else locals.sendResponse(res, 400, "account not found");
+  } else locals.sendResponse(res, 400, "Bad Request");
+});
 
-router.get('/UserNameIsReadyTake/:userName', async function (req, res) {
-  const locals = req.app.locals
-  let test = await locals.checkUserExist({ UserName: req.params.userName })
-  locals.sendResponse(res, 200, test)
-})
+router.get("/UserNameIsReadyTake/:userName", async function (req, res) {
+  const locals = req.app.locals;
+  let test = await locals.checkUserExist({ UserName: req.params.userName });
+  locals.sendResponse(res, 200, test);
+});
 
-router.get('/EmailIsReadyTake/:email', async function (req, res) {
-  const locals = req.app.locals
-  let test = await locals.checkUserExist({ Email: req.params.email })
-  locals.sendResponse(res, 200, test)
-})
+router.get("/EmailIsReadyTake/:email", async function (req, res) {
+  const locals = req.app.locals;
+  let test = await locals.checkUserExist({ Email: req.params.email });
+  locals.sendResponse(res, 200, test);
+});
+router.get("/MyInfo", auth, async function (req, res) {
+  const locals = req.app.locals;
+  const result = await locals.select("Users", ["FirstName", "LastName", "UserName", "Images"], { Token: req.userInfo.Token });
+  let myInfo = { ...result[0], Images: JSON.parse(result[0].Images)[0] };
+  res.send(myInfo);
+});
 
-module.exports = router
+module.exports = router;

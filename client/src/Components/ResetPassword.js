@@ -19,23 +19,26 @@ const ResetPassword = (props) => {
   let history = useHistory();
   let { token } = useParams();
   useEffect(() => {
+    let unmount = false
     try {
       Axios.post(`/Users/verifierToken`, { Token: token })
         .then((result) => {
-          if (result.data === false) {
-            props.dataHome.ChangeErrorMessages({
-              error: "Token not found",
-              warning: "",
-              success: "",
-            });
-            history.push(`/`);
-          } else changePageLoader(true);
+          if (!unmount)
+          {
+            if (result.data === false) {
+              props.dataHome.ChangeErrorMessages({
+                error: "Token not found",
+                warning: "",
+                success: "",
+              });
+              history.push(`/`);
+            } else changePageLoader(true);
+          }
         })
         .catch((error) => {});
     } catch (error) {
-      console.log("health check error");
     }
-    //eslint-disable-next-line
+    return (()=>unmount = true)//eslint-disable-next-line
   }, []);
   let UpdatePassword = () => {
     if (password.ConfirmPassword !== password.NewPassword) {

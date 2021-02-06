@@ -1,0 +1,48 @@
+/*
+  Localizable.strings
+
+  Copyright Spotify. All rights reserved.
+*/
+
+
+"sInstallerOsxAskUserToAuthenticate." = "インストールするにはお客さまの許可が必要です。";
+"sInstallerOsxAskUserToQuitSpotify" = "Spotifyの使用を中止し、再試行してください。";
+"sInstallerOsxContinueInBackground" = "バックグラウンドで続行";
+"sInstallerOsxDownloadFailedErrorDescription" = "Spotifyのダウンロード中にエラーが発生しました。";
+"sInstallerOsxDownloadFailedRetryIn" = "ダウンロードに失敗しました。%1$d秒後にもう一度トライします。";
+"sInstallerOsxDownloadingSpotify" = "Spotifyをダウンロードしています…";
+"sInstallerOsxExtractionFailedErrorDescription" = "Spotifyの解凍中にエラーが発生しました。";
+"sInstallerOsxGenericErrorDescription" = "Spotifyのインストール中にエラーが発生しました。";
+"sInstallerOsxInstallFailedErrorDescription" = "Spotifyのインストール中にエラーが発生しました。";
+"sInstallerOsxInstallationFailed" = "インストールが失敗しました";
+"sInstallerOsxInstallationFailedDefaultButtonTitle" = "Spotify.com からダウンロード";
+"sInstallerOsxInstallationIncompleteContinueButtonTitle" = "インストールを続行";
+"sInstallerOsxInstallationIncompleteDesc" = "Spotifyのインストールは間もなく完了します。 本当に中止しますか?";
+"sInstallerOsxInstallationIncompleteTitle" = "インストールが完了しませんでした";
+"sInstallerOsxInstallingSpotify" = "Spotifyをインストールしています…";
+"sInstallerOsxMMAboutInstallSpotify" = "Spotifyのインストールについて";
+"sInstallerOsxMMBringAllToFront" = "すべてを手前に移動";
+"sInstallerOsxMMHelp" = "ヘルプ";
+"sInstallerOsxMMHideInstallSpotify" = "Spotifyのインストールを非表示にする";
+"sInstallerOsxMMHideOthers" = "ほかを隠す";
+"sInstallerOsxMMInstallSpotify" = "Spotifyをインストール";
+"sInstallerOsxMMInstallSpotifyHelp" = "Spotifyヘルプのインストール";
+"sInstallerOsxMMMinimize" = "しまう";
+"sInstallerOsxMMQuitInstallSpotify" = "Spotifyのインストールを中止";
+"sInstallerOsxMMServices" = "サービス";
+"sInstallerOsxMMShowAll" = "すべて表示";
+"sInstallerOsxMMWindow" = "ウインドウ";
+"sInstallerOsxMMZoom" = "拡大";
+"sInstallerOsxMountFailedErrorDescription" = "ダウンロードしたSpotifyディスクイメージの実装中にエラーが発生しました。";
+"sInstallerOsxMoveApplicationButtonDoNotMove" = "移動しない";
+"sInstallerOsxMoveApplicationButtonMove" = "アプリケーションフォルダに移動";
+"sInstallerOsxMoveApplicationCouldNotMove" = "アプリケーションフォルダに移動できませんでした";
+"sInstallerOsxMoveApplicationQuestionInfoInDownloadsFolder" = "これでダウンロードフォルダが常に整理されます。";
+"sInstallerOsxMoveApplicationQuestionInfoWillRequirePasswd" = "これには管理者のパスワードが必要となりますのでご注意ください。";
+"sInstallerOsxMoveApplicationQuestionMessage" = "必要な場合は自分でアプリケーションフォルダに移動できます。";
+"sInstallerOsxMoveApplicationQuestionTitle" = "アプリケーションフォルダに移動しますか?";
+"sInstallerOsxMoveApplicationQuestionTitleHome" = "ホームフォルダのアプリケーションフォルダに移動しますか?";
+"sInstallerOsxQuitButtonTitle" = "中止する";
+"sInstallerOsxUnsupportedPlatformDesc" = "SpotifyではIntelプロセッサで動作するMac OS X 10.5以降が必要となります。";
+"sInstallerOsxUnsupportedPlatformHelp" = "Spotify.comで詳細を見る";
+"sInstallerOsxUnsupportedPlatformTitle" = "サポートされていないプラットフォーム";

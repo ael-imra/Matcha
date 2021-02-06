@@ -9,6 +9,7 @@ import Divider from "@material-ui/core/Divider";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
 import { useWindowSize } from "./UseWindowSize";
+import { useHistory } from "react-router-dom";
 import Axios from "axios";
 import "../Css/History.css";
 import ProfileImage from "./ProfileImage";
@@ -29,7 +30,7 @@ export default function History() {
   const [listHistory, changeListHistory] = React.useState([]);
   const [active, changeActive] = React.useState("History");
   const width = useWindowSize();
-
+  let history = useHistory();
   function switchActive(value) {
     changeActive((oldValue) => (oldValue === value ? oldValue : oldValue === "History" ? "BlackList" : "History"));
   }
@@ -46,19 +47,23 @@ export default function History() {
     } catch (error) {}
   };
   React.useEffect(() => {
+    let unmount = false
     try {
       Axios.get("/BlackList").then((result) => {
+        if (!unmount)
         changeUsersBlock(result.data);
       });
     } catch (error) {}
     try {
       Axios.get("/History").then((result) => {
+        if (!unmount)
         changeListHistory(result.data);
       });
     } catch (error) {}
+    return (()=>unmount = true)
   }, []);
   return (
-    <div style={{ width: "90%", height: "100%" }}>
+    <div style={{ width: "90%", height: "94%" }}>
       <List>
         <div className='titerListUser'>
           <ListItem>
@@ -67,6 +72,7 @@ export default function History() {
               style={{
                 marginTop: "0px",
                 marginBottom: "0px",
+                backgroundColor: "var(--background-QuickActions)",
                 marginLeft: "0px",
               }}
             >
@@ -131,14 +137,14 @@ export default function History() {
         </div>
       </List>
       {active === "BlackList" ? (
-        <List style={{ height: "100%", overflow: "auto" }}>
+        <List style={{ height: "100%",overflow:'auto' }}>
           {usersBlock.length !== 0 ? (
             usersBlock.map((user, key) => (
               <div key={key}>
                 <ListItem>
                   {width >= 552 ? (
                     <ListItemAvatar>
-                      <ProfileImage Image={user.Images} UserName={user.UserName} Style={{ width: "35px", height: "35px" }} />
+                      <ProfileImage Image={user.Images} UserName={user.UserName} Style={{ width: "35px", height: "35px", borderRadius: "50%" }} />
                     </ListItemAvatar>
                   ) : (
                     ""
@@ -183,15 +189,15 @@ export default function History() {
           )}
         </List>
       ) : (
-        <List style={{ height: "100%", overflow: "auto" }}>
+        <List style={{ height: "100%",overflow:'auto' }}>
           {listHistory.length !== 0 ? (
             listHistory.map((user, key) => (
               <div key={key}>
-                <ListItem>
+                <ListItem onClick={() => history.push(`/Profile/${user.UserName}`)}>
                   <ListItemAvatar>
-                    <ProfileImage Image={user.Images} UserName={user.UserName} Style={{ width: "40px", height: "40px",borderRadius:'50%' }} />
+                    <ProfileImage Image={user.Images} UserName={user.UserName} Style={{ width: "40px", height: "40px", borderRadius: "50%" }} />
                   </ListItemAvatar>
-                  <ListItemText primary={user.UserName} secondary={user.Content} style={{ fontSize: "17px" }} />
+                  <ListItemText primary={user.UserName} secondary={user.Content} style={{ fontSize: "17px", cursor: "pointer" }} />
                   {width >= 552 ? (
                     <ListItemSecondaryAction>
                       <p style={{ color: "var(--color-FriendInfo-firstChild)" }}>{ConvertDate(user.DateCreation, "time")}</p>

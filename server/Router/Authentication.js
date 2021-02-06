@@ -97,14 +97,14 @@ router.post('/LoginWithGoogle', async function (req, res) {
 router.post('/Insert', async function (req, res) {
   const { UserName, Email, FirstName, LastName, Password } = req.body
   const locals = req.app.locals
-  if (Validate('Email', Email) && Validate('Password', Password) && Validate('Username', UserName) && Validate('Name', LastName) && Validate('Name', FirstName)) {
+  if (Validate('Email', Email) && Validate('Password', Password) && Validate('Username', UserName.trim()) && Validate('Name', LastName.trim()) && Validate('Name', FirstName.trim())) {
     const result = await locals.checkUserExist({ Email, UserName })
     if (result === true) {
       const userInfo = {
-        UserName,
+        UserName: UserName.trim(),
         Email,
-        FirstName,
-        LastName,
+        FirstName: FirstName.trim(),
+        LastName: LastName.trim(),
         Password: md5(Password),
         Token: locals.crypto.randomBytes(64).toString('hex'),
         IsActive: 0,
@@ -126,7 +126,7 @@ function checkAllImages(images, locals) {
       images.forEach(async (image) => {
         const base64Data = await locals.checkImage(image.src, locals)
         if (base64Data) {
-          imageList[0] = image.default === 1 ? base64Data : null
+          imageList[0] = image.default === 1 ? base64Data : imageList[0]
           image.default !== 1 ? imageList.push(base64Data) : null
           arr.push('ok')
         } else {
@@ -141,19 +141,45 @@ function checkAllImages(images, locals) {
 router.post('/CompleteInsert', auth, async function (req, res) {
   const { step1, step2, step3, step4, step5 } = req.body
   const locals = req.app.locals
-  if ((step1, step2, step3, step4, step5) && step4.yourInterest && step4.yourInterest.length <= 5 && step4.yourInterest.length !== 0 && step4.DescribeYourself && (step5.length === 0 || (step5.every((image) => image.default === 0 || image.default === 1) && step5.findIndex((x) => x.default === 1) !== -1)) && isValidDate(step1) && step4.DescribeYourself.length <= 100 && step4.DescribeYourself.length !== 0 && getAge(step1) >= 18 && (step3.youGender === 'Male' || step3.youGender === 'Female') && step3.genderYouAreLooking.toString().replace(',', ' ').trim() && (step3.genderYouAreLooking.toString().replace(',', ' ').trim() === 'Male' || step3.genderYouAreLooking.toString().replace(',', ' ').trim() === 'Female' || step3.genderYouAreLooking.toString().replace(',', ' ').trim() === 'Female Male' || step3.genderYouAreLooking.toString().replace(',', ' ').trim() === 'Male Female')) {
+  if (
+    (step1, step2, step3, step4, step5) &&
+    step4.yourInterest &&
+    step4.yourInterest.length <= 5 &&
+    step4.yourInterest.length !== 0 &&
+    step4.DescribeYourself.trim() &&
+    (step5.length === 0 || (step5.every((image) => image.default === 0 || image.default === 1) && step5.findIndex((x) => x.default === 1) !== -1)) &&
+    isValidDate(step1) &&
+    step4.DescribeYourself.trim().length <= 100 &&
+    step4.DescribeYourself.trim().length !== 0 &&
+    getAge(step1) >= 18 &&
+    getAge(step1) <= 80 &&
+    (step3.youGender === 'Male' || step3.youGender === 'Female') &&
+    step3.genderYouAreLooking.toString().replace(',', ' ').trim() &&
+    ((parseFloat(step2.latitude) <= 90 && parseFloat(step2.latitude) >= -90 &&
+     parseFloat(step2.longitude) <= 180 && parseFloat(step2.longitude) >= -180) || (step2.ip && step2.ip !== '' && (await locals.checkIp(step2.ip)))) &&
+    (step3.genderYouAreLooking.toString().replace(',', ' ').trim() === 'Male' || step3.genderYouAreLooking.toString().replace(',', ' ').trim() === 'Female' || step3.genderYouAreLooking.toString().replace(',', ' ').trim() === 'Female Male' || step3.genderYouAreLooking.toString().replace(',', ' ').trim() === 'Male Female')
+  ) {
     const [imageList, imageCheck] = await checkAllImages(step5, locals)
     if (imageCheck) {
-      const obj = await locals.fetchDataJSON(step2.country, step2.latitude, step2.longitude, '194.170.36.47')
+      let Latitude, Longitude
+      if (parseFloat(step2.latitude) <= 90 && parseFloat(step2.latitude) >= -90 && parseFloat(step2.longitude) <= 180 && parseFloat(step2.longitude) >= -180) {
+        Latitude = step2.latitude
+        Longitude = step2.longitude
+      } else {
+        position = await locals.fetchDataJSON(step2.ip)
+        Longitude = position.Longitude
+        Latitude = position.Latitude
+      }
       const values = {
         DataBirthday: step1,
-        Biography: step4.DescribeYourself,
+        Biography: step4.DescribeYourself.trim(),
         Gender: step3.youGender.trim(),
         Sexual: step3.genderYouAreLooking.toString().replace(',', ' ').trim(),
         Images: JSON.stringify(imageList),
         ListInterest: JSON.stringify(step4.yourInterest),
         IsActive: 1,
-        ...obj,
+        Latitude,
+        Longitude,
       }
       const needed = {
         Token: req.userInfo.Token,
@@ -161,6 +187,7 @@ router.post('/CompleteInsert', auth, async function (req, res) {
       const result = await locals.update('Users', { ...values }, needed)
       if (result) locals.sendResponse(res, 200, values)
       else locals.sendResponse(res, 403, 'Something wrong With your images')
+      await locals.checkPosition(step2.latitude, step2.longitude)
     } else locals.sendResponse(res, 403, 'Something wrong With your images')
   } else locals.sendResponse(res, 400, 'bad user information')
 })

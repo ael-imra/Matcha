@@ -1,0 +1,48 @@
+/*
+  Localizable.strings
+
+  Copyright Spotify. All rights reserved.
+*/
+
+
+"sInstallerOsxAskUserToAuthenticate." = "A Spotify engedélyt kér a telepítésre.";
+"sInstallerOsxAskUserToQuitSpotify" = "Lépj ki a Spotifyból, és próbáld meg újból";
+"sInstallerOsxContinueInBackground" = "Folytatás a háttérben";
+"sInstallerOsxDownloadFailedErrorDescription" = "Hiba történt a Spotify letöltésekor.";
+"sInstallerOsxDownloadFailedRetryIn" = "Sikertelen letöltés. %1$d másodperc múlva újra próbálkozunk.";
+"sInstallerOsxDownloadingSpotify" = "A Spotify letöltése…";
+"sInstallerOsxExtractionFailedErrorDescription" = "Hiba történt a Spotify kibontásakor.";
+"sInstallerOsxGenericErrorDescription" = "Hiba történt a Spotify telepítésekor.";
+"sInstallerOsxInstallFailedErrorDescription" = "Hiba történt a Spotify telepítésekor.";
+"sInstallerOsxInstallationFailed" = "A telepítés nem sikerült";
+"sInstallerOsxInstallationFailedDefaultButtonTitle" = "Letöltés a Spotify.com webhelyről";
+"sInstallerOsxInstallationIncompleteContinueButtonTitle" = "Telepítés folytatása";
+"sInstallerOsxInstallationIncompleteDesc" = "A Spotify telepítése majdnem befejeződött. Biztosan kilépsz?";
+"sInstallerOsxInstallationIncompleteTitle" = "A telepítés nem fejeződött be";
+"sInstallerOsxInstallingSpotify" = "A Spotify telepítése…";
+"sInstallerOsxMMAboutInstallSpotify" = "A Spotify telepítéséről";
+"sInstallerOsxMMBringAllToFront" = "Összes előtérbe hozása";
+"sInstallerOsxMMHelp" = "Súgó";
+"sInstallerOsxMMHideInstallSpotify" = "A Spotify telepítőjének elrejtése";
+"sInstallerOsxMMHideOthers" = "A többi elrejtése";
+"sInstallerOsxMMInstallSpotify" = "A Spotify telepítése";
+"sInstallerOsxMMInstallSpotifyHelp" = "A Spotify súgójának telepítése";
+"sInstallerOsxMMMinimize" = "Kis méret";
+"sInstallerOsxMMQuitInstallSpotify" = "Kilépés a Spotify telepítőjéből";
+"sInstallerOsxMMServices" = "Szolgáltatások";
+"sInstallerOsxMMShowAll" = "Összes megjelenítése";
+"sInstallerOsxMMWindow" = "Ablak";
+"sInstallerOsxMMZoom" = "Nagyítás";
+"sInstallerOsxMountFailedErrorDescription" = "Hiba történt a letöltött Spotify-lemezkép csatlakoztatásakor.";
+"sInstallerOsxMoveApplicationButtonDoNotMove" = "Ne helyezze át";
+"sInstallerOsxMoveApplicationButtonMove" = "Áthelyezés az Alkalmazások mappába";
+"sInstallerOsxMoveApplicationCouldNotMove" = "Nem lehetett áthelyezni az Alkalmazások mappába";
+"sInstallerOsxMoveApplicationQuestionInfoInDownloadsFolder" = "Így nem lesz rendetlen a Letöltések mappád.";
+"sInstallerOsxMoveApplicationQuestionInfoWillRequirePasswd" = "Figyelj arra, hogy ehhez rendszergazdai jelszó szükséges.";
+"sInstallerOsxMoveApplicationQuestionMessage" = "Áthelyezhetem magam az Alkalmazások mappába, ha szeretnéd.";
+"sInstallerOsxMoveApplicationQuestionTitle" = "Áthelyezed az Alkalmazások mappába?";
+"sInstallerOsxMoveApplicationQuestionTitleHome" = "Áthelyezed a saját mappád Alkalmazások mappájába?";
+"sInstallerOsxQuitButtonTitle" = "Kilépés";
+"sInstallerOsxUnsupportedPlatformDesc" = "Sajnos a Spotify futtatásához a Mac OS X 10.5-ös vagy újabb verziója és Intel processzor szükséges.";
+"sInstallerOsxUnsupportedPlatformHelp" = "További tudnivalók a Spotify.com webhelyen találhatók";
+"sInstallerOsxUnsupportedPlatformTitle" = "Nem támogatott platform";

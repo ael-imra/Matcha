@@ -50,29 +50,32 @@ export default function Profile(props) {
     changeShowSuccess(false);
   };
   React.useEffect(() => {
+    let unmount = false
     try {
       Axios.get(`/Profile/GetUser/${userName}`, {})
         .then(async (result) => {
-          console.log(result.data);
-          if (result.data !== "User not found")
-            changeInfoUser({
-              ...result.data,
-              Images: JSON.parse(result.data.Images),
-              ListInterest: JSON.parse(result.data.ListInterest),
-              DataBirthday: result.data.DataBirthday.split("T")[0],
-              Sexual: result.data.Sexual === "Female Male" ? "Male Female" : result.data.Sexual,
+          if (!unmount)
+          {
+            if (result.data !== "User not found")
+              changeInfoUser({
+                ...result.data,
+                Images: JSON.parse(result.data.Images),
+                ListInterest: JSON.parse(result.data.ListInterest),
+                DataBirthday: result.data.DataBirthday.split("T")[0],
+                Sexual: result.data.Sexual === "Female Male" ? "Male Female" : result.data.Sexual,
+              });
+            let results = await Axios.post(`/Profile/CheckProfileOfYou/${userName}`, {});
+            changeUserNameAndEmail({
+              email: result.data.Email,
+              userName: result.data.UserName,
+              isProfileOfYou: result.data !== "User not found" ? results.data.isProfileOfYou : "User not found",
+              isNotReport: results.data.isNotReport,
             });
-          let results = await Axios.post(`/Profile/CheckProfileOfYou/${userName}`, {});
-          changeUserNameAndEmail({
-            email: result.data.Email,
-            userName: result.data.UserName,
-            isProfileOfYou: result.data !== "User not found" ? results.data.isProfileOfYou : "User not found",
-            isNotReport: results.data.isNotReport,
-          });
+          }
         })
         .catch((error) => {});
     } catch (error) {}
-    // eslint-disable-next-line
+    return (()=>unmount = true)// eslint-disable-next-line
   }, [userName]);
   return (
     <div className='profile'>
@@ -90,6 +93,7 @@ export default function Profile(props) {
             changeUserNameAndEmail={changeUserNameAndEmail}
             changeUser={props.changeUser}
             user={props.user}
+            changeShowSuccess={changeShowSuccess}
           />
           <PersonalInfo
             InfoUser={infoUser}
@@ -123,8 +127,8 @@ export default function Profile(props) {
           <CircularProgress color='secondary' style={{ backgroundColor: "transparent" }} />
         </div>
       ) : (
-        <div style={{ width: "100%", height: "auto", justifyContent: "center" }}>
-          <img src={searchNotFound} style={{ width: "70%", maxWidth: "600px" }} alt='...' />
+        <div style={{ width: "100%", height: "100%", justifyContent: "center", alignItems: "center" }}>
+          <img src={searchNotFound} style={{ width: "50%", maxWidth: "600px" }} alt='...' />
           <p className='labelInfo' style={{ textAlign: "center", fontSize: "20px" }}>
             Ops ... User Not found
           </p>

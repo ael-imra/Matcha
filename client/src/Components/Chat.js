@@ -17,8 +17,8 @@ function ChatMessage(props) {
       <div
         className="ChatMessageContent"
         style={{
-          backgroundColor: props.background,
-          color: props.color,
+          backgroundColor: props.pos === 'right' ? '#E6E8F4' : '#3D88B7',
+          color: props.pos === 'right' ? 'black' : 'white',
         }}
         onClick={() => changeHideDeleteMessage((oldValue) => !oldValue)}
       >
@@ -58,7 +58,7 @@ function Chat(props) {
     }
     // eslint-disable-next-line
   }, [])
-  function ShowScrollDown() {
+  function onScroll() {
     const { offsetHeight, scrollHeight, scrollTop } = ChatContent.current
     if (scrollHeight - (scrollTop + offsetHeight) > 30) changeHideScrollDown((oldValue) => (oldValue ? oldValue : true))
     else changeHideScrollDown(false)
@@ -94,7 +94,7 @@ function Chat(props) {
           <div className="ChatUserInfoName">{UserName}</div>
         </div>
       </div>
-      <div className="ChatContent" ref={ChatContent} onScroll={ShowScrollDown}>
+      <div className="ChatContent" ref={ChatContent} onScroll={onScroll}>
         {!hideLoader ? (
           <Loader
             style={{
@@ -105,7 +105,8 @@ function Chat(props) {
         ) : null}
         {friends[UserName]
           ? friends[UserName].messages.map((msg) => {
-              if (msg !== 'limit') return <ChatMessage key={'Message' + msg.id} pos={msg.IdUserOwner !== ctx.cache.chatUserInfo.IdUserOwner ? 'right' : 'left'} background={msg.IdUserOwner !== ctx.cache.chatUserInfo.IdUserOwner ? '#E6E8F4' : '#3D88B7'} color={msg.IdUserOwner !== ctx.cache.chatUserInfo.IdUserOwner ? 'black' : 'white'} message={msg.Content} time={ctx.ref.ConvertDate(msg.date, 'time')} removeMessage={()=>ctx.ref.removeMessage(UserName,msg.id)} />
+              if (msg !== 'limit') return <ChatMessage key={'Message' + msg.id} pos={msg.IdUserOwner !== ctx.cache.chatUserInfo.IdUserOwner ? 'right' : 'left'}
+              message={msg.Content} time={ctx.ref.ConvertDate(msg.date, 'time')} removeMessage={()=>ctx.ref.removeMessage(UserName,msg.id)} />
               return null
             })
           : null}

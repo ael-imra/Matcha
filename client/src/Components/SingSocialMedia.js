@@ -51,7 +51,6 @@ const SingSocialMedia = (props) => {
                 })
                 .catch((error) => {});
             } catch (error) {
-              console.log("health check error");
             }
           }
         } else {
@@ -81,7 +80,6 @@ const SingSocialMedia = (props) => {
         })
         .catch(() => {});
     } catch (error) {
-      console.log("health check error");
     }
   };
   return (

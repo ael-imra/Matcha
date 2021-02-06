@@ -37,9 +37,6 @@
   width: 100%;
   display: flex;
   flex-flow: column;
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 .form-group {
   width: 48%;

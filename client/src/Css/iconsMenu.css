@@ -44,17 +44,7 @@
   right: 0px;
   transition: all 0.5s;
 }
-.menu button {
-  font-family: 'Roboto', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  border: none;
-  background-color: var(--main-color-Light);
-  border-radius: 7px;
-  margin-right: 23px;
-  cursor: pointer;
-  z-index: 2;
-}
+
 .icon-menu-show:hover div:nth-of-type(1) {
   width: 100%;
 }

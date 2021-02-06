@@ -39,10 +39,13 @@ export default function PersonalInfo(props) {
   const UpdateInfoUser = () => {
     try {
       Axios.post("/Profile/EditInfoUser", props.InfoUser).then((result) => {
-        let userInfo = JSON.parse(localStorage.getItem("userInfo"));
-        props.changeUserNameAndEmail((oldValue) => ({ ...oldValue, email: props.InfoUser.Email, userName: props.InfoUser.UserName }));
-        props.changeUser((oldValue) => ({ ...oldValue, FirstName: props.InfoUser.FirstName, LastName: props.InfoUser.LastName, UserName: props.InfoUser.UserName }));
-        localStorage.setItem("userInfo", JSON.stringify({ ...userInfo, FirstName: props.InfoUser.FirstName, UserName: props.InfoUser.UserName, LastName: props.InfoUser.LastName }));
+        if (result.data !== "NoUpdate") {
+          props.changeShowSuccess(true);
+          let userInfo = JSON.parse(localStorage.getItem("userInfo"));
+          props.changeUserNameAndEmail((oldValue) => ({ ...oldValue, email: props.InfoUser.Email, userName: props.InfoUser.UserName }));
+          props.changeUser((oldValue) => ({ ...oldValue, FirstName: props.InfoUser.FirstName, LastName: props.InfoUser.LastName, UserName: props.InfoUser.UserName }));
+          localStorage.setItem("userInfo", JSON.stringify({ ...userInfo, FirstName: props.InfoUser.FirstName, UserName: props.InfoUser.UserName, LastName: props.InfoUser.LastName }));
+        }
       });
     } catch (error) {}
   };
@@ -77,27 +80,25 @@ export default function PersonalInfo(props) {
         }
       }
       if (key === 5) {
-        if (!isValidDate(inputInfo.value) || getAge(inputInfo.value) < 18) {
-          inputsError.push("age is not Valid, must be greater than 18");
+        if (!isValidDate(inputInfo.value) || getAge(inputInfo.value) < 18 || getAge(inputInfo.value) > 80) {
+          inputsError.push("Error age must be greater than 18 And less than 80");
         }
       }
-      if (key === 7) {
+      if (key === 6) {
         if (inputInfo.value !== "Male" && inputInfo.value !== "Female" && inputInfo.value !== "Male Female") {
           inputsError.push("Sexual is not valid");
         }
       }
-      if (key === 8) {
+      if (key === 7) {
         if (inputInfo.value !== "Male" && inputInfo.value !== "Female") {
           inputsError.push("Gender is not valid");
         }
       }
       if (Await.length === 2) {
         if (props.InfoUser.ListInterest.length === 0 || props.InfoUser.ListInterest.length > 5) inputsError.push("ListInterest is not valid or greater than 5");
-        if (props.InfoUser.Biography.trim().length > 100 || props.InfoUser.Biography.trim() === 0) inputsError.push("Biography is not Valid, must not be empty or greater than 100 letters");
+        if (props.InfoUser.Biography.trim().length === 0 || props.InfoUser.Biography.trim().length > 100) inputsError.push("Biography is not Valid, must not be empty or less than 100 letters");
         if (inputsError.every((items) => items === "")) {
-          ctx.cache.users = []
           UpdateInfoUser();
-          props.changeShowSuccess(true);
         } else {
           props.ChangeError(inputsError);
           props.ChangeShowError(true);
@@ -181,10 +182,6 @@ export default function PersonalInfo(props) {
       <div className='infoUser'>
         <p className='labelInfo'>DateBirthday</p>
         <input type='date' className='inputDateBirthday' style={{ color: ctx.cache.Mode === "Dark" ? "white" : "black" }} value={props.InfoUser.DataBirthday} onChange={ChangeDateBirthday} disabled={!props.UserNameAndEmail.isProfileOfYou} />
-      </div>
-      <div className='infoUser'>
-        <p className='labelInfo'>City :</p>
-        <Input DefaultValue={props.InfoUser.City} />
       </div>
       <div className='infoUser'>
         <p className='labelInfo'>Biography :</p>

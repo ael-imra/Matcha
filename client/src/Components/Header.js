@@ -5,7 +5,6 @@ import { DataContext } from '../Context/AppContext';
 import { Toggle } from './Switch';
 import { useLocation } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
-import Axios from 'axios';
 
 const Header = (props) => {
   let location = useLocation();
@@ -37,15 +36,8 @@ const Header = (props) => {
           style={{ height: '33px' }}
           onClick={() => {
             if (location.pathname.includes('/step')) {
-              try {
-                Axios.get('/Authentication/Logout').then((result) => {
-                  if (result.data === `You're now logout`) {
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('userInfo');
-                    history.push('/');
-                  }
-                });
-              } catch (error) {}
+              localStorage.clear()
+              window.location.reload()
             } else {
               history.push('/');
               props.dataHome.StateHome === 3 ? props.dataHome.ChangeHome(2) : props.dataHome.ChangeHome(3);

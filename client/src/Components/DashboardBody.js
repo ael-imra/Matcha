@@ -4,12 +4,13 @@ import { Toggle } from './Switch'
 import '../Css/DashboardBody.css'
 import { DataContext } from '../Context/AppContext'
 import { Route, Switch, useHistory, useLocation } from 'react-router-dom'
+import warring from '../Images/warning-animate.svg'
 import { Users } from './Users'
 import { Filter } from './Filter'
 import Profile from './Profile'
 import History from './History'
-import Axios from 'axios'
 import FilterListIcon from '@material-ui/icons/FilterList'
+import ProfileImage from './ProfileImage'
 
 function IconComponent(props) {
   // eslint-disable-next-line
@@ -27,25 +28,15 @@ function DashboardBody(props) {
   const history = useHistory()
 
   useEffect(() => {
-    if (location.pathname !== '/') changeHideFilter(true)
+    let unmount = false
+    if (location.pathname !== '/' && !unmount) changeHideFilter(true)
+    return (()=>unmount = true)
   }, [location])
   function Error404() {
     useEffect(() => {
       history.push('/')
     }, [])
     return <div></div>
-  }
-  let logout = () => {
-    try {
-      Axios.get('/Authentication/Logout').then((result) => {
-        if (result.data === `You're now logout`) {
-          localStorage.removeItem('token')
-          localStorage.removeItem('userInfo')
-          history.push('/')
-          props.ChangeIsLogin('Not login')
-        }
-      })
-    } catch (error) {}
   }
   return (
     <div className="DashboardBody" style={props.style ? props.style : {}}>
@@ -60,13 +51,7 @@ function DashboardBody(props) {
             />
           ) : null}
           <div className="DashboardBodyHeaderProfile">
-            {props.user.Image ? (
-              <img src={props.user.Image} alt="profileImage" className="DashboardBodyHeaderProfileImage" />
-            ) : (
-              <div className="no-image-profile" style={{ width: '35px', height: '35px', fontSize: '20px' }}>
-                {props.user.UserName.substring(0, 2)}
-              </div>
-            )}
+            <ProfileImage Image={props.user.Image} UserName={props.user.UserName} Style={{ width: '35px', height: '35px' }} />
             <span>{`${props.user.FirstName} ${props.user.LastName}`}</span>
           </div>
           <div className="DashboardBodyHeaderSettings">
@@ -105,7 +90,12 @@ function DashboardBody(props) {
           <Route path="/history">
             <History />
           </Route>
-          <Route path="/logout">{logout}</Route>
+          <Route path="/ForgatPassword/:token">
+            <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <img src={warring} alt="..." style={{ width: '50%' }} />
+              <p style={{ fontSize: '27px', fontWeight: '600' }}>Logout then try again</p>
+            </div>
+          </Route>
           <Route path="*">
             <Error404 />
           </Route>

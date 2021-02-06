@@ -27,7 +27,6 @@ export default function ImageUser(props) {
         let arrayImage = props.InfoUser.Images;
         arrayImage.splice(result.data.index, 1);
         props.ChangeInfoUser({ ...props.InfoUser, Images: [...arrayImage] });
-        console.log(arrayPicture);
       });
     } catch (error) {}
   };

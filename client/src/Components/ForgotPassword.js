@@ -66,7 +66,6 @@ const ForgotPassword = (props) => {
                 });
               });
           } catch (error) {
-            console.log(error);
           }
         }}
         className='ft_btn'

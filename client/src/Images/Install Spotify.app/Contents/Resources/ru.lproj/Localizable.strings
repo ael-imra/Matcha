@@ -1,0 +1,48 @@
+/*
+  Localizable.strings
+
+  Copyright Spotify. All rights reserved.
+*/
+
+
+"sInstallerOsxAskUserToAuthenticate." = "Для установки Spotify требуется разрешение.";
+"sInstallerOsxAskUserToQuitSpotify" = "Выйди из Spotify и попробуй еще раз";
+"sInstallerOsxContinueInBackground" = "Продолжить в фоновом режиме";
+"sInstallerOsxDownloadFailedErrorDescription" = "При скачивании Spotify произошла ошибка.";
+"sInstallerOsxDownloadFailedRetryIn" = "Не удалось скачать данные. Мы повторим попытку через %1$d сек.";
+"sInstallerOsxDownloadingSpotify" = "Скачиваем Spotify…";
+"sInstallerOsxExtractionFailedErrorDescription" = "При извлечении Spotify произошла ошибка.";
+"sInstallerOsxGenericErrorDescription" = "При установке Spotify произошла ошибка.";
+"sInstallerOsxInstallFailedErrorDescription" = "При установке Spotify произошла ошибка.";
+"sInstallerOsxInstallationFailed" = "Ошибка установки";
+"sInstallerOsxInstallationFailedDefaultButtonTitle" = "Скачать с сайта spotify.com";
+"sInstallerOsxInstallationIncompleteContinueButtonTitle" = "Продолжить установку";
+"sInstallerOsxInstallationIncompleteDesc" = "Установка Spotify почти завершена. Хочешь прервать ее?";
+"sInstallerOsxInstallationIncompleteTitle" = "Установка не завершена";
+"sInstallerOsxInstallingSpotify" = "Устанавливаем Spotify…";
+"sInstallerOsxMMAboutInstallSpotify" = "Об установщике Spotify";
+"sInstallerOsxMMBringAllToFront" = "Показать все окна";
+"sInstallerOsxMMHelp" = "Поддержка";
+"sInstallerOsxMMHideInstallSpotify" = "Скрыть установщик Spotify";
+"sInstallerOsxMMHideOthers" = "Скрыть остальное";
+"sInstallerOsxMMInstallSpotify" = "Установщик Spotify";
+"sInstallerOsxMMInstallSpotifyHelp" = "Поддержка";
+"sInstallerOsxMMMinimize" = "Свернуть";
+"sInstallerOsxMMQuitInstallSpotify" = "Выйти из установщика Spotify";
+"sInstallerOsxMMServices" = "Сервисы";
+"sInstallerOsxMMShowAll" = "Показать все";
+"sInstallerOsxMMWindow" = "Окно";
+"sInstallerOsxMMZoom" = "Масштаб";
+"sInstallerOsxMountFailedErrorDescription" = "При подключении скачанного образа Spotify произошла ошибка.";
+"sInstallerOsxMoveApplicationButtonDoNotMove" = "Не переносить";
+"sInstallerOsxMoveApplicationButtonMove" = "Перенести в папку «Программы»";
+"sInstallerOsxMoveApplicationCouldNotMove" = "Не удалось перенести в папку «Программы»";
+"sInstallerOsxMoveApplicationQuestionInfoInDownloadsFolder" = "Это поможет тебе поддерживать порядок в папке «Загрузки».";
+"sInstallerOsxMoveApplicationQuestionInfoWillRequirePasswd" = "Примечание. Потребуется ввести пароль администратора.";
+"sInstallerOsxMoveApplicationQuestionMessage" = "Установщик можно перенести в папку «Программы».";
+"sInstallerOsxMoveApplicationQuestionTitle" = "Перенести в папку «Программы»?";
+"sInstallerOsxMoveApplicationQuestionTitleHome" = "Перенести в папку пользователя > «Программы»?";
+"sInstallerOsxQuitButtonTitle" = "Выйти";
+"sInstallerOsxUnsupportedPlatformDesc" = "Для работы Spotify необходима операционная система macOS 10.5 или более поздней версии, а также компьютер с процессором Intel.";
+"sInstallerOsxUnsupportedPlatformHelp" = "Подробнее на spotify.com";
+"sInstallerOsxUnsupportedPlatformTitle" = "Платформа не поддерживается";

@@ -1,0 +1,48 @@
+/*
+  Localizable.strings
+
+  Copyright Spotify. All rights reserved.
+*/
+
+
+"sInstallerOsxAskUserToAuthenticate." = "Spotify heeft je toestemming nodig voor installeren.";
+"sInstallerOsxAskUserToQuitSpotify" = "Sluit Spotify af en probeer het opnieuw";
+"sInstallerOsxContinueInBackground" = "Doorgaan op de achtergrond";
+"sInstallerOsxDownloadFailedErrorDescription" = "Er is een fout opgetreden tijdens het downloaden van Spotify.";
+"sInstallerOsxDownloadFailedRetryIn" = "Het downloaden is mislukt. Opnieuw proberen in %1$ds.";
+"sInstallerOsxDownloadingSpotify" = "Spotify aan het downloaden...";
+"sInstallerOsxExtractionFailedErrorDescription" = "Er is een fout opgetreden tijdens het downloaden van Spotify.";
+"sInstallerOsxGenericErrorDescription" = "Er is een fout opgetreden tijdens de installatie van Spotify.";
+"sInstallerOsxInstallFailedErrorDescription" = "Er is een fout opgetreden tijdens de installatie van Spotify.";
+"sInstallerOsxInstallationFailed" = "Installatie mislukt";
+"sInstallerOsxInstallationFailedDefaultButtonTitle" = "Downloaden vanaf Spotify.com";
+"sInstallerOsxInstallationIncompleteContinueButtonTitle" = "Doorgaan met installatie";
+"sInstallerOsxInstallationIncompleteDesc" = "De installatie van Spotify is bijna compleet. Weet je zeker dat je wilt stoppen?";
+"sInstallerOsxInstallationIncompleteTitle" = "Installatie niet compleet";
+"sInstallerOsxInstallingSpotify" = "Spotify aan het installeren...";
+"sInstallerOsxMMAboutInstallSpotify" = "Over het installeren van Spotify";
+"sInstallerOsxMMBringAllToFront" = "Alles naar voren brengen";
+"sInstallerOsxMMHelp" = "Help";
+"sInstallerOsxMMHideInstallSpotify" = "Installatie van Spotify verbergen";
+"sInstallerOsxMMHideOthers" = "Overige verbergen";
+"sInstallerOsxMMInstallSpotify" = "Spotify installeren";
+"sInstallerOsxMMInstallSpotifyHelp" = "Spotify Help installeren";
+"sInstallerOsxMMMinimize" = "Minimaliseren";
+"sInstallerOsxMMQuitInstallSpotify" = "Installatie van Spotify afsluiten";
+"sInstallerOsxMMServices" = "Diensten";
+"sInstallerOsxMMShowAll" = "Alles weergeven";
+"sInstallerOsxMMWindow" = "Venster";
+"sInstallerOsxMMZoom" = "Zoomen";
+"sInstallerOsxMountFailedErrorDescription" = "Er is een fout opgetreden tijdens het activeren van de gedownloade Spotify schijfkopie.";
+"sInstallerOsxMoveApplicationButtonDoNotMove" = "Niet verplaatsen";
+"sInstallerOsxMoveApplicationButtonMove" = "Naar de map Applicaties verplaatsen";
+"sInstallerOsxMoveApplicationCouldNotMove" = "Kan niet naar de map Applicaties verplaatsen";
+"sInstallerOsxMoveApplicationQuestionInfoInDownloadsFolder" = "Op deze manier blijft je map Downloads overzichtelijk.";
+"sInstallerOsxMoveApplicationQuestionInfoWillRequirePasswd" = "Hiervoor heb je een beheerderswachtwoord nodig.";
+"sInstallerOsxMoveApplicationQuestionMessage" = "Als je wilt, kan ik mezelf naar de map Applicaties verplaatsen.";
+"sInstallerOsxMoveApplicationQuestionTitle" = "Naar de map Applicaties verplaatsen?";
+"sInstallerOsxMoveApplicationQuestionTitleHome" = "Naar de map Applicaties in je map Start verplaatsen?";
+"sInstallerOsxQuitButtonTitle" = "Afsluiten";
+"sInstallerOsxUnsupportedPlatformDesc" = "Sorry, Spotify vereist Mac OS X 10.5 of hoger en een Intel processor.";
+"sInstallerOsxUnsupportedPlatformHelp" = "Meer informatie op Spotify.com";
+"sInstallerOsxUnsupportedPlatformTitle" = "Niet-ondersteund platform";

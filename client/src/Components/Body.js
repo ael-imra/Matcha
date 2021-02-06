@@ -27,8 +27,13 @@ const Body = (props) => {
     });
   };
   React.useEffect(() => {
-    if (ErrorMessages.error !== "" || ErrorMessages.warning !== "" || ErrorMessages.success !== "") changeShowMessage(true);
-    else changeShowMessage(false);
+    let unmount = false
+    if (!unmount)
+    {
+      if (ErrorMessages.error !== "" || ErrorMessages.warning !== "" || ErrorMessages.success !== "") changeShowMessage(true);
+      else changeShowMessage(false);
+    }
+    return (()=>unmount = true)
   }, [ErrorMessages.error, ErrorMessages.warning, ErrorMessages.success]);
 
   function Error404() {
