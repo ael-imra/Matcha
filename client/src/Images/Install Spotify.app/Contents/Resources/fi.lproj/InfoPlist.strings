@@ -1,9 +1,0 @@
-/*
-  InfoPlist.strings
-
-  Copyright Spotify. All rights reserved.
-*/
-
-
-"CFBundleDisplayName" = "Spotify-asennusohjelma Installer";
-"CFBundleName" = "Spotify-asennusohjelma Installer";

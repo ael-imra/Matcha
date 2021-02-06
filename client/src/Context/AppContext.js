@@ -258,6 +258,8 @@ export default function AppContext(props) {
               ref.removeFriend(user.UserName)
               ref.removeNotification(user.UserName)
             }
+            else if(Type === "Unlike")
+              ref.removeFriend(user.UserName)
             else{
               if (Type === 'LikedBack') ref.addFriend(user)
               cache.notifications.data = ref.removeDeplicate([{

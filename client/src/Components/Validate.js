@@ -1,13 +1,12 @@
 import Jimp from "jimp";
 function Validate(name, value) {
   const list = {
-    // eslint-disable-next-line
-    Name: /^[a-zA-Z0-9 ]{2,}$/g.test(value), // eslint-disable-next-line
-    Username: /^[a-zA-Z0-9\.\-_]{5,15}$/g.test(value), // eslint-disable-next-line
-    Email: /^[\S+]{5,40}@\S+\.\S+$/g.test(value), // eslint-disable-next-line
-    Password: /^[ -~]{8,30}$/g.test(value),
-  };
-  return list[name];
+    Name: /^[a-zA-Z0-9]{2,30}$/g.test(value) && value,
+    Username: /^[a-zA-Z0-9\.\-_]{5,15}$/g.test(value) && value,
+    Email: /^[a-zA-Z0-9]{1,10}[\-\_\.]{0,1}[a-zA-Z0-9]{1,10}@[a-zA-Z0-9]{1,5}[\-\_]{0,1}[a-zA-Z0-9]{1,5}.[a-zA-Z0-9]{1,5}[\.]{0,1}[a-zA-Z0-9]{1,5}$/g.test(value),
+    Password: /^[ -~]{8,30}$/g.test(value) && value,
+  }
+  return list[name](value)
 }
 function checkImages(images) {
   return new Promise((resolve) => {

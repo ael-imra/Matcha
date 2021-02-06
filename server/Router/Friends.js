@@ -38,7 +38,8 @@ router.post('/Invite', checkIfHasOneImage, async (req, res) => {
       if (checkFriends && checkFriends.length > 0) {
         const UserOwner = checkFriends[0].IdUserOwner === req.userInfo.IdUserOwner ? req.userInfo.UserName : UserName
         const UserReceiver = UserOwner === UserName ? req.userInfo.UserName : UserName
-        if ((checkFriends[0].IdUserOwner === req.userInfo.IdUserOwner || checkFriends[0].IdUserReceiver === req.userInfo.IdUserOwner) && checkFriends[0].Match) {
+        if (checkFriends[0].IdUserOwner === req.userInfo.IdUserOwner && checkFriends[0].Match)
+        {
           locals.notification(req, 'Unlike', UserOwner, UserReceiver)
           locals.update(
             'Friends',
@@ -47,6 +48,16 @@ router.post('/Invite', checkIfHasOneImage, async (req, res) => {
               IdUserReceiver: checkFriends[0].IdUserOwner,
               Match: 0,
             },
+            {
+              IdUserOwner: checkFriends[0].IdUserOwner,
+              IdUserReceiver: checkFriends[0].IdUserReceiver,
+            }
+          )
+        }
+        if (checkFriends[0].IdUserReceiver === req.userInfo.IdUserOwner && checkFriends[0].Match) {
+          locals.notification(req, 'Unlike', UserOwner, UserReceiver)
+          locals.update(
+            'Friends',{Match: 0},
             {
               IdUserOwner: checkFriends[0].IdUserOwner,
               IdUserReceiver: checkFriends[0].IdUserReceiver,

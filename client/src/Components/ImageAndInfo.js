@@ -109,10 +109,13 @@ export default function ImageAndInfo(props) {
     try {
       Axios.post(`/Friends/Invite/`, { UserName: props.userName }).then((result) => {
         props.ChangeInfoUser(()=>{
+          if (ctx.cache.friends[props.userName])
+          {
+            ctx.ref.removeFriend(props.userName)
+            ctx.ref.removeNotification(props.userName)
+          }
           if (result.data === "Friend has been created" || result.data === 'Friend has been updated')
             return ({ ...props.InfoUser, CheckFriends: 1})
-          ctx.ref.removeFriend(props.userName)
-          ctx.ref.removeNotification(props.userName)
           return ({ ...props.InfoUser, CheckFriends: 0})
       })})
     } catch (error) {}

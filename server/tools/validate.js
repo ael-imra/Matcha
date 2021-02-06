@@ -1,11 +1,11 @@
 function Validate(name, value) {
   const list = {
-    Name: /^[a-zA-Z ]{5,}$/g.test(value) && value,
-    Username: /^[a-zA-Z0-9 \.\-_]{5,15}$/g.test(value) && value,
-    Email: /^[\S+]{5,40}@\S+\.\S+$/g.test(value),
+    Name: /^[a-zA-Z0-9]{2,30}$/g.test(value) && value,
+    Username: /^[a-zA-Z0-9\.\-_]{5,15}$/g.test(value) && value,
+    Email: /^[a-zA-Z0-9]{1,10}[\-\_\.]{0,1}[a-zA-Z0-9]{1,10}@[a-zA-Z0-9]{1,5}[\-\_]{0,1}[a-zA-Z0-9]{1,5}.[a-zA-Z0-9]{1,5}[\.]{0,1}[a-zA-Z0-9]{1,5}$/g.test(value),
     Password: /^[ -~]{8,30}$/g.test(value) && value,
   }
-  return list[name]
+  return list[name](value)
 }
 function getAge(dateString) {
   let today = new Date()

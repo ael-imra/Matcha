@@ -1,9 +1,0 @@
-/*
-  InfoPlist.strings
-
-  Copyright Spotify. All rights reserved.
-*/
-
-
-"CFBundleDisplayName" = "Spotify 安裝程式";
-"CFBundleName" = "Spotify 安裝程式";
