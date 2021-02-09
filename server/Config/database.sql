@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `Blacklist` (
     `IdBlacklist` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `IdUserOwner` INT NOT NULL,
     `IdUserReceiver` INT NOT NULL,
-    `DateBlock` VARCHAR(255),
+    `DateBlock` DATETIME DEFAULT NOW(),
     FOREIGN KEY (IdUserOwner) REFERENCES `Users`(IdUserOwner),
     FOREIGN KEY (IdUserReceiver) REFERENCES `Users`(IdUserOwner)
 );

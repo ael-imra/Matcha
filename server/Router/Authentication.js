@@ -25,21 +25,21 @@ async function auth(req, res, next) {
       });
     } else locals.sendResponse(res, 200, "token invalid");
   } else {
-    locals.sendResponse(res, 400, "token not found");
+    locals.sendResponse(res, 200, "token not found");
   }
 }
 router.get("/Logout", auth, function (req, res) {
   if (req.userInfo) {
     req.app.locals.update("Users", { Active: 0 }, { JWT: req.userInfo.JWT });
     req.app.locals.sendResponse(res, 200, "You're now logout");
-  } else req.app.locals.sendResponse(res, 403, "Something wrong please try again");
+  } else req.app.locals.sendResponse(res, 200, "Something wrong please try again");
 });
 router.post("/Login", async function (req, res) {
   const locals = req.app.locals;
-  const { Email, Password } = req.body;
-  if (Validate("Email", Email) && Validate("Password", Password)) {
+  const { UserName, Password } = req.body;
+  if (Validate("Username", UserName) && Validate("Password", Password)) {
     const resultInfo = await locals.select("Users", ["FirstName", "LastName", "UserName", "Images", "IdUserOwner", "JWT", "IsActive"], {
-      Email,
+      UserName,
       Password: md5(Password),
     });
     if (resultInfo.length !== 0) {
@@ -56,7 +56,7 @@ router.post("/Login", async function (req, res) {
           const accessToken = jwt.sign(data.IdUserOwner, process.env.JWT_KEY);
           const resultUpdateJWT = await locals.update("Users", { JWT: accessToken }, { IdUserOwner: data.IdUserOwner });
           if (resultUpdateJWT) locals.sendResponse(res, 200, { accessToken, data }, true);
-          else locals.sendResponse(res, 403, "Something wrong please try again");
+          else locals.sendResponse(res, 200, "Something wrong please try again");
         } else locals.sendResponse(res, 200, "account is not active");
       }
     } else locals.sendResponse(res, 200, "User Not Found");
@@ -88,7 +88,7 @@ router.post("/LoginWithGoogle", async function (req, res) {
           const accessToken = jwt.sign({ data }, process.env.JWT_KEY);
           const resultUpdateJWT = await locals.update("Users", { JWT: accessToken }, { IdUserOwner: data.IdUserOwner });
           if (resultUpdateJWT) locals.sendResponse(res, 200, { accessToken, data }, true);
-          else locals.sendResponse(res, 403, "Something wrong please try again");
+          else locals.sendResponse(res, 200, "Something wrong please try again");
         } else locals.sendResponse(res, 200, "account is not active");
       }
     } else locals.sendResponse(res, 200, "User Not Found");
@@ -143,9 +143,11 @@ router.post("/CompleteInsert", auth, async function (req, res) {
   const locals = req.app.locals;
   if (
     (step1, step2, step3, step4, step5) &&
-    step4.yourInterest &&
+    step5 instanceof Array &&
+    step4.yourInterest instanceof Array &&
     step4.yourInterest.length <= 5 &&
     step4.yourInterest.length !== 0 &&
+    typeof step4.DescribeYourself === "string" &&
     step4.DescribeYourself.trim() &&
     step4.yourInterest.every((Interest) => Interest.length >= 2 && Interest.length <= 25) &&
     (step5.length === 0 || (step5.every((image) => image.default === 0 || image.default === 1) && step5.length <= 5 && step5.filter((image) => image.default === 1).length == 1)) &&
@@ -184,7 +186,7 @@ router.post("/CompleteInsert", auth, async function (req, res) {
         };
         const result = await locals.update("Users", { ...values }, needed);
         if (result) locals.sendResponse(res, 200, values);
-        else locals.sendResponse(res, 403, "Something wrong With your images");
+        else locals.sendResponse(res, 200, "Something wrong With your images");
       } else if (await locals.checkIp(step2.ip)) {
         position = await locals.fetchDataJSON(step2.ip);
         Longitude = position.Longitude;
@@ -205,10 +207,10 @@ router.post("/CompleteInsert", auth, async function (req, res) {
         };
         const result = await locals.update("Users", { ...values }, needed);
         if (result) locals.sendResponse(res, 200, values);
-        else locals.sendResponse(res, 403, "Something wrong With your images");
-      } else locals.sendResponse(res, 400, "bad user information");
-    } else locals.sendResponse(res, 403, "Something wrong With your images");
-  } else locals.sendResponse(res, 400, "bad user information");
+        else locals.sendResponse(res, 200, "Something wrong With your images");
+      } else locals.sendResponse(res, 200, "bad user information");
+    } else locals.sendResponse(res, 200, "Something wrong With your images");
+  } else locals.sendResponse(res, 200, "bad user information");
 });
 
 module.exports = { Authentication: router, auth };

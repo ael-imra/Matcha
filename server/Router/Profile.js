@@ -6,8 +6,7 @@ const haversine = require("haversine-distance");
 const { auth } = require("./Authentication");
 router.post("/EditInfoUser", auth, async function (req, res) {
   const locals = req.app.locals;
-  const ListInterest = JSON.stringify(req.body.ListInterest);
-  let { UserName, Email, FirstName, LastName, DataBirthday, Biography, Sexual, Gender } = req.body;
+  let { UserName, Email, FirstName, LastName, DataBirthday, Biography, Sexual, Gender,ListInterest } = req.body;
   if (
     (UserName, Email, FirstName, LastName, FirstName, DataBirthday, Sexual, Gender, ListInterest) &&
     Validate("Username", UserName) &&
@@ -21,10 +20,12 @@ router.post("/EditInfoUser", auth, async function (req, res) {
     Biography.length <= 100 &&
     (Sexual.trim() === "Male" || Sexual.trim() === "Female" || Sexual.trim() === "Female Male" || Sexual.trim() === "Male Female") &&
     (Gender.trim() === "Male" || Gender.trim() === "Female" || Gender.trim() === "Other") &&
-    JSON.parse(ListInterest).length &&
-    JSON.parse(ListInterest).every((Interest) => Interest.length !== 1 && Interest.length <= 25) &&
-    JSON.parse(ListInterest).length <= 5
+    ListInterest instanceof Array &&
+    ListInterest.length &&
+    ListInterest.every((Interest) => Interest.length !== 1 && Interest.length <= 25) &&
+    ListInterest.length <= 5
   ) {
+    ListInterest = JSON.stringify(ListInterest);
     Sexual = Sexual.trim();
     Gender = Gender.trim();
     const userReadyTake = await locals.query("select COUNT(*) As COUNT from Users WHERE UserName=?", UserName);
@@ -110,33 +111,34 @@ router.post("/ChangePasswordProfile", auth, async function (req, res) {
     else res.send("failed");
   } else res.send("failed");
 });
-router.get("/GetUser/:userName", auth, async function (req, res) {
-  const locals = req.app.locals;
+router.get('/GetUser/:userName', auth, async function (req, res) {
+  const locals = req.app.locals
   if (req.params.userName) {
-    const IdUserReceiver = await locals.getIdUserOwner(req.params.userName);
+    const IdUserReceiver = await locals.getIdUserOwner(req.params.userName)
     if (IdUserReceiver) {
-      const ifNotBlock = await locals.ifNotBlock(req.userInfo.IdUserOwner, IdUserReceiver, locals);
+      const ifNotBlock = await locals.ifNotBlock(req.userInfo.IdUserOwner, IdUserReceiver, locals)
       if (ifNotBlock) {
-        const result = await locals.select("Users", ["FirstName", "UserName", "Email", "DataBirthday", "LastName", "Gender", "Sexual", "Biography", "ListInterest", "Images", "LastLogin", "Active", "Latitude", "Longitude"], {
+        const result = await locals.select('Users', ['FirstName', 'UserName', 'Email', 'DataBirthday', 'LastName', 'Gender', 'Sexual', 'Biography', 'ListInterest', 'Images', 'LastLogin', 'Active', 'Latitude', 'Longitude'], {
           UserName: req.params.userName,
           IsActive: 1,
-        });
+        })
         if (result[0]) {
-          const YourRating = await locals.getRating(req.params.userName, locals);
-          const MyRating = await locals.myRating(req.params.userName, req.userInfo.UserName, locals);
-          const CountRating = await locals.CountRating(req.params.userName, locals);
-          const CountFriends = await locals.query("SELECT COUNT(*) As Count FROM Friends WHERE (IdUserOwner=? OR IdUserReceiver=?) AND `Match`=1", [IdUserReceiver, IdUserReceiver]);
-          const CheckFriends = await locals.query("select Count(*) As Count From  Friends WHERE (IdUserOwner=? AND IdUserReceiver=?) Or (IdUserOwner=? AND IdUserReceiver=?) AND `Match`=1", [req.userInfo.IdUserOwner, IdUserReceiver, IdUserReceiver, req.userInfo.IdUserOwner]);
-          const Distance = haversine({ lat: result[0].Latitude, lng: result[0].Longitude }, { lat: req.userInfo.Latitude, lng: req.userInfo.Longitude });
-          const values = { ...result[0], YourRating, CountRating, CountFriends: CountFriends[0].Count, CheckFriends: CheckFriends[0].Count, MyRating, Distance };
-          if (result[0].UserName !== req.userInfo.UserName) 
-            locals.notification(req, "View", req.userInfo.UserName, req.params.userName);
-          locals.sendResponse(res, 200, values);
-        } else locals.sendResponse(res, 200, "User not found");
-      } else locals.sendResponse(res, 200, "User not found");
-    } else locals.sendResponse(res, 200, "User not found");
-  } else locals.sendResponse(res, 200, "User not found");
-});
+          const YourRating = await locals.getRating(req.params.userName, locals)
+          const MyRating = await locals.myRating(req.params.userName, req.userInfo.UserName, locals)
+          const CountRating = await locals.CountRating(req.params.userName, locals)
+          const CountFriends = await locals.query('SELECT COUNT(*) As Count FROM Friends WHERE (IdUserOwner=? OR IdUserReceiver=?) AND `Match`=1', [IdUserReceiver, IdUserReceiver])
+          const CheckFriends = await locals.query('select Count(*) As Count From  Friends WHERE (IdUserOwner=? AND IdUserReceiver=?) Or (IdUserOwner=? AND IdUserReceiver=?) AND `Match`=1', [req.userInfo.IdUserOwner, IdUserReceiver, IdUserReceiver, req.userInfo.IdUserOwner])
+          const Distance = haversine({ lat: result[0].Latitude, lng: result[0].Longitude }, { lat: req.userInfo.Latitude, lng: req.userInfo.Longitude })
+          const IfHaveImage = await locals.getImage(req.userInfo.Token, locals)
+          const values = { ...result[0], YourRating, CountRating, CountFriends: CountFriends[0].Count, CheckFriends: CheckFriends[0].Count, MyRating, Distance, IfHaveImage: JSON.parse(IfHaveImage[0].Images).length === 0 ? false : true }
+
+          if (result[0].UserName !== req.userInfo.UserName) locals.notification(req, 'View', req.userInfo.UserName, req.params.userName)
+          locals.sendResponse(res, 200, values)
+        } else locals.sendResponse(res, 200, 'User not found')
+      } else locals.sendResponse(res, 200, 'User not found')
+    } else locals.sendResponse(res, 200, 'User not found')
+  } else locals.sendResponse(res, 200, 'User not found')
+})
 router.post("/CheckProfileOfYou/:userName", auth, async function (req, res) {
   const locals = req.app.locals;
   const IdUserReceiver = await locals.getIdUserOwner(req.params.userName);
@@ -152,7 +154,7 @@ router.post("/CheckProfileOfYou/:userName", auth, async function (req, res) {
     } else res.send({ isProfileOfYou: "User not found", isNotReport: false });
   } else res.send({ isProfileOfYou: "User not found", isNotReport: false });
 });
-router.post("/BlockUser/:userName", auth, async function (req, res) {
+router.get("/BlockUser/:userName", auth, async function (req, res) {
   const locals = req.app.locals;
   const IdUserReceiver = await locals.getIdUserOwner(req.params.userName);
   if (IdUserReceiver) {
@@ -161,7 +163,6 @@ router.post("/BlockUser/:userName", auth, async function (req, res) {
       const values = {
         IdUserOwner: req.userInfo.IdUserOwner,
         IdUserReceiver: IdUserReceiver,
-        DateBlock: new Date(),
       };
       locals.notification(req, "removeFriend", req.userInfo.UserName, req.params.userName);
       const resultInsert = await locals.insert("Blacklist", values);
@@ -190,15 +191,13 @@ router.get("/ReportUser/:userName", auth, async function (req, res) {
       const values = {
         IdUserOwner: req.userInfo.IdUserOwner,
         IdUserReceiver: IdUserReceiver,
-        Datereport: new Date(),
       };
       const resultInsert = await locals.insert("report", values);
       if (resultInsert) {
         const value = {
-          IdUserOwner: IdUserReceiver,
-          IdUserReceiver: req.userInfo.IdUserOwner,
-          Content: `${req.userInfo.UserName} report you`,
-          DateCreation: new Date(),
+          IdUserOwner: req.userInfo.IdUserOwner,
+          IdUserReceiver: IdUserReceiver,
+          Content: `You report ${req.params.userName}`,
         };
         const resultInsert = await locals.insert("History", value);
         if (resultInsert) locals.sendResponse(res, 200, "successful");
@@ -209,7 +208,7 @@ router.get("/ReportUser/:userName", auth, async function (req, res) {
 });
 router.post("/UserReadyTake", auth, async function (req, res) {
   const locals = req.app.locals;
-  if (req.body.UserName) {
+  if (locals.Validate('Username',req.body.UserName)) {
     const userReadyTake = await locals.query("select COUNT(*) As COUNT from Users WHERE UserName=?", req.body.UserName);
     if (userReadyTake[0].COUNT === 0 || req.userInfo.UserName === req.body.UserName) res.send(true);
     else res.send(false);
@@ -217,7 +216,7 @@ router.post("/UserReadyTake", auth, async function (req, res) {
 });
 router.post("/EmailReadyTake", auth, async function (req, res) {
   const locals = req.app.locals;
-  if (req.body.Email) {
+  if (locals.Validate('Email',req.body.Email)) {
     const EmailReadyTake = await locals.query("select COUNT(*) As COUNT from Users WHERE Email=?", req.body.Email);
     if (EmailReadyTake[0].COUNT !== 1 || req.userInfo.Email === req.body.Email) res.send(true);
     else res.send(false);

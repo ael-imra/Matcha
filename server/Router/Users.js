@@ -17,7 +17,7 @@ router.post('/', auth, async function (req, res) {
   const { Latitude, Longitude } = req.userInfo
   const { list, age, name, location, rating, start, length } = req.body
   const locals = req.app.locals
-  if (name.length <= 255 && list instanceof Array && list.length <= 5 && list.toString().length <= 255 && location instanceof Array && location.length === 2 && start >=0 && length >0)
+  if ((!name || name && name.length <= 255) && list instanceof Array && list.length <= 5 && list.toString().length <= 255 && location instanceof Array && location.length === 2 && location[0] >=0 && location[1] <= 1000 && start >=0 && length >0)
   {
     let filterResult = await locals.filter({ IdUserOwner: req.userInfo.IdUserOwner, name, age, rating, sexual: req.userInfo.Sexual})
     let newFilterResult = []
@@ -99,8 +99,8 @@ router.get("/Active", async function (req, res) {
     if (result && result.length > 0 && result[0].Count === 1) {
       locals.update("Users", { IsActive: 2, Token: locals.crypto.randomBytes(64).toString("hex") }, { Token });
       locals.sendResponse(res, 200, "Account Now is Active");
-    } else locals.sendResponse(res, 400, "Account Not Found");
-  } else locals.sendResponse(res, 400, "Account Not Found");
+    } else locals.sendResponse(res, 200, "Account Not Found");
+  } else locals.sendResponse(res, 200, "Account Not Found");
 });
 
 router.post("/ResetPassword", async function (req, res) {
@@ -111,9 +111,9 @@ router.post("/ResetPassword", async function (req, res) {
     if (result) {
       const resultUpdate = await locals.update("Users", { Password: md5(Password), Token: locals.crypto.randomBytes(64).toString("hex"), JWT: null }, { Token });
       if (resultUpdate) locals.sendResponse(res, 200, "Account is Active");
-      else locals.sendResponse(res, 403, "Error on Update Password");
-    } else locals.sendResponse(res, 400, "account not found");
-  } else locals.sendResponse(res, 400, "Bad Request");
+      else locals.sendResponse(res, 200, "Error on Update Password");
+    } else locals.sendResponse(res, 200, "account not found");
+  } else locals.sendResponse(res, 200, "Bad Request");
 });
 
 router.get("/UserNameIsReadyTake/:userName", async function (req, res) {

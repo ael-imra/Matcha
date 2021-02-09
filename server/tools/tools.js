@@ -29,7 +29,7 @@ function checkImage(src, locals) {
         Jimp.read(buffer, (err, res) => {
           if (err) resolve(null);
           else {
-            res.quality(40).write(`./images/${nameImage}.jpg`);
+            res.quality(30).write(`./images/${nameImage}.jpg`);
             resolve(`/images/${nameImage}.jpg`);
           }
         });
@@ -163,11 +163,12 @@ async function notification(req, Type, UserOwner, UserReceiver) {
         IdUserReceiver,
         Type,
       })
-      locals.insert('History', {
-        IdUserOwner,
-        IdUserReceiver,
-        Content:`You ${Type} ${UserReceiver}`,
-      })
+      if (Type !== "removeFriend")
+        locals.insert('History', {
+          IdUserOwner,
+          IdUserReceiver,
+          Content:`You ${Type} ${UserReceiver}`,
+        })
     }
     if (locals.sockets && locals.sockets.length > 0 && locals.sockets[IdUserReceiver]) {
       const user = await locals.select('Users', ['IdUserOwner', 'Images', 'UserName', 'LastLogin', 'Active'], { IdUserOwner })

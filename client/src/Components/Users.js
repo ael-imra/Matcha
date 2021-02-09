@@ -162,7 +162,7 @@ function Users() {
     else ctx.ref.getUsers(users.length - 1, 1)
   }
   function blockUser(UserName) {
-    axios.post(`/Profile/BlockUser/${UserName}`, {})
+    axios.get(`/Profile/BlockUser/${UserName}`)
     removeUser(UserName)
   }
   return (

@@ -47,7 +47,6 @@ const SingSocialMedia = (props) => {
                   } else {
                     if (result.data === "account is not active") props.ChangeErrorMessages({ error: "", warning: "This Account is deactivated please visit your email", success: "" });
                     else {
-                      console.log("ko");
                       props.ChangeErrorMessages({ error: "oops ... email not found", warning: "", success: "" });
                     }
                   }

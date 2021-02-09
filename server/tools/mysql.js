@@ -28,10 +28,10 @@ mysql.query = function (query, params) {
       if (error) resolve(error)
       else
         connection.query(query, params, (err, result) => {
-          if (err) reject(err)
-          else resolve(result)
-          connection.release(0)
-        })
+            if (err) reject(err)
+            else resolve(result)
+            connection.release(0)
+          })
     })
   })
 }
@@ -64,12 +64,12 @@ mysql.filter = async function (values) {
       (SELECT AVG(RatingValue) FROM Rating WHERE IdUserReceiver = u.IdUserOwner group by IdUserReceiver) AS rating,\
       (SELECT AVG(RatingValue) FROM Rating WHERE IdUserOwner=? AND  IdUserReceiver = u.IdUserOwner group by IdUserReceiver) AS myRating,\
       (SELECT IdUserReceiver FROM Friends WHERE u.IdUserOwner = IdUserReceiver AND IdUserOwner=?) AS friendreceiver,\
-      (SELECT IdUserOwner FROM Friends WHERE u.IdUserOwner = IdUserOwner AND `Match`=1 AND IdUserReceiver=?) AS friendowner,\
+      (SELECT IdUserOwner FROM Friends WHERE `Match`=1 AND ((u.IdUserOwner = IdUserOwner AND IdUserReceiver=?) OR (? = IdUserOwner AND IdUserReceiver=u.IdUserOwner))) AS friendowner,\
       (SELECT IdBlacklist FROM Blacklist WHERE (IdUserOwner=? AND IdUserReceiver=u.IdUserOwner) OR (IdUserOwner=u.IdUserOwner AND IdUserReceiver=?)) AS blackList\
       FROM Users u \
-      WHERE u.IsActive=1 AND u.IdUserOwner != ? AND u.UserName LIKE ? AND (? = "Male Female" || u.Gender=?) > 0 AND u.Images != "[]"\
+      WHERE u.IsActive=1 AND u.IdUserOwner != ? AND u.UserName LIKE ? AND (? = "Male Female" OR ? = "Female Male" OR u.Gender=?) > 0 AND u.Images != "[]"\
       HAVING Age >= ? AND Age <= ? AND ((rating IS NULL AND ? = 0) OR (rating >= ? AND rating <= ?)) AND friendowner IS NULL AND friendreceiver IS NULL AND blackList IS NULL'
-    const result = await mysql.query(query, [values.IdUserOwner, values.IdUserOwner, values.IdUserOwner, values.IdUserOwner, values.IdUserOwner, values.IdUserOwner, values.name, values.sexual, values.sexual, values.age[0], values.age[1], values.rating[0], values.rating[0], values.rating[1]])
+    const result = await mysql.query(query, [values.IdUserOwner, values.IdUserOwner, values.IdUserOwner, values.IdUserOwner, values.IdUserOwner, values.IdUserOwner, values.IdUserOwner, values.name, values.sexual, values.sexual, values.sexual, values.age[0], values.age[1], values.rating[0], values.rating[0], values.rating[1]])
     return result
   }
   return null

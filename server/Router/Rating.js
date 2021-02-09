@@ -27,6 +27,7 @@ router.get('/myRating/:usernameReceiever', async (req, res) => {
     const IdUserReceiver = await locals.getIdUserOwner(req.params.usernameReceiever)
     const RatingValue = await locals.select('Rating', 'RatingValue', { IdUserOwner: req.userInfo.UserName, IdUserReceiver})
     if (RatingValue.length > 0) locals.sendResponse(res, 200, RatingValue[0].RatingValue.toString())
+    else locals.sendResponse(res, 200, 'Wrong UserName')
   } else locals.sendResponse(res, 200, 'bad request')
 })
 module.exports = router
