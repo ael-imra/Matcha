@@ -50,7 +50,7 @@ function Dashboard(props) {
   const [LayoutHide, changeLayoutHide] = useState(true)
   useEffect(() => {
     let unmount = false
-    if (width >= 1000 && !LayoutHide && !unmount) changeLayoutHide(true) 
+    if (width >= 1240 && !LayoutHide && !unmount) changeLayoutHide(true) 
     return (()=>unmount = true)// eslint-disable-next-line
   }, [width])
   useEffect(() => {

@@ -22,15 +22,18 @@ export default function UpdatePassword(props) {
               NewPassword: "",
               ConfirmPassword: "",
             });
+            props.changeShowSuccess(true);
             props.formUpdatePasswordClose();
-            props.ChangeError("");
           } else {
             props.ChangeError(["Password not valid"]);
+            props.ChangeShowError(true);
           }
         });
       } catch (error) {}
-    } else props.ChangeError(["Password not valid"]);
-    props.ChangeShowError(true);
+    } else {
+      props.ChangeError(["Password not valid"]);
+      props.ChangeShowError(true);
+    }
   };
   const [password, changePassword] = React.useState({
     CurrentPassword: "",

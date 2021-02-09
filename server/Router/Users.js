@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Validate = require("../tools/validate");
+const {Validate} = require("../tools/validate");
 const md5 = require("md5");
 const haversine = require("haversine-distance");
 const { auth } = require("./Authentication");
@@ -16,15 +16,15 @@ router.get("/", auth, async function (req, res) {
 router.post('/', auth, async function (req, res) {
   const { Latitude, Longitude } = req.userInfo
   const { list, age, name, location, rating, start, length } = req.body
-  if (list instanceof Array && location instanceof Array && location.length === 2 && start >=0 && length >0)
+  const locals = req.app.locals
+  if (name.length <= 255 && list instanceof Array && list.length <= 5 && list.toString().length <= 255 && location instanceof Array && location.length === 2 && start >=0 && length >0)
   {
-    const locals = req.app.locals
     let filterResult = await locals.filter({ IdUserOwner: req.userInfo.IdUserOwner, name, age, rating, sexual: req.userInfo.Sexual})
     let newFilterResult = []
     const listInterest = [...list, ...JSON.parse(req.userInfo.ListInterest)]
     if (filterResult && filterResult.length > 0) {
       filterResult.map((item) => {
-        item.rating = item.rating === null ? 0 : item.rating - item.CountReport / 100 < 0 ? 0 : item.rating - item.CountReport / 100
+        item.rating = item.rating === null ? 0 : item.rating
         item.distance = haversine({ lat: item.Latitude, lng: item.Longitude }, { lat: Latitude, lng: Longitude })
         const km = item.distance / 1000
         if ((location[1] === 1000 && km >= location[0]) || (km >= location[0] && km <= location[1])) newFilterResult.push(item)
@@ -60,7 +60,7 @@ router.get('/listInterest', auth, async function (req, res) {
     IdUserOwner: req.userInfo.IdUserOwner,
   })
   let listInterest = []
-  result.map((item) => listInterest.push(...JSON.parse(item.ListInterest)))
+  result.map((item) => item.ListInterest ? listInterest.push(...JSON.parse(item.ListInterest)) : 0)
   listInterest = [...new Set(listInterest)]
   req.app.locals.sendResponse(
     res,
@@ -72,7 +72,6 @@ router.get('/listInterest', auth, async function (req, res) {
     true
   )
 })
-
 router.post("/ForgatPassword", async function (req, res) {
   const { Email } = req.body;
   const locals = req.app.locals;
@@ -107,7 +106,6 @@ router.get("/Active", async function (req, res) {
 router.post("/ResetPassword", async function (req, res) {
   const { Token, Password, Confirm } = req.body;
   const locals = req.app.locals;
-  console.log(req.body);
   if (Token && Validate("Password", Confirm) && Password === Confirm) {
     const result = await locals.verifierToken(Token, locals);
     if (result) {

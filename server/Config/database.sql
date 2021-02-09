@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS Matcha;
-USE Matcha;
+CREATE DATABASE IF NOT EXISTS `Matcha`;
+USE `Matcha`;
 CREATE TABLE IF NOT EXISTS `Users` (
     `IdUserOwner` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `UserName` VARCHAR(255) NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `Users` (
     `Images` VARCHAR(1255),
     `IsActive` INT,
     `JWT` VARCHAR(1024),
-    `LastLogin` DateTime DEFAULT NOW(),
+    `LastLogin` DATETIME DEFAULT NOW(),
     `Active` INT DEFAULT 0
 );
 CREATE TABLE IF NOT EXISTS `Friends` (
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `Notifications` (
     `IdUserOwner` INT NOT NULL,
     `IdUserReceiver` INT NOT NULL,
     `Type` VARCHAR(255) NOT NULL,
-    `DateCreation` DateTime DEFAULT NOW(),
+    `DateCreation` DATETIME DEFAULT NOW(),
     `IsRead` INT DEFAULT 0,
     FOREIGN KEY (`IdUserOwner`) REFERENCES `Users`(`IdUserOwner`),
     FOREIGN KEY (`IdUserReceiver`) REFERENCES `Users`(`IdUserOwner`)
@@ -45,12 +45,12 @@ CREATE TABLE IF NOT EXISTS `Messages` (
     `IdUserOwner` INT NOT NULL,
     `IdUserReceiver` INT NOT NULL,
     `Content` VARCHAR(255) NOT NULL,
-    `DateCreation` DateTime DEFAULT NOW(),
+    `DateCreation` DATETIME DEFAULT NOW(),
     `IsRead` INT DEFAULT 0,
     FOREIGN KEY (IdUserOwner) REFERENCES `Users`(IdUserOwner),
     FOREIGN KEY (IdUserReceiver) REFERENCES `Users`(IdUserOwner)
 );
-CREATE TABLE IF NOT EXISTS Rating (
+CREATE TABLE IF NOT EXISTS `Rating` (
     `IdRating` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `IdUserOwner` INT NOT NULL,
     `IdUserReceiver` INT NOT NULL,
@@ -58,12 +58,12 @@ CREATE TABLE IF NOT EXISTS Rating (
     FOREIGN KEY (IdUserOwner) REFERENCES `Users`(IdUserOwner),
     FOREIGN KEY (IdUserReceiver) REFERENCES `Users`(IdUserOwner)
 );
-CREATE TABLE IF NOT EXISTS `Hitory` (
-    `IdHitory` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS `History` (
+    `IdHistory` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `IdUserOwner` INT NOT NULL,
     `IdUserReceiver` INT NOT NULL,
-    `DateCreation` VARCHAR(255),
-    `Content` varchar(255),
+    `DateCreation` DATETIME DEFAULT NOW(),
+    `Content` VARCHAR(255),
     FOREIGN KEY (IdUserOwner) REFERENCES `Users`(IdUserOwner),
     FOREIGN KEY (IdUserReceiver) REFERENCES `Users`(IdUserOwner)
 );
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `Report` (
     `IdReport` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `IdUserOwner` INT NOT NULL,
     `IdUserReceiver` INT NOT NULL,
-    `DateReport` DateTime DEFAULT NOW(),
+    `DateReport` DATETIME DEFAULT NOW(),
     FOREIGN KEY (IdUserOwner) REFERENCES `Users`(IdUserOwner),
     FOREIGN KEY (IdUserReceiver) REFERENCES `Users`(IdUserOwner)
 );

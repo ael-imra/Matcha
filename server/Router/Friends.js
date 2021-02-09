@@ -31,9 +31,10 @@ router.get('/', checkIfHasOneImage, async (req, res) => {
 router.post('/Invite', checkIfHasOneImage, async (req, res) => {
   const { UserName } = req.body
   const locals = req.app.locals
-  if (UserName) {
+  if (locals.Validate('Username',UserName)) {
     const IdUserOwner = await locals.getIdUserOwner(UserName)
-    if (IdUserOwner && IdUserOwner !== req.userInfo.IdUserOwner) {
+    const ifNotBlock = await locals.ifNotBlock(IdUserOwner, req.userInfo.IdUserOwner, locals)
+    if (IdUserOwner && IdUserOwner !== req.userInfo.IdUserOwner && ifNotBlock) {
       const checkFriends = await locals.query('SELECT * FROM Friends WHERE (IdUserOwner=? AND IdUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?)', [req.userInfo.IdUserOwner, IdUserOwner, IdUserOwner, req.userInfo.IdUserOwner])
       if (checkFriends && checkFriends.length > 0) {
         const UserOwner = checkFriends[0].IdUserOwner === req.userInfo.IdUserOwner ? req.userInfo.UserName : UserName
@@ -55,7 +56,7 @@ router.post('/Invite', checkIfHasOneImage, async (req, res) => {
           )
         }
         if (checkFriends[0].IdUserReceiver === req.userInfo.IdUserOwner && checkFriends[0].Match) {
-          locals.notification(req, 'Unlike', UserOwner, UserReceiver)
+          locals.notification(req, 'Unlike', UserReceiver,UserOwner)
           locals.update(
             'Friends',{Match: 0},
             {

@@ -16,10 +16,12 @@ import ProfileImage from "./ProfileImage";
 import Rating from "@material-ui/lab/Rating";
 import ExploreIcon from "@material-ui/icons/Explore";
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
-import {DataContext} from '../Context/AppContext'
+import { DataContext } from "../Context/AppContext";
+import RoomIcon from "@material-ui/icons/Room";
+import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 
 export default function ImageAndInfo(props) {
-  const ctx = useContext(DataContext)
+  const ctx = useContext(DataContext);
   let history = useHistory();
   const width = useWindowSize();
   const [ifUpload, changeIfUpload] = React.useState(0);
@@ -54,7 +56,7 @@ export default function ImageAndInfo(props) {
               try {
                 Axios.post("/Profile/AddImage", { image: image }).then((result) => {
                   changeIfUpload(0);
-                  Images[props.InfoUser.Images.length] = result.data;
+                  Images.push(result.data);
                   props.ChangeInfoUser({
                     ...props.InfoUser,
                     Images: [...Images],
@@ -88,8 +90,8 @@ export default function ImageAndInfo(props) {
   let BlockUser = () => {
     try {
       Axios.post(`/Profile/BlockUser/${props.userName}`, {}).then((result) => {
-        ctx.ref.removeFriend(props.userName)
-        ctx.ref.removeNotification(props.userName)
+        ctx.ref.removeFriend(props.userName);
+        ctx.ref.removeNotification(props.userName);
         history.push("/");
       });
     } catch (error) {}
@@ -108,16 +110,12 @@ export default function ImageAndInfo(props) {
   let like = () => {
     try {
       Axios.post(`/Friends/Invite/`, { UserName: props.userName }).then((result) => {
-        props.ChangeInfoUser(()=>{
-          if (ctx.cache.friends[props.userName])
-          {
-            ctx.ref.removeFriend(props.userName)
-            ctx.ref.removeNotification(props.userName)
-          }
-          if (result.data === "Friend has been created" || result.data === 'Friend has been updated')
-            return ({ ...props.InfoUser, CheckFriends: 1})
-          return ({ ...props.InfoUser, CheckFriends: 0})
-      })})
+        props.ChangeInfoUser(() => ({
+          ...props.InfoUser,
+          CheckFriends: props.InfoUser.CheckFriends === 0 ? 1 : 0,
+        }));
+        ctx.ref.removeFriend(props.userName);
+      });
     } catch (error) {}
   };
   let updatePosition = (e) => {
@@ -158,6 +156,11 @@ export default function ImageAndInfo(props) {
       });
     } catch (error) {}
   };
+  let DeleteMyAccount = (e) => {
+    try {
+      Axios.post("/Profile/DeleteMyAccount").then((result) => {});
+    } catch (error) {}
+  };
   const formUpdatePasswordShow = () => {
     props.ChangeShowUpdatePassword(true);
   };
@@ -184,7 +187,18 @@ export default function ImageAndInfo(props) {
         </div>
         <div>
           <p className='UseName'>{props.UserNameAndEmail.userName}</p>
-          <p className='Email'>{props.UserNameAndEmail.isProfileOfYou ? props.UserNameAndEmail.email : props.InfoUser.Active === 1 ? "Online" : props.InfoUser.LastLogin}</p>
+          <p className='Email'>{props.UserNameAndEmail.isProfileOfYou ? props.UserNameAndEmail.email : props.InfoUser.Active === 1 ? "Online" : " login " + ctx.ref.ConvertDate(props.InfoUser.LastLogin) +"   ago"}</p>
+          {props.UserNameAndEmail.isProfileOfYou ? (
+            ""
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <RoomIcon style={{ marginRight: "8px" }} />
+              <p className='Email' style={{ marginBottom: "0px" }}>
+                {(props.InfoUser.Distance / 1000).toFixed(1)}Km
+              </p>
+            </div>
+          )}
+
           <div className='CountReviewFriend'>
             <div>
               <p>{parseFloat(props.InfoUser.YourRating).toFixed(1)}</p>
@@ -233,6 +247,24 @@ export default function ImageAndInfo(props) {
                 }}
               >
                 refresh GPS
+              </Button>
+              <Button
+                variant='contained'
+                color='secondary'
+                startIcon={<DeleteIcon />}
+                onClick={DeleteMyAccount}
+                style={{
+                  marginTop: "15px",
+                  fontWeight: "600",
+                  fontSize: "11px",
+                  paddingBottom: "5px",
+                  paddingTop: "5px",
+                  paddingLeft: "12px",
+                  paddingRight: "12px",
+                  backgroundColor: "var(--background-Nav)",
+                }}
+              >
+                Delete my account
               </Button>
             </div>
           ) : (
@@ -288,7 +320,7 @@ export default function ImageAndInfo(props) {
                   <Button
                     variant='contained'
                     color='secondary'
-                    startIcon={<FavoriteIcon />}
+                    startIcon={<FavoriteBorderIcon />}
                     style={{
                       marginTop: "15px",
                       fontWeight: "600",

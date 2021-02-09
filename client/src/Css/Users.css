@@ -151,6 +151,9 @@
   left: 50%;
   transform: translate(-50%, 200px);
 }
+.UserActionsRating .MuiRating-iconEmpty {
+  color: rgba(95, 95, 95, 0.78);
+}
 .UserAfterClick .UserActionsRating {
   transform: translate(-50%, 0px);
   filter: none !important;

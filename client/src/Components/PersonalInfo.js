@@ -35,11 +35,16 @@ export default function PersonalInfo(props) {
       value: "Male",
       label: "Male",
     },
+    {
+      value: "Other",
+      label: "Other",
+    },
   ];
   const UpdateInfoUser = () => {
     try {
       Axios.post("/Profile/EditInfoUser", props.InfoUser).then((result) => {
         if (result.data !== "NoUpdate") {
+          ctx.cache.users = []
           props.changeShowSuccess(true);
           let userInfo = JSON.parse(localStorage.getItem("userInfo"));
           props.changeUserNameAndEmail((oldValue) => ({ ...oldValue, email: props.InfoUser.Email, userName: props.InfoUser.UserName }));
@@ -90,12 +95,12 @@ export default function PersonalInfo(props) {
         }
       }
       if (key === 7) {
-        if (inputInfo.value !== "Male" && inputInfo.value !== "Female") {
+        if (inputInfo.value !== "Male" && inputInfo.value !== "Female" && inputInfo.value !== "Other") {
           inputsError.push("Gender is not valid");
         }
       }
       if (Await.length === 2) {
-        if (props.InfoUser.ListInterest.length === 0 || props.InfoUser.ListInterest.length > 5) inputsError.push("ListInterest is not valid or greater than 5");
+        if (props.InfoUser.ListInterest.length === 0 || props.InfoUser.ListInterest.length > 5 || !props.InfoUser.ListInterest.every((Interest) => Interest.length > 1 && Interest.length <= 25)) inputsError.push("ListInterest is not valid or greater than 5");
         if (props.InfoUser.Biography.trim().length === 0 || props.InfoUser.Biography.trim().length > 100) inputsError.push("Biography is not Valid, must not be empty or less than 100 letters");
         if (inputsError.every((items) => items === "")) {
           UpdateInfoUser();

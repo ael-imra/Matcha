@@ -29,6 +29,7 @@ const Step2 = (props) => {
               step4: { ...oldValue.step4, yourInterest: arr },
             }))
           }
+          max={5}
         />
       </div>
     </>

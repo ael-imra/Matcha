@@ -1,5 +1,5 @@
 import React from 'react'
-import '../Css/Switch.css'
+import '../Css/Toggle.css'
 function Toggle(props) {
   const style = {
     transition: 'all 0.5s',

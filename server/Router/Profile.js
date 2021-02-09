@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { Validate, isValidDate, getAge } = require("../tools/validate");
 const md5 = require("md5");
+const haversine = require("haversine-distance");
 const { auth } = require("./Authentication");
 router.post("/EditInfoUser", auth, async function (req, res) {
   const locals = req.app.locals;
@@ -19,8 +20,9 @@ router.post("/EditInfoUser", auth, async function (req, res) {
     Biography &&
     Biography.length <= 100 &&
     (Sexual.trim() === "Male" || Sexual.trim() === "Female" || Sexual.trim() === "Female Male" || Sexual.trim() === "Male Female") &&
-    (Gender.trim() === "Male" || Gender.trim() === "Female") &&
+    (Gender.trim() === "Male" || Gender.trim() === "Female" || Gender.trim() === "Other") &&
     JSON.parse(ListInterest).length &&
+    JSON.parse(ListInterest).every((Interest) => Interest.length !== 1 && Interest.length <= 25) &&
     JSON.parse(ListInterest).length <= 5
   ) {
     Sexual = Sexual.trim();
@@ -115,7 +117,7 @@ router.get("/GetUser/:userName", auth, async function (req, res) {
     if (IdUserReceiver) {
       const ifNotBlock = await locals.ifNotBlock(req.userInfo.IdUserOwner, IdUserReceiver, locals);
       if (ifNotBlock) {
-        const result = await locals.select("Users", ["FirstName", "UserName", "Email", "DataBirthday", "LastName", "Gender", "Sexual", "Biography", "ListInterest", "Images", "LastLogin", "Active"], {
+        const result = await locals.select("Users", ["FirstName", "UserName", "Email", "DataBirthday", "LastName", "Gender", "Sexual", "Biography", "ListInterest", "Images", "LastLogin", "Active", "Latitude", "Longitude"], {
           UserName: req.params.userName,
           IsActive: 1,
         });
@@ -125,22 +127,10 @@ router.get("/GetUser/:userName", auth, async function (req, res) {
           const CountRating = await locals.CountRating(req.params.userName, locals);
           const CountFriends = await locals.query("SELECT COUNT(*) As Count FROM Friends WHERE (IdUserOwner=? OR IdUserReceiver=?) AND `Match`=1", [IdUserReceiver, IdUserReceiver]);
           const CheckFriends = await locals.query("select Count(*) As Count From  Friends WHERE (IdUserOwner=? AND IdUserReceiver=?) Or (IdUserOwner=? AND IdUserReceiver=?) AND `Match`=1", [req.userInfo.IdUserOwner, IdUserReceiver, IdUserReceiver, req.userInfo.IdUserOwner]);
-          const values = { ...result[0], YourRating, CountRating, CountFriends: CountFriends[0].Count, CheckFriends: CheckFriends[0].Count, MyRating };
-          if (result[0].UserName !== req.userInfo.UserName) {
-            await locals.insert("Hitory", {
-              IdUserOwner: IdUserReceiver,
-              IdUserReceiver: req.userInfo.IdUserOwner,
-              Content: `${req.userInfo.UserName} visit you profile`,
-              DateCreation: new Date(),
-            });
-            await locals.insert("Hitory", {
-              IdUserOwner: req.userInfo.IdUserOwner,
-              IdUserReceiver: IdUserReceiver,
-              Content: `your visit profile of ${req.params.userName}`,
-              DateCreation: new Date(),
-            });
+          const Distance = haversine({ lat: result[0].Latitude, lng: result[0].Longitude }, { lat: req.userInfo.Latitude, lng: req.userInfo.Longitude });
+          const values = { ...result[0], YourRating, CountRating, CountFriends: CountFriends[0].Count, CheckFriends: CheckFriends[0].Count, MyRating, Distance };
+          if (result[0].UserName !== req.userInfo.UserName) 
             locals.notification(req, "View", req.userInfo.UserName, req.params.userName);
-          }
           locals.sendResponse(res, 200, values);
         } else locals.sendResponse(res, 200, "User not found");
       } else locals.sendResponse(res, 200, "User not found");
@@ -150,39 +140,42 @@ router.get("/GetUser/:userName", auth, async function (req, res) {
 router.post("/CheckProfileOfYou/:userName", auth, async function (req, res) {
   const locals = req.app.locals;
   const IdUserReceiver = await locals.getIdUserOwner(req.params.userName);
-  const ifNotBlock = await locals.ifNotBlock(req.userInfo.IdUserOwner, IdUserReceiver, locals);
-  if (ifNotBlock) {
-    const test = await locals.checkProfileOfYou(req.userInfo.Token, req.params.userName, locals);
-    const result = await locals.checkUserNotReport({
-      IdUserOwner: req.userInfo.IdUserOwner,
-      IdUserReceiver: IdUserReceiver,
-    });
-    res.send({ isProfileOfYou: test, isNotReport: result });
+  if (IdUserReceiver) {
+    const ifNotBlock = await locals.ifNotBlock(req.userInfo.IdUserOwner, IdUserReceiver, locals);
+    if (ifNotBlock) {
+      const ProfileOfYou = await locals.checkProfileOfYou(req.userInfo.Token, req.params.userName, locals);
+      const result = await locals.checkUserNotReport({
+        IdUserOwner: req.userInfo.IdUserOwner,
+        IdUserReceiver: IdUserReceiver,
+      });
+      res.send({ isProfileOfYou: ProfileOfYou, isNotReport: result });
+    } else res.send({ isProfileOfYou: "User not found", isNotReport: false });
   } else res.send({ isProfileOfYou: "User not found", isNotReport: false });
 });
-router.post('/BlockUser/:userName', auth, async function (req, res) {
-  const locals = req.app.locals
-  const IdUserReceiver = await locals.getIdUserOwner(req.params.userName)
+router.post("/BlockUser/:userName", auth, async function (req, res) {
+  const locals = req.app.locals;
+  const IdUserReceiver = await locals.getIdUserOwner(req.params.userName);
   if (IdUserReceiver) {
-    const ifNotBlock = await locals.ifNotBlock(req.userInfo.IdUserOwner, IdUserReceiver, locals)
+    const ifNotBlock = await locals.ifNotBlock(req.userInfo.IdUserOwner, IdUserReceiver, locals);
     if (ifNotBlock) {
       const values = {
         IdUserOwner: req.userInfo.IdUserOwner,
         IdUserReceiver: IdUserReceiver,
         DateBlock: new Date(),
-      }
-      locals.notification(req,'removeFriend',req.userInfo.UserName,req.params.userName)
-      const resultInsert = await locals.insert('Blacklist', values)
+      };
+      locals.notification(req, "removeFriend", req.userInfo.UserName, req.params.userName);
+      const resultInsert = await locals.insert("Blacklist", values);
       if (resultInsert) {
-        await locals.query('DELETE FROM Friends WHERE (IdUserOwner=? AND IdUserReceiver=?) Or (IdUserOwner=? AND IdUserReceiver=?)', [req.userInfo.IdUserOwner, IdUserReceiver, IdUserReceiver, req.userInfo.IdUserOwner])
-        await locals.query('DELETE FROM Hitory WHERE (IdUserOwner=? AND IdUserReceiver=?) Or (IdUserOwner=? AND IdUserReceiver=?)', [req.userInfo.IdUserOwner, IdUserReceiver, IdUserReceiver, req.userInfo.IdUserOwner])
-        await locals.query('DELETE FROM Notifications WHERE (IdUserOwner=? AND IdUserReceiver=?) Or (IdUserOwner=? AND IdUserReceiver=?)', [req.userInfo.IdUserOwner, IdUserReceiver, IdUserReceiver, req.userInfo.IdUserOwner])
-        await locals.query('DELETE FROM Messages WHERE (IdUserOwner=? AND IdUserReceiver=?) Or (IdUserOwner=? AND IdUserReceiver=?)', [req.userInfo.IdUserOwner, IdUserReceiver, IdUserReceiver, req.userInfo.IdUserOwner])
-        locals.sendResponse(res, 200, 'successful')
-      } else locals.sendResponse(res, 200, 'Error')
-    } else locals.sendResponse(res, 200, 'Error')
-  } else locals.sendResponse(res, 200, 'Error')
-})
+        await locals.query("DELETE FROM Friends WHERE (IdUserOwner=? AND IdUserReceiver=?) Or (IdUserOwner=? AND IdUserReceiver=?)", [req.userInfo.IdUserOwner, IdUserReceiver, IdUserReceiver, req.userInfo.IdUserOwner]);
+        await locals.query("DELETE FROM History WHERE (IdUserOwner=? AND IdUserReceiver=?) Or (IdUserOwner=? AND IdUserReceiver=?)", [req.userInfo.IdUserOwner, IdUserReceiver, IdUserReceiver, req.userInfo.IdUserOwner]);
+        await locals.query("DELETE FROM Notifications WHERE (IdUserOwner=? AND IdUserReceiver=?) Or (IdUserOwner=? AND IdUserReceiver=?)", [req.userInfo.IdUserOwner, IdUserReceiver, IdUserReceiver, req.userInfo.IdUserOwner]);
+        await locals.query("DELETE FROM Rating WHERE (IdUserOwner=? AND IdUserReceiver=?) Or (IdUserOwner=? AND IdUserReceiver=?)", [req.userInfo.IdUserOwner, IdUserReceiver, IdUserReceiver, req.userInfo.IdUserOwner]);
+        await locals.query("DELETE FROM Messages WHERE (IdUserOwner=? AND IdUserReceiver=?) Or (IdUserOwner=? AND IdUserReceiver=?)", [req.userInfo.IdUserOwner, IdUserReceiver, IdUserReceiver, req.userInfo.IdUserOwner]);
+        locals.sendResponse(res, 200, "successful");
+      } else locals.sendResponse(res, 200, "Error");
+    } else locals.sendResponse(res, 200, "Error");
+  } else locals.sendResponse(res, 200, "Error");
+});
 
 router.get("/ReportUser/:userName", auth, async function (req, res) {
   const locals = req.app.locals;
@@ -207,7 +200,7 @@ router.get("/ReportUser/:userName", auth, async function (req, res) {
           Content: `${req.userInfo.UserName} report you`,
           DateCreation: new Date(),
         };
-        const resultInsert = await locals.insert("Hitory", value);
+        const resultInsert = await locals.insert("History", value);
         if (resultInsert) locals.sendResponse(res, 200, "successful");
         else locals.sendResponse(res, 200, "Error");
       } else locals.sendResponse(res, 200, "Error");
@@ -229,6 +222,18 @@ router.post("/EmailReadyTake", auth, async function (req, res) {
     if (EmailReadyTake[0].COUNT !== 1 || req.userInfo.Email === req.body.Email) res.send(true);
     else res.send(false);
   } else res.send("Error");
+});
+router.post("/DeleteMyAccount", auth, async function (req, res) {
+  const locals = req.app.locals;
+  await locals.query("DELETE FROM Friends WHERE (IdUserOwner=? Or IdUserReceiver=?)", [req.userInfo.IdUserOwner, req.userInfo.IdUserOwner]);
+  await locals.query("DELETE FROM History WHERE (IdUserOwner=? Or IdUserReceiver=?)", [req.userInfo.IdUserOwner, req.userInfo.IdUserOwner]);
+  await locals.query("DELETE FROM Notifications WHERE (IdUserOwner=? Or IdUserReceiver=?)", [req.userInfo.IdUserOwner, req.userInfo.IdUserOwner]);
+  await locals.query("DELETE FROM Messages WHERE (IdUserOwner=? Or IdUserReceiver=?)", [req.userInfo.IdUserOwner, req.userInfo.IdUserOwner]);
+  await locals.query("DELETE FROM report WHERE (IdUserOwner=? Or IdUserReceiver=?)", [req.userInfo.IdUserOwner, req.userInfo.IdUserOwner]);
+  await locals.query("DELETE FROM Rating WHERE (IdUserOwner=? Or IdUserReceiver=?)", [req.userInfo.IdUserOwner, req.userInfo.IdUserOwner]);
+  await locals.query("DELETE FROM Blacklist WHERE (IdUserOwner=? Or IdUserReceiver=?)", [req.userInfo.IdUserOwner, req.userInfo.IdUserOwner]);
+  await locals.query("DELETE FROM Users WHERE IdUserOwner=? ", [req.userInfo.IdUserOwner]);
+  res.send("Delete success");
 });
 router.post("/UpdatePosition", auth, async function (req, res) {
   const locals = req.app.locals;

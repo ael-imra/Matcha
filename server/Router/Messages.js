@@ -36,7 +36,7 @@ const router = express.Router()
 
 router.get('/readMessages/:UserName', async (req, res) => {
   const locals = req.app.locals
-  if (req.params && req.params.UserName && req.userInfo.UserName !== req.params.UserName) {
+  if (req.params && locals.Validate('Username',req.params.UserName) && req.userInfo.UserName !== req.params.UserName) {
     const IdUserOwner = await locals.getIdUserOwner(req.params.UserName)
     if (IdUserOwner) locals.update('Messages', { IsRead: 1 }, { IdUserOwner, IdUserReceiver: req.userInfo.IdUserOwner })
     locals.sendResponse(res, 200, 'all messages is readed')
@@ -54,7 +54,7 @@ router.get('/deleteMessage/:id', async (req, res) => {
 
 router.get('/:UserName/:index', async (req, res) => {
   const locals = req.app.locals
-  if (req.params && req.params.UserName && req.userInfo.UserName !== req.params.UserName) {
+  if (req.params && locals.Validate('Username',req.params.UserName) && req.userInfo.UserName !== req.params.UserName) {
     req.params.index = req.params.index && parseInt(req.params.index) > 0 ? parseInt(req.params.index) : 0
     const IdUserReceiver = await locals.getIdUserOwner(req.params.UserName)
     const messages = await locals.query('SELECT * FROM Messages WHERE (IdUserOwner=? AND IdUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?) ORDER BY `DateCreation` DESC LIMIT ?,?', [req.userInfo.IdUserOwner, IdUserReceiver, IdUserReceiver, req.userInfo.IdUserOwner, req.params.index, 30])

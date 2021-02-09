@@ -9,7 +9,7 @@
 .body-titre {
   width: 400px;
   transition: height 1000ms;
-  animation: fade-in-left 0.6s both;
+  animation: fade-in-left 0.6s;
 }
 .body-img img {
   transform: translateY(-30px);

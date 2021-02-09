@@ -30,12 +30,12 @@ function Select(props) {
   }
   function changeItem(index, active) {
     const newArray = [...list]
-    if (newArray[index]) newArray[index].selected = active ? true : false
+    if (newArray[index]) newArray[index].selected = active && getListActive(list).length < props.max ? true : false
     changeList(newArray)
     if (props.change) props.change(getListActive(newArray))
   }
   function keyUp(event) {
-    if (event.keyCode === 13) {
+    if (event.keyCode === 13 && event.target.value.trim() && getListActive(list).length < props.max) {
       const newIndex = list.length
       const newArray = [...list, { id: newIndex, value: event.target.value, selected: true }]
       event.target.value = ''

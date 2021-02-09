@@ -5,13 +5,18 @@ function ImageLoader(props) {
   const imageRef = useRef(null)
   useEffect(() => {
     let unmount = false
+    let timeout = false
+    setTimeout(()=>timeout = true,5000)
     async function fetchDataImage(src) {
-      try {
-        const res = await fetch(src)
-        const data = await res.blob()
-        return data
-      } catch (err) {
-        return await fetchDataImage(src)
+      if (!timeout)
+      {
+        try {
+          const res = await fetch(src.indexOf('http') > -1?src:'http://' + window.location.hostname + ':5000'+src)
+          const data = await res.blob()
+          return data
+        } catch (err) {
+          return await fetchDataImage(src)
+        }
       }
     }
     fetchDataImage(props.src).then((data) => {

@@ -103,5 +103,5 @@
   }
 }
 .AnimationBtn {
-  animation: jello-horizontal 1s both;
+  animation: jello-horizontal 1s;
 }

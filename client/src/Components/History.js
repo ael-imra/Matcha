@@ -13,19 +13,10 @@ import { useHistory } from "react-router-dom";
 import Axios from "axios";
 import "../Css/History.css";
 import ProfileImage from "./ProfileImage";
-function ConvertDate(date, type) {
-  if (date && type) {
-    const dayOfWeek = ["Sunday", "Monday", "Thursday", "Wednesday", "Tuesday", "Friday", "Saturday"];
-    const myDate = new Date() - Date.parse(date);
-    if (type && type === "time") return new Date(date).toISOString().slice(10, 16).replace("T", " ");
-    else if (type && type === "date") return new Date(date).toISOString().slice(0, 10);
-    if (myDate.getFullYear() === 0 && myDate.getMonth() === 0 && myDate.getDate() === 1) return "Yesterday";
-    else if (myDate.getFullYear() === 0 && myDate.getMonth() === 0 && myDate.getDate() < 7 && myDate.getDate() > 0) return dayOfWeek[myDate.getDay()];
-    else if (myDate.getFullYear() === 0 && myDate.getMonth() === 0 && myDate.getDate() === 0) return new Date(date).toISOString().slice(0, 19).replace("T", " ");
-    return new Date(date).toISOString().slice(0, 10);
-  }
-}
+import { DataContext } from "../Context/AppContext";
+
 export default function History() {
+  const ctx = React.useContext(DataContext);
   const [usersBlock, changeUsersBlock] = React.useState([]);
   const [listHistory, changeListHistory] = React.useState([]);
   const [active, changeActive] = React.useState("History");
@@ -72,7 +63,7 @@ export default function History() {
               style={{
                 marginTop: "0px",
                 marginBottom: "0px",
-                backgroundColor: "var(--background-QuickActions)",
+                backgroundColor: "var(--background-DashboardBody)",
                 marginLeft: "0px",
               }}
             >
@@ -200,7 +191,7 @@ export default function History() {
                   <ListItemText primary={user.UserName} secondary={user.Content} style={{ fontSize: "17px", cursor: "pointer" }} />
                   {width >= 552 ? (
                     <ListItemSecondaryAction>
-                      <p style={{ color: "var(--color-FriendInfo-firstChild)" }}>{ConvertDate(user.DateCreation, "time")}</p>
+                      <p style={{ color: "var(--color-FriendInfo-firstChild)" }}>{ctx.ref.ConvertDate(user.DateCreation)}</p>
                     </ListItemSecondaryAction>
                   ) : (
                     ""

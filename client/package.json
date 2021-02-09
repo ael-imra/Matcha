@@ -20,8 +20,8 @@
     "socket.io-client": "^3.0.4"
   },
   "scripts": {
-    "startProduc": "npm run build && PORT=3000 serve -s build",
-    "startDev": "react-scripts start",
+    "startProduc": "npm run build && PORT=3001 serve -s build",
+    "startDev": "export HTTPS=true&&PORT=3000 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

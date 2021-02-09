@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import '../Css/header.css';
 import logo from '../Images/logo.svg';
 import { DataContext } from '../Context/AppContext';
-import { Toggle } from './Switch';
+import { Toggle } from './Toggle';
 import { useLocation } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 

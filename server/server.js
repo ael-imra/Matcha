@@ -22,8 +22,9 @@ const io = require('socket.io')(http, {
     origin: '*',
   },
 })
+const validate = require('./tools/validate')
 
-tools.init(app, { ...mysql, ...tools, sendMail, crypto, sockets: [] })
+tools.init(app, { ...mysql, ...tools, sendMail, crypto,...validate, sockets: [] })
 async function sendFriendMyState(Active, IdUserOwner, UserName, sockets) {
   const friends = await mysql.query('SELECT * FROM Friends WHERE `Match`=1 AND (IdUserOwner=? OR IdUserReceiver=?)', [IdUserOwner, IdUserOwner])
   if (friends.length > 0)
@@ -53,7 +54,6 @@ async function sendFriendMyState(Active, IdUserOwner, UserName, sockets) {
     })
 }
 io.on('connection', (socket) => {
-  console.log('User Connected')
   socket.on('token', async (token) => {
     const result = await mysql.select('Users', ['UserName', 'IdUserOwner', 'Images'], {
       JWT: token,
@@ -72,7 +72,7 @@ io.on('connection', (socket) => {
     if (obj) {
       const { user, message } = JSON.parse(obj)
       const sockets = app.locals.sockets
-      if (user.UserName && message && message.Content.trim() && socket.UserName) {
+      if (user.UserName && message && message.Content.trim() && message.Content.trim().length < 255 && socket.UserName) {
         const IdUserOwner = await mysql.getIdUserOwner(user.UserName)
         const result = await mysql.query('SELECT * FROM Friends WHERE `Match`=1 AND ((IdUserOwner=? AND IdUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?))', [socket.IdUserOwner, IdUserOwner, IdUserOwner, socket.IdUserOwner])
         ifNotBlock = await app.locals.ifNotBlock(IdUserOwner, socket.IdUserOwner, app.locals)
@@ -121,7 +121,6 @@ io.on('connection', (socket) => {
     }
   })
   socket.on('disconnect', async () => {
-    console.log('user Disconnected')
     if (socket.UserName) {
       app.locals.sockets[socket.IdUserOwner] = app.locals.sockets[socket.IdUserOwner].filter((item) => item.id !== socket.id)
       if (app.locals.sockets[socket.IdUserOwner].length === 0) {

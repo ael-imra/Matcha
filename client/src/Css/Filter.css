@@ -59,7 +59,7 @@
   min-width: 270px;
   display: flex;
   flex-flow: column;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
 }

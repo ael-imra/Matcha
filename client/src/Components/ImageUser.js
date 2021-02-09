@@ -10,7 +10,7 @@ export default function ImageUser(props) {
     let arrayPicture = Array.from(document.querySelectorAll(".Image"));
     let index = arrayPicture.indexOf(e.target.closest(".Image")) + 1;
     try {
-      Axios.post("/Profile/MakeImageDefault", { index: index }).then((result) => {
+      Axios.post("/Profile/MakeImageDefault", { index: index }).then(() => {
         const arrayImage = props.InfoUser.Images;
         [arrayImage[0], arrayImage[index]] = [arrayImage[index], arrayImage[0]];
         let userInfo = JSON.parse(localStorage.getItem("userInfo"));

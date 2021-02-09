@@ -19,7 +19,7 @@ const Body = (props) => {
     warning: "",
     success: "",
   });
-  const handleClose = (event, reason) => {
+  const handleClose = () => {
     ChangeErrorMessages({
       error: "",
       warning: "",
@@ -98,7 +98,7 @@ const Body = (props) => {
         </Route>
       </Switch>
 
-      <Snackbar open={showMessage} autoHideDuration={6000} onClose={handleClose}>
+      <Snackbar open={showMessage} autoHideDuration={4000} onClose={handleClose}>
         {ErrorMessages.error !== "" ? (
           <Alert severity='error'>{ErrorMessages.error}</Alert>
         ) : ErrorMessages.warning !== "" ? (

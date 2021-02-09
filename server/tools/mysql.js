@@ -65,10 +65,9 @@ mysql.filter = async function (values) {
       (SELECT AVG(RatingValue) FROM Rating WHERE IdUserOwner=? AND  IdUserReceiver = u.IdUserOwner group by IdUserReceiver) AS myRating,\
       (SELECT IdUserReceiver FROM Friends WHERE u.IdUserOwner = IdUserReceiver AND IdUserOwner=?) AS friendreceiver,\
       (SELECT IdUserOwner FROM Friends WHERE u.IdUserOwner = IdUserOwner AND `Match`=1 AND IdUserReceiver=?) AS friendowner,\
-      (SELECT IdBlacklist FROM Blacklist WHERE (IdUserOwner=? AND IdUserReceiver=u.IdUserOwner) OR (IdUserOwner=u.IdUserOwner AND IdUserReceiver=?)) AS blackList,\
-      (SELECT COUNT(IdReport) FROM Report WHERE IdUserReceiver=u.IdUserOwner) AS CountReport\
+      (SELECT IdBlacklist FROM Blacklist WHERE (IdUserOwner=? AND IdUserReceiver=u.IdUserOwner) OR (IdUserOwner=u.IdUserOwner AND IdUserReceiver=?)) AS blackList\
       FROM Users u \
-      WHERE u.IdUserOwner != ? AND u.UserName LIKE ? AND (? = "Male Female" || u.Gender=?) > 0 AND u.Images != "[]"\
+      WHERE u.IsActive=1 AND u.IdUserOwner != ? AND u.UserName LIKE ? AND (? = "Male Female" || u.Gender=?) > 0 AND u.Images != "[]"\
       HAVING Age >= ? AND Age <= ? AND ((rating IS NULL AND ? = 0) OR (rating >= ? AND rating <= ?)) AND friendowner IS NULL AND friendreceiver IS NULL AND blackList IS NULL'
     const result = await mysql.query(query, [values.IdUserOwner, values.IdUserOwner, values.IdUserOwner, values.IdUserOwner, values.IdUserOwner, values.IdUserOwner, values.name, values.sexual, values.sexual, values.age[0], values.age[1], values.rating[0], values.rating[0], values.rating[1]])
     return result
@@ -97,11 +96,11 @@ mysql.searchUsersBlocks = async function (idUserOwner, userName) {
   return result
 }
 mysql.selectHistory = async function (idUserOwner) {
-  const result = await mysql.query(`SELECT u.IdUserOwner,UserName,Content,Images,DateCreation FROM Users u INNER JOIN Hitory h WHERE h.idUserOwner=? AND u.IdUserOwner = h.IdUserReceiver ORDER BY IdHitory DESC`, idUserOwner)
+  const result = await mysql.query(`SELECT u.IdUserOwner,UserName,Content,Images,DateCreation FROM Users u INNER JOIN History h WHERE h.idUserOwner=? AND u.IdUserOwner = h.IdUserReceiver ORDER BY IdHistory DESC`, idUserOwner)
   return result
 }
 mysql.searchHistory = async function (idUserOwner, userName) {
-  const result = await mysql.query(`SELECT u.IdUserOwner,UserName,Content,Images,DateCreation FROM Users u INNER JOIN Hitory h WHERE h.idUserOwner=? AND u.IdUserOwner = h.IdUserReceiver AND u.UserName LIKE ? ORDER BY IdHitory DESC`, [idUserOwner, userName + '%'])
+  const result = await mysql.query(`SELECT u.IdUserOwner,UserName,Content,Images,DateCreation FROM Users u INNER JOIN History h WHERE h.idUserOwner=? AND u.IdUserOwner = h.IdUserReceiver AND u.UserName LIKE ? ORDER BY IdHistory DESC`, [idUserOwner, userName + '%'])
   return result
 }
 module.exports = mysql

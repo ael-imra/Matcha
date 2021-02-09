@@ -117,7 +117,7 @@ export default function Profile(props) {
               <p style={{ display: "block", fontSize: "15px" }}>{`* success Update `}</p>
             </Alert>
           </Snackbar>
-          <UpdatePassword showUpdatePassword={showUpdatePassword} formUpdatePasswordClose={formUpdatePasswordClose} ChangeError={changeError} ChangeShowError={changeShowError} />
+          <UpdatePassword showUpdatePassword={showUpdatePassword} formUpdatePasswordClose={formUpdatePasswordClose} ChangeError={changeError} ChangeShowError={changeShowError} changeShowSuccess={changeShowSuccess}/>
           <Dialog open={showImage.state} onClose={exitFullscreenImage}>
             <img alt='...' src={showImage.src} style={{ width: "100%" }} />
           </Dialog>

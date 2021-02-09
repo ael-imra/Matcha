@@ -33,7 +33,7 @@ const SingUp = (props) => {
       <p className="t1" style={{ color: ctx.cache.Mode === 'Dark' ? 'white' : 'black' }}>
         Sign up to Matcha
       </p>
-      <SingSocialMedia ChangeErrorMessages={props.dataHome.ChangeErrorMessages} type="sing up" titre="sing up with Google" />
+      <SingSocialMedia ChangeErrorMessages={props.dataHome.ChangeErrorMessages} type="sing up" />
       <Line str="Or" color={ctx.cache.Mode} />
       <div className="form-sing">
         <div className="inline-group">

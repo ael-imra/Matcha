@@ -33,7 +33,7 @@ function Filter() {
       </div>
       <div className="FilterAdvance">
         <div className="FilterAdvanceFirst">
-          <Select list={listInterest} change={changeListActive} active={listActive} />
+          <Select list={listInterest} change={changeListActive} active={listActive} max={5} />
         </div>
         <div className="FilterAdvanceSecond">
           <div className="FilterAdvanceAge">

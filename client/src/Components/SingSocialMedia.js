@@ -46,12 +46,14 @@ const SingSocialMedia = (props) => {
                     }
                   } else {
                     if (result.data === "account is not active") props.ChangeErrorMessages({ error: "", warning: "This Account is deactivated please visit your email", success: "" });
-                    else props.ChangeErrorMessages({ error: "oops ... email not found", warning: "", success: "" });
+                    else {
+                      console.log("ko");
+                      props.ChangeErrorMessages({ error: "oops ... email not found", warning: "", success: "" });
+                    }
                   }
                 })
                 .catch((error) => {});
-            } catch (error) {
-            }
+            } catch (error) {}
           }
         } else {
           changeUser({
@@ -64,7 +66,6 @@ const SingSocialMedia = (props) => {
           changeShowFormPassword(true);
         }
       } catch (error) {}
-    else console.log("allow cookie ");
   };
   const insert = () => {
     try {
@@ -79,8 +80,7 @@ const SingSocialMedia = (props) => {
           if (result.data === "successful") props.ChangeHome(5);
         })
         .catch(() => {});
-    } catch (error) {
-    }
+    } catch (error) {}
   };
   return (
     <div className='sing-social-media'>

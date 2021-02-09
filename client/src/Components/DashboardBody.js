@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import IconMenu from './IconMenu'
-import { Toggle } from './Switch'
+import { Toggle } from './Toggle'
 import '../Css/DashboardBody.css'
 import { DataContext } from '../Context/AppContext'
 import { Route, Switch, useHistory, useLocation } from 'react-router-dom'
@@ -42,7 +42,7 @@ function DashboardBody(props) {
     <div className="DashboardBody" style={props.style ? props.style : {}}>
       <div className="DashboardBodyHeader">
         <div>
-          {props.width <= 1000 ? (
+          {props.width <= 1240 ? (
             <IconComponent
               dataHome={{
                 showMenu: 0,
