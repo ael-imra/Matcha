@@ -99,7 +99,19 @@ const Step = (props) => {
       DataStep.step2.longitude = pos.coords.longitude
       if (!unmount) changeInfoStep({ ...DataStep })
     }
-    navigator.geolocation.getCurrentPosition(success, () => 0)
+    navigator.permissions.query({
+        name: 'geolocation'
+    }).then(function(result) {
+        permissionGeolocation(result.state)
+        result.onchange = function() {
+            permissionGeolocation(result.state);
+        }
+    });
+    function permissionGeolocation(state)
+    {
+      if (state === 'granted' || state === "promp")
+        navigator.geolocation.getCurrentPosition(success, () => 0)
+    }
     return () => (unmount = true)
     // eslint-disable-next-line
   }, [])

@@ -139,7 +139,21 @@ export default function ImageAndInfo(props) {
         }).then((result) => {})
       } catch (error) {}
     }
-    navigator.geolocation.getCurrentPosition(success, error)
+    navigator.permissions.query({
+      name: 'geolocation'
+    }).then(function(result) {
+        permissionGeolocation(result.state)
+        result.onchange = function() {
+            permissionGeolocation(result.state);
+        }
+    });
+    function permissionGeolocation(state)
+    {
+      if (state === 'granted' || state === "promp")
+        navigator.geolocation.getCurrentPosition(success, error)
+      else
+        error()
+    }
   }
 
   let deleteImageProfile = (e) => {

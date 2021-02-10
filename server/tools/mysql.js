@@ -106,11 +106,11 @@ mysql.checkUserNotReport = async function (values) {
   return result && result.length > 0 && !result[0].Count
 }
 mysql.selectUsersBlocks = async function (idUserOwner) {
-  const result = await mysql.query(`SELECT u.IdUserOwner,UserName,Email,Images FROM Users u INNER JOIN Blacklist b WHERE b.idUserOwner=? AND u.IdUserOwner = b.IdUserReceiver ORDER BY IdBlacklist DESC`, idUserOwner)
+  const result = await mysql.query(`SELECT u.IdUserOwner,UserName,Images FROM Users u INNER JOIN Blacklist b WHERE b.idUserOwner=? AND u.IdUserOwner = b.IdUserReceiver ORDER BY IdBlacklist DESC`, idUserOwner)
   return result
 }
 mysql.searchUsersBlocks = async function (idUserOwner, userName) {
-  const result = await mysql.query(`SELECT u.IdUserOwner,UserName,Email,Images FROM Users u INNER JOIN Blacklist b WHERE b.idUserOwner=? AND u.IdUserOwner = b.IdUserReceiver AND u.UserName LIKE ? ORDER BY IdBlacklist DESC`, [idUserOwner, userName + '%'])
+  const result = await mysql.query(`SELECT u.IdUserOwner,UserName,Images FROM Users u INNER JOIN Blacklist b WHERE b.idUserOwner=? AND u.IdUserOwner = b.IdUserReceiver AND u.UserName LIKE ? ORDER BY IdBlacklist DESC`, [idUserOwner, userName + '%'])
   return result
 }
 mysql.selectHistory = async function (idUserOwner) {

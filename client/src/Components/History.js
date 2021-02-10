@@ -138,7 +138,7 @@ export default function History() {
                   ) : (
                     ''
                   )}
-                  <ListItemText primary={user.UserName} secondary={user.Email} style={{ fontSize: '17px' }} alt="..." />
+                  <ListItemText primary={user.UserName} style={{ fontSize: '17px' }} alt="..." />
                   <ListItemSecondaryAction>
                     <Button
                       variant="contained"

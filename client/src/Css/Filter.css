@@ -86,3 +86,6 @@
 .FilterAdvance .MuiChip-root * {
   color: white !important;
 }
+.Filter .MuiSlider-root{ 
+  padding: 10px 0;
+}
