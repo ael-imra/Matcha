@@ -24,7 +24,7 @@ const io = require('socket.io')(http, {
 })
 const validate = require('./tools/validate')
 
-tools.init(app, { ...mysql, ...tools, sendMail, crypto,...validate, sockets: [] })
+tools.init(app, { ...mysql, ...tools, sendMail, crypto, ...validate, sockets: [] })
 async function sendFriendMyState(Active, IdUserOwner, UserName, sockets) {
   const friends = await mysql.query('SELECT * FROM Friends WHERE `Match`=1 AND (IdUserOwner=? OR IdUserReceiver=?)', [IdUserOwner, IdUserOwner])
   if (friends.length > 0)
@@ -146,6 +146,4 @@ app.get('/images/:image', (req, res) => {
   res.sendFile(`${__dirname}/images/${req.params.image}`)
 })
 app.use(tools.handleError)
-http.listen(process.env.PORT, () => {
-  console.log(`Matcha server app listening at http://localhost:${process.env.PORT}`)
-})
+http.listen(process.env.PORT)

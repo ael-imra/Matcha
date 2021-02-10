@@ -28,17 +28,15 @@ function User(props) {
         usernameReceiver,
         RatingValue: parseFloat(value).toFixed(1),
       })
-      .then((data) =>{
-        if (data.data instanceof Object && parseFloat(data.data.AVG) >= 0 && parseFloat(data.data.AVG) <= 5)
-        {
+      .then((data) => {
+        if (data.data instanceof Object && parseFloat(data.data.AVG) >= 0 && parseFloat(data.data.AVG) <= 5) {
           ctx.cache.users[props.index].rating = parseFloat(data.data.AVG).toFixed(1)
           changeRatingValue(() => ({
-              userValue: value,
-              avg: parseFloat(data.data.AVG).toFixed(1),
-            })
-          )
+            userValue: value,
+            avg: parseFloat(data.data.AVG).toFixed(1),
+          }))
         }
-        })
+      })
   }
   function addFriend(UserName) {
     axios
@@ -126,9 +124,9 @@ function User(props) {
     </div>
   )
 }
-function Users() {
+function Users(props) {
   const ctx = useContext(DataContext)
-  const [users, changeUsers] = useState(() => [...[...ctx.cache.users].splice(0,24)])
+  const [users, changeUsers] = useState(() => [...[...ctx.cache.users].splice(0, 24)])
   const [usersLoader, changeUsersLoader] = useState(false)
   const [length, changeLength] = useState(24)
   const usersRef = useRef()
@@ -143,17 +141,14 @@ function Users() {
     const { scrollHeight, scrollTop, offsetHeight } = usersRef.current
     if (offsetHeight + scrollTop + 300 > scrollHeight && !usersLoader && users[users.length - 1] !== 'limit') {
       if (length >= ctx.cache.users.length) ctx.ref.getUsers(ctx.cache.users.length, 24)
-      else changeUsers([...[...ctx.cache.users].splice(0,length+24)])
+      else changeUsers([...[...ctx.cache.users].splice(0, length + 24)])
       changeLength((oldValue) => oldValue + 24)
     }
   }
   function UserClick(event) {
-    if (!event.target.closest('.UserActionsRating') && !event.target.closest('.UserActions') && !event.target.closest('.UserImageSlideButtons'))
-    {
-      if (event.target.closest('.User').classList.contains('UserAfterClick'))
-        event.target.closest('.User').classList.remove('UserAfterClick')
-      else
-        event.target.closest('.User').classList.add('UserAfterClick')
+    if (!event.target.closest('.UserActionsRating') && !event.target.closest('.UserActions') && !event.target.closest('.UserImageSlideButtons')) {
+      if (event.target.closest('.User').classList.contains('UserAfterClick')) event.target.closest('.User').classList.remove('UserAfterClick')
+      else event.target.closest('.User').classList.add('UserAfterClick')
     }
   }
   function removeUser(UserName) {
@@ -169,7 +164,27 @@ function Users() {
     <>
       <div className="Users" onScroll={UsersScroll} ref={usersRef}>
         {users.map((obj, index) => {
-          if (index < length && obj !== 'limit') return <User index={index} key={obj.IdUserOwner} IdUserOwner={obj.IdUserOwner} images={JSON.parse(obj.Images)} city={obj.City} rating={obj.rating} myRating={obj.myRating} gender={obj.Gender} age={obj.Age} userName={obj.UserName} distance={obj.distance} listInterest={JSON.parse(obj.ListInterest)} removeUser={removeUser} blockUser={blockUser} onClick={UserClick} userInfo={localStorage.userInfo ? JSON.parse(localStorage.userInfo) : {}} />
+          if (index < length && obj !== 'limit')
+            return (
+              <User
+                index={index}
+                key={obj.IdUserOwner}
+                IdUserOwner={obj.IdUserOwner}
+                images={JSON.parse(obj.Images)}
+                city={obj.City}
+                rating={obj.rating}
+                myRating={obj.myRating}
+                gender={obj.Gender}
+                age={obj.Age}
+                userName={obj.UserName}
+                distance={obj.distance}
+                listInterest={JSON.parse(obj.ListInterest)}
+                removeUser={removeUser}
+                blockUser={blockUser}
+                onClick={UserClick}
+                userInfo={props.user}
+              />
+            )
           return null
         })}
       </div>

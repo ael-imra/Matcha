@@ -6,12 +6,11 @@ function ImageLoader(props) {
   useEffect(() => {
     let unmount = false
     let timeout = false
-    setTimeout(()=>timeout = true,5000)
+    setTimeout(() => (timeout = true), 5000)
     async function fetchDataImage(src) {
-      if (!timeout)
-      {
+      if (!timeout) {
         try {
-          const res = await fetch(src.indexOf('http') > -1?src:'http://' + window.location.hostname + ':5000'+src)
+          const res = await fetch(src.indexOf('http') > -1 ? src : 'http://' + window.location.hostname + ':5000' + src)
           const data = await res.blob()
           return data
         } catch (err) {

@@ -28,10 +28,10 @@ mysql.query = function (query, params) {
       if (error) resolve(error)
       else
         connection.query(query, params, (err, result) => {
-            if (err) reject(err)
-            else resolve(result)
-            connection.release(0)
-          })
+          if (err) reject(err)
+          else resolve(result)
+          connection.release(0)
+        })
     })
   })
 }
@@ -55,10 +55,11 @@ mysql.delete = async function (table, values) {
   return result
 }
 mysql.filter = async function (values) {
-  if (values && values.IdUserOwner && values.age instanceof Array && values.age.length === 2 && values.age[0] >=18 && values.age[1] <= 80 && values.rating instanceof Array && values.rating.length === 2 && values.rating[0]>=0 && values.rating[1] <= 5 && values.sexual) {
+  if (values && values.IdUserOwner && values.age instanceof Array && values.age.length === 2 && values.age[0] >= 18 && values.age[1] <= 80 && values.rating instanceof Array && values.rating.length === 2 && values.rating[0] >= 0 && values.rating[1] <= 5 && values.sexual) {
     values.name = values.name ? '%' + values.name + '%' : '%%'
     values.sexual = values instanceof Array ? JSON.stringify(values.sexual) : values.sexual
-    const query = 'SELECT \
+    const query =
+      'SELECT \
       u.IdUserOwner,u.UserName,u.Images,u.Gender,u.ListInterest,u.Latitude,u.Longitude,\
       Year(CURDATE())-Year(u.DataBirthday) AS Age,\
       (SELECT AVG(RatingValue) FROM Rating WHERE IdUserReceiver = u.IdUserOwner group by IdUserReceiver) AS rating,\
@@ -69,7 +70,24 @@ mysql.filter = async function (values) {
       FROM Users u \
       WHERE u.IsActive=1 AND u.IdUserOwner != ? AND u.UserName LIKE ? AND (? = "Male Female" OR ? = "Female Male" OR u.Gender=?) > 0 AND u.Images != "[]"\
       HAVING Age >= ? AND Age <= ? AND ((rating IS NULL AND ? = 0) OR (rating >= ? AND rating <= ?)) AND friendowner IS NULL AND friendreceiver IS NULL AND blackList IS NULL'
-    const result = await mysql.query(query, [values.IdUserOwner, values.IdUserOwner, values.IdUserOwner, values.IdUserOwner, values.IdUserOwner, values.IdUserOwner, values.IdUserOwner, values.name, values.sexual, values.sexual, values.sexual, values.age[0], values.age[1], values.rating[0], values.rating[0], values.rating[1]])
+    const result = await mysql.query(query, [
+      values.IdUserOwner,
+      values.IdUserOwner,
+      values.IdUserOwner,
+      values.IdUserOwner,
+      values.IdUserOwner,
+      values.IdUserOwner,
+      values.IdUserOwner,
+      values.name,
+      values.sexual,
+      values.sexual,
+      values.sexual,
+      values.age[0],
+      values.age[1],
+      values.rating[0],
+      values.rating[0],
+      values.rating[1],
+    ])
     return result
   }
   return null

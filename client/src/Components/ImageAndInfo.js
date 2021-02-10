@@ -62,12 +62,10 @@ export default function ImageAndInfo(props) {
                     Images: [...Images],
                   })
                   if (Images.length === 1) {
-                    let userInfo = JSON.parse(localStorage.getItem('userInfo'))
                     props.changeUser((oldValue) => ({
                       ...oldValue,
                       Image: result.data,
                     }))
-                    localStorage.setItem('userInfo', JSON.stringify({ ...userInfo, Image: result.data }))
                   }
                 })
               } catch (error) {}
@@ -126,7 +124,7 @@ export default function ImageAndInfo(props) {
         Axios.post(`/Profile/UpdatePosition`, {
           latitude: pos.coords.latitude,
           longitude: pos.coords.longitude,
-        }).then((result) => {})
+        }).then(() => {})
       } catch (error) {}
     }
     async function error() {
@@ -149,9 +147,7 @@ export default function ImageAndInfo(props) {
       Axios.post('/Profile/DeleteImage', { index: 0 }).then((result) => {
         let arrayImage = props.InfoUser.Images
         arrayImage.splice(0, 1)
-        let userInfo = JSON.parse(localStorage.getItem('userInfo'))
         props.changeUser((oldValue) => ({ ...oldValue, Image: arrayImage[0] }))
-        localStorage.setItem('userInfo', JSON.stringify({ ...userInfo, Image: arrayImage[0] }))
         props.ChangeInfoUser({ ...props.InfoUser, Images: [...arrayImage] })
       })
     } catch (error) {}
@@ -406,7 +402,16 @@ export default function ImageAndInfo(props) {
             props.InfoUser.Images.map((value, key) =>
               key !== 0 ? (
                 value !== 'XXX' ? (
-                  <ImageUser isProfileOfYou={props.UserNameAndEmail.isProfileOfYou} InfoUser={props.InfoUser} width={width} image={value.includes('http://') || value.includes('https://') ? value : `http://${window.location.hostname}:5000${value}`} ChangeImage={props.ChangeImage} changeUser={props.changeUser} ChangeInfoUser={props.ChangeInfoUser} key={key} />
+                  <ImageUser
+                    isProfileOfYou={props.UserNameAndEmail.isProfileOfYou}
+                    InfoUser={props.InfoUser}
+                    width={width}
+                    image={value.includes('http://') || value.includes('https://') ? value : `http://${window.location.hostname}:5000${value}`}
+                    ChangeImage={props.ChangeImage}
+                    changeUser={props.changeUser}
+                    ChangeInfoUser={props.ChangeInfoUser}
+                    key={key}
+                  />
                 ) : (
                   <div className="Image" key={key}>
                     <Skeleton variant="rect" width={220} height={320} style={{ borderRadius: '8px' }}></Skeleton>

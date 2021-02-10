@@ -77,14 +77,6 @@ const Step = (props) => {
       })
         .then((result) => {
           if (typeof result.data === 'object') {
-            let userInfo = JSON.parse(localStorage.getItem('userInfo'))
-            localStorage.setItem(
-              'userInfo',
-              JSON.stringify({
-                ...userInfo,
-                Image: JSON.parse(result.data.Images)[0],
-              })
-            )
             props.dataHome.ChangeIsLogin('Login')
             history.push(`/`)
           } else {
@@ -170,7 +162,8 @@ const Step = (props) => {
                     })
                 }
                 if (NbrStep === 2)
-                  if (infoStep.step4.DescribeYourself !== '' && infoStep.step4.yourInterest.length <= 5 && infoStep.step4.yourInterest.length !== 0 && infoStep.step4.DescribeYourself.length <= 100 && infoStep.step4.yourInterest.every((Interest) => Interest.length >= 2 && Interest.length <= 25)) changeNrbStep(NbrStep + 1)
+                  if (infoStep.step4.DescribeYourself !== '' && infoStep.step4.yourInterest.length <= 5 && infoStep.step4.yourInterest.length !== 0 && infoStep.step4.DescribeYourself.length <= 100 && infoStep.step4.yourInterest.every((Interest) => Interest.length >= 2 && Interest.length <= 25))
+                    changeNrbStep(NbrStep + 1)
                   else
                     props.dataHome.ChangeErrorMessages({
                       error: 'description must be between 1 and 100 character and listInterest between 1 and 5',
@@ -179,7 +172,14 @@ const Step = (props) => {
                     })
 
                 if (NbrStep === 3) {
-                  if ((infoStep.step3.youGender === 'Male' || infoStep.step3.youGender === 'Female' || infoStep.step3.youGender === 'Other') && (infoStep.step3.genderYouAreLooking.toString().replace(',', ' ').trim() === 'Male' || infoStep.step3.genderYouAreLooking.toString().replace(',', ' ').trim() === 'Female' || infoStep.step3.genderYouAreLooking.toString().replace(',', ' ').trim() === 'Female Male' || infoStep.step3.genderYouAreLooking.toString().replace(',', ' ').trim() === 'Male Female')) changeNrbStep(NbrStep + 1)
+                  if (
+                    (infoStep.step3.youGender === 'Male' || infoStep.step3.youGender === 'Female' || infoStep.step3.youGender === 'Other') &&
+                    (infoStep.step3.genderYouAreLooking.toString().replace(',', ' ').trim() === 'Male' ||
+                      infoStep.step3.genderYouAreLooking.toString().replace(',', ' ').trim() === 'Female' ||
+                      infoStep.step3.genderYouAreLooking.toString().replace(',', ' ').trim() === 'Female Male' ||
+                      infoStep.step3.genderYouAreLooking.toString().replace(',', ' ').trim() === 'Male Female')
+                  )
+                    changeNrbStep(NbrStep + 1)
                   else
                     props.dataHome.ChangeErrorMessages({
                       error: "select your gender and gender you're looking for",

@@ -1,150 +1,133 @@
-const axios = require("axios");
-const Jimp = require("jimp");
-const { OAuth2Client } = require("google-auth-library");
-const client = new OAuth2Client();
+const axios = require('axios')
+const Jimp = require('jimp')
 function init(app, obj) {
-  for (const [key, value] of Object.entries(obj)) app.locals[key] = value;
+  for (const [key, value] of Object.entries(obj)) app.locals[key] = value
 }
 async function fetchDataJSON(ip) {
-  const res = await axios.get(`http://ip-api.com/json/${ip}`);
+  const res = await axios.get(`http://ip-api.com/json/${ip}`)
   return {
     Latitude: res.data.lat,
     Longitude: res.data.lon,
-  };
+  }
 }
 
 function sendResponse(res, code, message, json) {
-  res.status(code);
-  if (json) res.json(message);
-  else res.send(message);
-  res.end();
+  res.status(code)
+  if (json) res.json(message)
+  else res.send(message)
+  res.end()
 }
 function checkImage(src, locals) {
   return new Promise((resolve) => {
-    if (src && src !== "") {
-      const base64Data = src.split(",");
+    if (src && src !== '') {
+      const base64Data = src.split(',')
       if (base64Data.length > 1) {
-        const nameImage = locals.crypto.randomBytes(16).toString("hex");
-        const buffer = Buffer.from(base64Data[1], "base64");
+        const nameImage = locals.crypto.randomBytes(16).toString('hex')
+        const buffer = Buffer.from(base64Data[1], 'base64')
         Jimp.read(buffer, (err, res) => {
-          if (err) resolve(null);
+          if (err) resolve(null)
           else {
-            res.quality(30).write(`./images/${nameImage}.jpg`);
-            resolve(`/images/${nameImage}.jpg`);
+            res.quality(30).write(`./images/${nameImage}.jpg`)
+            resolve(`/images/${nameImage}.jpg`)
           }
-        });
-      } else resolve(null);
-    } else resolve(null);
-  });
+        })
+      } else resolve(null)
+    } else resolve(null)
+  })
 }
 function checkImages(images) {
   return new Promise((resolve) => {
-    let arr = [];
+    let arr = []
     if (images.length > 0)
       images.forEach((image) => {
-        let base64Data = image.split(",");
+        let base64Data = image.split(',')
         if (base64Data.length > 1) {
-          const buffer = Buffer.from(base64Data[1], "base64");
+          const buffer = Buffer.from(base64Data[1], 'base64')
           Jimp.read(buffer, (err, res) => {
             if (err) {
-              resolve(false);
+              resolve(false)
             } else {
-              arr.push("ok");
+              arr.push('ok')
             }
-            if (arr.length === images.length) resolve(true);
-          });
-        } else resolve(false);
-      });
-    else resolve(false);
-  });
+            if (arr.length === images.length) resolve(true)
+          })
+        } else resolve(false)
+      })
+    else resolve(false)
+  })
 }
 function handleError(err, req, res, next) {
   if (err) {
-    req.app.locals.sendResponse(res, 200, "Bad Request");
-  } else next();
+    req.app.locals.sendResponse(res, 200, 'Bad Request')
+  } else next()
 }
 let checkProfileOfYou = (token, UserName, locals) => {
   return new Promise(async (resolve) => {
-    if (token && UserName && locals && token !== "" && UserName !== "") {
-      const result = await locals.select("Users", ["UserName"], {
+    if (token && UserName && locals && token !== '' && UserName !== '') {
+      const result = await locals.select('Users', ['UserName'], {
         Token: token,
         IsActive: 1,
-      });
+      })
       if (result[0]) {
-        if (result[0].UserName === UserName) resolve(true);
-        else resolve(false);
-      } else resolve(false);
-    } else resolve(false);
-  });
-};
+        if (result[0].UserName === UserName) resolve(true)
+        else resolve(false)
+      } else resolve(false)
+    } else resolve(false)
+  })
+}
 function handleError(err, req, res, next) {
-  if (err) req.app.locals.sendResponse(res, 200, "Bad Request");
-  else next();
+  if (err) req.app.locals.sendResponse(res, 200, 'Bad Request')
+  else next()
 }
 let getImage = (token, locals) => {
   return new Promise(async (resolve) => {
-    if (token && locals && token != "") {
-      const result = await locals.select("Users", ["Images"], {
+    if (token && locals && token != '') {
+      const result = await locals.select('Users', ['Images'], {
         Token: token,
         IsActive: 1,
-      });
-      if (result[0]) resolve(result);
-      else resolve(false);
-    } else resolve(false);
-  });
-};
+      })
+      if (result[0]) resolve(result)
+      else resolve(false)
+    } else resolve(false)
+  })
+}
 
 let getPassword = (token, locals) => {
   return new Promise(async (resolve, reject) => {
-    if (token && locals && token != "") {
-      const result = await locals.select("Users", ["Password"], {
+    if (token && locals && token != '') {
+      const result = await locals.select('Users', ['Password'], {
         Token: token,
         IsActive: 1,
-      });
-      if (result[0]) resolve(result);
-      else resolve(false);
-    } else resolve(false);
-  });
-};
+      })
+      if (result[0]) resolve(result)
+      else resolve(false)
+    } else resolve(false)
+  })
+}
 function getImageProfile(users) {
   return new Promise((resolve) => {
-    let Array = [];
+    let Array = []
     users.forEach((user) => {
-      user.Images = JSON.parse(user.Images)[0];
-      Array.push("ok");
-      if (Array.length === users.length) resolve("ok");
-    });
-    if (Array.length === users.length) resolve("ok");
-  });
+      user.Images = JSON.parse(user.Images)[0]
+      Array.push('ok')
+      if (Array.length === users.length) resolve('ok')
+    })
+    if (Array.length === users.length) resolve('ok')
+  })
 }
 function ifNotBlock(IdUserOwner, IdUserReceiver, locals) {
   return new Promise(async (resolve) => {
-    const result1 = await locals.select("Blacklist", "*", {
+    const result1 = await locals.select('Blacklist', '*', {
       IdUserOwner: IdUserOwner,
       IdUserReceiver: IdUserReceiver,
-    });
-    const result2 = await locals.select("Blacklist", "*", {
+    })
+    const result2 = await locals.select('Blacklist', '*', {
       IdUserOwner: IdUserReceiver,
       IdUserReceiver: IdUserOwner,
-    });
-    if (!result1[0] && !result2[0]) resolve(true);
-    else resolve(false);
-  });
-}
-function verifyIdTokenGoogle(id) {
-  return new Promise(async (resolve) => {
-    try {
-      const ticket = await client.verifyIdToken({
-        idToken: id,
-        audience: "652872186498-sdfbthmnqp8tqnlnpmu3rsiv2v8rb8s5.apps.googleusercontent.com", // Specify the CLIENT_ID
-      });
-      const payload = ticket.getPayload();
-      const userEmail = payload;
-      resolve(userEmail.email);
-    } catch (error) {
-      resolve(false);
-    }
-  });
+    })
+    if (!result1[0] && !result2[0]) resolve(true)
+    else resolve(false)
+  })
 }
 
 async function notification(req, Type, UserOwner, UserReceiver) {
@@ -156,25 +139,28 @@ async function notification(req, Type, UserOwner, UserReceiver) {
     let result = {
       insertId: null,
     }
-    if (Type !== 'addFriend')
-    {
+    if (Type !== 'addFriend') {
       result = await locals.insert('Notifications', {
         IdUserOwner,
         IdUserReceiver,
         Type,
       })
-      if (Type !== "removeFriend")
+      if (Type !== 'removeFriend')
         locals.insert('History', {
           IdUserOwner,
           IdUserReceiver,
-          Content:`You ${Type} ${UserReceiver}`,
+          Content: `You ${Type} ${UserReceiver}`,
         })
     }
     if (locals.sockets && locals.sockets.length > 0 && locals.sockets[IdUserReceiver]) {
       const user = await locals.select('Users', ['IdUserOwner', 'Images', 'UserName', 'LastLogin', 'Active'], { IdUserOwner })
-      if (Type === 'addFriend' || Type === 'LikedBack')
-      {
-        const messages = await locals.query('SELECT IdMessages As "id",IdUserOwner,Content,DateCreation As "date" FROM Messages WHERE (IdUserOwner=? AND idUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?) ORDER BY DateCreation DESC LIMIT 30', [IdUserOwner, IdUserReceiver, IdUserReceiver, IdUserOwner])
+      if (Type === 'addFriend' || Type === 'LikedBack') {
+        const messages = await locals.query('SELECT IdMessages As "id",IdUserOwner,Content,DateCreation As "date" FROM Messages WHERE (IdUserOwner=? AND idUserReceiver=?) OR (IdUserOwner=? AND IdUserReceiver=?) ORDER BY DateCreation DESC LIMIT 30', [
+          IdUserOwner,
+          IdUserReceiver,
+          IdUserReceiver,
+          IdUserOwner,
+        ])
         const IsRead = await locals.select('Messages', 'COUNT(IsRead) AS IsRead', {
           IdUserReceiver: req.userInfo.IdUserOwner,
           IsRead: 0,
@@ -198,41 +184,41 @@ async function notification(req, Type, UserOwner, UserReceiver) {
   }
 }
 function checkIfHasOneImage(req, res, next) {
-  if (JSON.parse(req.userInfo.Images).length > 0) next();
-  else res.app.locals.sendResponse(res, 200, "You Need At lest One Image to do This Action");
+  if (JSON.parse(req.userInfo.Images).length > 0) next()
+  else res.app.locals.sendResponse(res, 200, 'You Need At lest One Image to do This Action')
 }
 async function CheckActive(Email, locals) {
-  const result = await locals.query("SELECT COUNT(*) AS 'Count' FROM Users WHERE Email=? AND (IsActive=1 OR IsActive=2)", [Email]);
-  return result[0].Count === 1 ? true : false;
+  const result = await locals.query("SELECT COUNT(*) AS 'Count' FROM Users WHERE Email=? AND (IsActive=1 OR IsActive=2)", [Email])
+  return result[0].Count === 1 ? true : false
 }
 async function verifierToken(Token, locals) {
-  const result = await locals.query("SELECT COUNT(*) AS 'Count' FROM Users WHERE Token=? AND (IsActive=1 OR IsActive=2)", [Token]);
-  return result[0].Count === 1 ? true : false;
+  const result = await locals.query("SELECT COUNT(*) AS 'Count' FROM Users WHERE Token=? AND (IsActive=1 OR IsActive=2)", [Token])
+  return result[0].Count === 1 ? true : false
 }
 async function getRating(UserOwner, locals) {
-  const IdUserReceiver = await locals.getIdUserOwner(UserOwner);
-  const avgRatingValue = await locals.select("Rating", 'SUM(RatingValue)/Count(*) AS "AVG"', { IdUserReceiver });
-  return avgRatingValue && avgRatingValue.length > 0 && avgRatingValue[0].AVG ? avgRatingValue[0].AVG.toString() : "0";
+  const IdUserReceiver = await locals.getIdUserOwner(UserOwner)
+  const avgRatingValue = await locals.select('Rating', 'SUM(RatingValue)/Count(*) AS "AVG"', { IdUserReceiver })
+  return avgRatingValue && avgRatingValue.length > 0 && avgRatingValue[0].AVG ? avgRatingValue[0].AVG.toString() : '0'
 }
 async function myRating(UserOwner, UserReceiver, locals) {
-  const IdUserReceiver = await locals.getIdUserOwner(UserOwner);
-  const IdUserOwner = await locals.getIdUserOwner(UserReceiver);
-  const avgRatingValue = await locals.select("Rating", 'SUM(RatingValue)/Count(*) AS "AVG"', { IdUserReceiver, IdUserOwner });
-  return avgRatingValue && avgRatingValue.length > 0 && avgRatingValue[0].AVG ? avgRatingValue[0].AVG.toString() : "0";
+  const IdUserReceiver = await locals.getIdUserOwner(UserOwner)
+  const IdUserOwner = await locals.getIdUserOwner(UserReceiver)
+  const avgRatingValue = await locals.select('Rating', 'SUM(RatingValue)/Count(*) AS "AVG"', { IdUserReceiver, IdUserOwner })
+  return avgRatingValue && avgRatingValue.length > 0 && avgRatingValue[0].AVG ? avgRatingValue[0].AVG.toString() : '0'
 }
 async function CountRating(UserOwner, locals) {
-  const IdUserReceiver = await locals.getIdUserOwner(UserOwner);
-  const count = await locals.select("Rating", 'Count(*) AS "Count"', { IdUserReceiver });
-  return count[0].Count;
+  const IdUserReceiver = await locals.getIdUserOwner(UserOwner)
+  const count = await locals.select('Rating', 'Count(*) AS "Count"', { IdUserReceiver })
+  return count[0].Count
 }
 async function CountFriends(UserOwner, locals) {
-  const IdUserReceiver = await locals.getIdUserOwner(UserOwner);
-  const count = await locals.select("Friends", 'Count(*) AS "Count"', { IdUserReceiver, Match: 1 });
-  return count[0].Count;
+  const IdUserReceiver = await locals.getIdUserOwner(UserOwner)
+  const count = await locals.select('Friends', 'Count(*) AS "Count"', { IdUserReceiver, Match: 1 })
+  return count[0].Count
 }
 
 async function checkIp(ip) {
-  return (await axios.get(`http://ip-api.com/json/${ip}`)).data.status === "success" ? true : false;
+  return (await axios.get(`http://ip-api.com/json/${ip}`)).data.status === 'success' ? true : false
 }
 
 module.exports = {
@@ -248,7 +234,6 @@ module.exports = {
   getPassword,
   getImageProfile,
   ifNotBlock,
-  verifyIdTokenGoogle,
   checkIfHasOneImage,
   CheckActive,
   verifierToken,
@@ -257,4 +242,4 @@ module.exports = {
   CountFriends,
   myRating,
   checkIp,
-};
+}

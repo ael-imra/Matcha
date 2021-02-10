@@ -9,4 +9,4 @@ function Loader(props) {
   )
 }
 
-export { Loader}
+export { Loader }

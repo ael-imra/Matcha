@@ -17,4 +17,4 @@ function Toggle(props) {
     </div>
   )
 }
-export {  Toggle }
+export { Toggle }

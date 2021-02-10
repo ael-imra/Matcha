@@ -1,4 +1,4 @@
-import React, { useState, useContext,useEffect } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import Slider from '@material-ui/core/Slider'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
@@ -13,17 +13,16 @@ function Filter() {
   const [age, changeAge] = useState(ctx.cache.filterData.age)
   const [rating, changeRating] = useState(ctx.cache.filterData.rating)
   const [location, changeLocation] = useState(ctx.cache.filterData.location)
-  const [listInterest,changeListInterest] = useState([...ctx.cache.listInterest])
-  useEffect(()=>{
+  const [listInterest, changeListInterest] = useState([...ctx.cache.listInterest])
+  useEffect(() => {
     ctx.ref.changeListInterest = changeListInterest
     ctx.ref.changeListActive = changeListActive
-    if (ctx.cache.listInterest.length === 0)
-      ctx.ref.getListInterest()
-    return (()=>{
+    if (ctx.cache.listInterest.length === 0) ctx.ref.getListInterest()
+    return () => {
       ctx.ref.changeListInterest = null
       ctx.ref.changeListActive = null
-    })// eslint-disable-next-line
-  },[])
+    } // eslint-disable-next-line
+  }, [])
   return (
     <div className="Filter">
       <div className="FilterSearch">

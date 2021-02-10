@@ -36,11 +36,8 @@ async function insertData() {
 }
 fs.readFile('./database.sql', (err, data) => {
   pool.query(data.toString(), (err) => {
-    if (err) throw err
-    console.log('Database Created')
     pool.end()
     insertData().then(() => {
-      console.log('Users Is Created!!')
       mysqlObject.pool.end()
     })
   })

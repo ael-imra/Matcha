@@ -6,7 +6,7 @@ import { DashboardBody } from './DashboardBody' // eslint-disable-next-line
 import { ModeStyle } from '../Data/ModeStyle'
 import { useWindowSize } from './UseWindowSize'
 import { DataContext } from '../Context/AppContext'
-import Axios from "axios"
+import Axios from 'axios'
 
 function Layout(props) {
   const [active, changeActive] = useState('Menu')
@@ -44,28 +44,25 @@ function Layout(props) {
 }
 function Dashboard(props) {
   const ctx = useContext(DataContext)
-  const userJSON = JSON.parse(localStorage.getItem('userInfo'))
-  const [user, changeUser] = useState(userJSON ? { ...userJSON, UserName: userJSON.UserName ? userJSON.UserName : "**-***", LastName: userJSON.LastName ? userJSON.LastName : "******", FirstName: userJSON.FirstName ? userJSON.FirstName : "******" } : { UserName: "**-***", LastName: "******", FirstName: "******" })
+  const [user, changeUser] = useState({ UserName: '**-***', LastName: '******', FirstName: '******' })
   const width = useWindowSize()
   const [LayoutHide, changeLayoutHide] = useState(true)
   useEffect(() => {
     let unmount = false
-    if (width >= 1240 && !LayoutHide && !unmount) changeLayoutHide(true) 
-    return (()=>unmount = true)// eslint-disable-next-line
+    if (width >= 1240 && !LayoutHide && !unmount) changeLayoutHide(true)
+    return () => (unmount = true) // eslint-disable-next-line
   }, [width])
   useEffect(() => {
     let unmount = false
-    let myInfo = JSON.parse(localStorage.getItem("userInfo"));
-    if (!myInfo || !myInfo.UserName || !myInfo.LastName || !myInfo.FirstName) {
-      try {
-        Axios.get("/Users/MyInfo").then((result) => {
-          if (!unmount)
-            changeUser({ ...result.data, Image: result.data.Images });
-          localStorage.setItem("userInfo", JSON.stringify({ ...result.data, Image: result.data.Images }));
-        });
-      } catch (error) {}
-    }
-    return(()=>unmount = true)
+    try {
+      Axios.get('/Users/MyInfo').then((result) => {
+        if (!unmount) {
+          ctx.cache.userInfo = { ...result.data, Image: result.data.Images }
+          changeUser({ ...result.data, Image: result.data.Images })
+        }
+      })
+    } catch (error) {}
+    return () => (unmount = true) // eslint-disable-next-line
   }, [])
   return (
     <div className="Dashboard" style={ModeStyle[ctx.cache.Mode].Dashboard}>

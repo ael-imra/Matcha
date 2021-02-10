@@ -25,16 +25,20 @@ function ChatMessage(props) {
         <div className="ChatMessageText">{props.message}</div>
         <div className="ChatMessageTime">{props.time}</div>
       </div>
-      {props.pos !== 'left'?<div
-        className="ChatMessageDelete"
-        title="delete"
-        style={{
-          left: '0',
-          display: hideDeleteMessage ? 'block' : 'none',
-        }}
-      >
-        <div style={{ color: 'red', fontSize: '13px', cursor: 'pointer' }} onClick={props.removeMessage}>delete</div>
-      </div>:null}
+      {props.pos !== 'left' ? (
+        <div
+          className="ChatMessageDelete"
+          title="delete"
+          style={{
+            left: '0',
+            display: hideDeleteMessage ? 'block' : 'none',
+          }}
+        >
+          <div style={{ color: 'red', fontSize: '13px', cursor: 'pointer' }} onClick={props.removeMessage}>
+            delete
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }
@@ -105,8 +109,7 @@ function Chat(props) {
         ) : null}
         {friends[UserName]
           ? friends[UserName].messages.map((msg) => {
-              if (msg !== 'limit') return <ChatMessage key={'Message' + msg.id} pos={msg.IdUserOwner !== ctx.cache.chatUserInfo.IdUserOwner ? 'right' : 'left'}
-              message={msg.Content} time={ctx.ref.ConvertDate(msg.date, 'time')} removeMessage={()=>ctx.ref.removeMessage(UserName,msg.id)} />
+              if (msg !== 'limit') return <ChatMessage key={'Message' + msg.id} pos={msg.IdUserOwner !== ctx.cache.chatUserInfo.IdUserOwner ? 'right' : 'left'} message={msg.Content} time={ctx.ref.ConvertDate(msg.date, 'time')} removeMessage={() => ctx.ref.removeMessage(UserName, msg.id)} />
               return null
             })
           : null}

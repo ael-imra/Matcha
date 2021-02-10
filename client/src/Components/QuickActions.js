@@ -89,9 +89,9 @@ function QuickActions(props) {
           </Tabs>
         </Paper>
         <Search search={search} changeSearch={changeSearch} />
-        {CurrentAction === 'Friends' ? <Friends search={search} /> : null}
-        {CurrentAction === 'Messages' ? <Messages search={search} /> : null}
-        {CurrentAction === 'Notification' ? <Notification search={search} /> : null}
+        {CurrentAction === 'Friends' && !chatUserInfo.UserName ? <Friends search={search} /> : null}
+        {CurrentAction === 'Messages' && !chatUserInfo.UserName ? <Messages search={search} /> : null}
+        {CurrentAction === 'Notification' && !chatUserInfo.UserName ? <Notification search={search} /> : null}
       </div>
       {chatUserInfo.UserName ? (
         <div

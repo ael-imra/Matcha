@@ -30,7 +30,7 @@ function DashboardBody(props) {
   useEffect(() => {
     let unmount = false
     if (location.pathname !== '/' && !unmount) changeHideFilter(true)
-    return (()=>unmount = true)
+    return () => (unmount = true)
   }, [location])
   function Error404() {
     useEffect(() => {
@@ -70,10 +70,17 @@ function DashboardBody(props) {
               ''
             )}
 
-            <Toggle list={['Dark', 'Light']} active={ctx.cache.Mode} switch={() =>ctx.ref.changeMode(oldValue=>{
-                ctx.cache.Mode = oldValue === 'Dark' ? 'Light' : 'Dark'
-                return (ctx.cache.Mode)
-            })} colors={['#FD7A48', '#7C79E4']} />
+            <Toggle
+              list={['Dark', 'Light']}
+              active={ctx.cache.Mode}
+              switch={() =>
+                ctx.ref.changeMode((oldValue) => {
+                  ctx.cache.Mode = oldValue === 'Dark' ? 'Light' : 'Dark'
+                  return ctx.cache.Mode
+                })
+              }
+              colors={['#FD7A48', '#7C79E4']}
+            />
           </div>
         </div>
         {!hideFilter ? <Filter /> : null}
@@ -82,7 +89,7 @@ function DashboardBody(props) {
       <div className="DashboardBodyContent">
         <Switch>
           <Route exact path="/">
-            <Users />
+            <Users user={props.user} />
           </Route>
           <Route path="/profile/:userName">
             <Profile user={props.user} changeUser={props.changeUser} />

@@ -1,12 +1,11 @@
 import React, { useContext, useState } from 'react'
-import SingSocialMedia from './SingSocialMedia'
 import { DataContext } from '../Context/AppContext'
-import Line from './Line'
 import Axios from 'axios'
 import Input from './Input'
 import { useWindowSize } from './UseWindowSize'
 import { useHistory } from 'react-router-dom'
 import { Validate } from './Validate'
+import Divider from '@material-ui/core/Divider'
 const SingIn = (props) => {
   const ctx = useContext(DataContext)
   const [DataInput, saveDataInput] = useState({ UserName: '', Password: '' })
@@ -23,10 +22,8 @@ const SingIn = (props) => {
             if (typeof result.data === 'object') {
               localStorage.setItem('token', result.data.accessToken)
               if (result.data.data.IsActive === 1) {
-                localStorage.setItem('userInfo', JSON.stringify({ FirstName: result.data.data.FirstName, Image: result.data.data.Images, UserName: result.data.data.UserName, LastName: result.data.data.LastName }))
                 props.dataHome.ChangeIsLogin('Login')
               } else if (result.data.data.IsActive === 2) {
-                localStorage.setItem('userInfo', JSON.stringify({ FirstName: result.data.data.FirstName, UserName: result.data.data.UserName, LastName: result.data.data.LastName }))
                 history.push('/step')
                 props.dataHome.ChangeIsLogin('Step')
               }
@@ -39,7 +36,7 @@ const SingIn = (props) => {
                 })
               else
                 props.dataHome.ChangeErrorMessages({
-                  error: 'We couldn’t find an account matching the Email and password you entered.Please check your Email and password and try again.',
+                  error: 'We couldn’t find an account matching the UserName and password you entered.Please check your Email and password and try again.',
                   warning: '',
                   success: '',
                 })
@@ -60,8 +57,7 @@ const SingIn = (props) => {
       <p className="t1" style={{ color: ctx.cache.Mode === 'Dark' ? 'white' : 'black' }}>
         Sing in To matcha
       </p>
-      <SingSocialMedia titre="sing in with Google" type="sing in" ChangeIsLogin={props.dataHome.ChangeIsLogin} ChangeErrorMessages={props.dataHome.ChangeErrorMessages} />
-      <Line str={'Or'} color={ctx.cache.Mode} />
+      <Divider />
       <div className="form-sing">
         <div className="form-group" style={{ width: '100%' }}>
           <p
@@ -77,7 +73,7 @@ const SingIn = (props) => {
               saveDataInput((oldValue) => ({ ...oldValue, UserName: userName }))
             }}
             Disabled="false"
-            Type="email"
+            Type="text"
           />
         </div>
         <div className="form-group" style={{ width: '100%' }}>

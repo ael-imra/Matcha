@@ -1,4 +1,4 @@
-import React, { useContext, useState,useEffect } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import '../Css/App.css'
 import AppContext, { DataContext } from '../Context/AppContext'
 import Header from './Header'
@@ -11,10 +11,10 @@ import { ModeStyle } from '../Data/ModeStyle'
 function App() {
   const ctx = useContext(DataContext)
   const [Mode, changeMode] = useState('Light')
-  const [StateHome, ChangeHome] = useState(1)// eslint-disable-next-line
-  useEffect(()=>{
+  const [StateHome, ChangeHome] = useState(1) // eslint-disable-next-line
+  useEffect(() => {
     ctx.ref.changeMode = changeMode
-    return (()=>ctx.ref.changeMode=null)
+    return () => (ctx.ref.changeMode = null)
   })
   if (ctx.isLogin === 'Step' || ctx.isLogin === 'Not login') {
     return (
@@ -30,15 +30,15 @@ function App() {
 
 function AppContainer() {
   return (
-      <Router>
-        <AppContext>
-          <Switch>
-            <Route>
-              <App />
-            </Route>
-          </Switch>
-        </AppContext>
-      </Router>
+    <Router>
+      <AppContext>
+        <Switch>
+          <Route>
+            <App />
+          </Route>
+        </Switch>
+      </AppContext>
+    </Router>
   )
 }
 

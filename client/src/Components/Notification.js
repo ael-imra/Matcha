@@ -62,8 +62,7 @@ function Notification(props) {
   })
   function onScroll() {
     const { offsetHeight, scrollHeight, scrollTop } = notificationsContent.current
-    if (scrollTop + 50 > scrollHeight - offsetHeight)
-      ctx.ref.getNotifications()
+    if (scrollTop + 50 > scrollHeight - offsetHeight) ctx.ref.getNotifications()
   }
   useEffect(() => {
     ctx.ref.changeNotifications = changeNotifications
@@ -76,7 +75,7 @@ function Notification(props) {
   }, [props.search])
   return (
     <div className="Notification" ref={notificationsContent} style={props.style ? props.style : {}} onScroll={onScroll}>
-      {notifications.data.map((obj) => obj!=="limit"?(<Notice key={'Notice' + obj.IdNotification.toString()} Type={obj.Type} username={obj.UserName} date={obj.DateCreation} img={obj.Images} ConvertDate={ctx.ref.ConvertDate} />):null)}
+      {notifications.data.map((obj) => (obj !== 'limit' ? <Notice key={'Notice' + obj.IdNotification.toString()} Type={obj.Type} username={obj.UserName} date={obj.DateCreation} img={obj.Images} ConvertDate={ctx.ref.ConvertDate} /> : null))}
       {!hideLoader ? <div className="NotificationLoader"></div> : null}
     </div>
   )

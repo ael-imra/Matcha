@@ -59,3 +59,14 @@
   /* margin-top: 20px; */
   height: 94%;
 }
+.DashboardBody .no-image-profile {
+  font-size: 15px;
+  width: 35px;
+  display: flex;
+  height: 35px;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--background-Nav);
+  color: var(--background-NavLink-Active);
+  border-radius: 50%;
+}

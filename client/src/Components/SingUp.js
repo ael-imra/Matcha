@@ -2,11 +2,10 @@ import React, { useContext, useState } from 'react'
 import '../Css/sing_up.css'
 import Input from './Input'
 import { DataContext } from '../Context/AppContext'
-import SingSocialMedia from './SingSocialMedia'
-import Line from './Line'
 import { useWindowSize } from './UseWindowSize'
 import Axios from 'axios'
 import { Validate } from './Validate'
+import Divider from '@material-ui/core/Divider'
 
 const SingUp = (props) => {
   const width = useWindowSize()
@@ -33,8 +32,7 @@ const SingUp = (props) => {
       <p className="t1" style={{ color: ctx.cache.Mode === 'Dark' ? 'white' : 'black' }}>
         Sign up to Matcha
       </p>
-      <SingSocialMedia ChangeErrorMessages={props.dataHome.ChangeErrorMessages} type="sing up" />
-      <Line str="Or" color={ctx.cache.Mode} />
+      <Divider />
       <div className="form-sing">
         <div className="inline-group">
           <div className="form-group">

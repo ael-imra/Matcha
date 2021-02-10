@@ -19,7 +19,7 @@ function Select(props) {
   }
   const [list, changeList] = useState(init(props.list, props.active))
   const [search, changeSearch] = useState('') // eslint-disable-next-line
-  useEffect(() => changeList(init(props.list, props.active)), [props.active,props.list])
+  useEffect(() => changeList(init(props.list, props.active)), [props.active, props.list])
   function getListActive(list) {
     const newArray = []
     list.map((item) => {
