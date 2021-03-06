@@ -63,7 +63,7 @@ SignUp Dark/Light mode</br>
 ![](Screenshots/signup_light.png)</br>
 ![](Screenshots/signup_dark.png)</br>
 Dashboard Dark/Light mode</br>
-![](Screenshots/dashboard_light.png</br>)
+![](Screenshots/dashboard_light.png)</br>
 ![](Screenshots/dashboard_dark.png)</br>
 Profile Dark/Light mode</br>
 ![](Screenshots/profile_light.png)</br>
