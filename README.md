@@ -71,3 +71,7 @@ Profile Dark/Light mode</br>
 History Dark/Light mode</br>
 ![](Screenshots/history_light.png)</br>
 ![](Screenshots/history_dark.png)</br>
+Steps</br>
+![](Screenshots/step1.png)</br>
+![](Screenshots/step2.png)</br>
+![](Screenshots/step3.png)</br>
