@@ -53,13 +53,13 @@ JWT_KEY= <key>
 
 ## Screenshots
 
-Home</br>
+Home Dark/Light mode</br>
 ![](Screenshots/home_ligh.png)</br>
 ![](Screenshots/home_dark.png)</br>
-SignIN</br>
+SignIn Dark/Light mode</br>
 ![](Screenshots/signin_light.png)</br>
 ![](Screenshots/signin_dark.png)</br>
-SignUP</br>
+SignUp</br>
 ![](Screenshots/signup_light.png)</br>
 ![](Screenshots/signup_dark.png)</br>
 Dashboard</br>
