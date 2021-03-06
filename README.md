@@ -54,20 +54,20 @@ JWT_KEY= <key>
 ## Screenshots
 
 Home Dark/Light mode</br>
-![](Screenshots/home_ligh.png)</br>
+![](Screenshots/home_light.png)</br>
 ![](Screenshots/home_dark.png)</br>
 SignIn Dark/Light mode</br>
 ![](Screenshots/signin_light.png)</br>
 ![](Screenshots/signin_dark.png)</br>
-SignUp</br>
+SignUp Dark/Light mode</br>
 ![](Screenshots/signup_light.png)</br>
 ![](Screenshots/signup_dark.png)</br>
-Dashboard</br>
+Dashboard Dark/Light mode</br>
 ![](Screenshots/dashboard_light.png</br>)
 ![](Screenshots/dashboard_dark.png)</br>
-Profile</br>
+Profile Dark/Light mode</br>
 ![](Screenshots/profile_light.png)</br>
 ![](Screenshots/profile_dark.png)</br>
-History</br>
+History Dark/Light mode</br>
 ![](Screenshots/history_light.png)</br>
 ![](Screenshots/history_dark.png)</br>
